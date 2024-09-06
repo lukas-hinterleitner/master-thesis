@@ -1,6 +1,3 @@
-[submodule "code/OLMo"]
-	path = code/OLMo
-	url = https://github.com/allenai/OLMo.git
 [submodule "open-instruct"]
 	path = code/open_instruct
 	url = https://github.com/allenai/open-instruct.git
