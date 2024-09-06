@@ -1,0 +1,3 @@
+[submodule "submodules/open-instruct"]
+	path = submodules/open-instruct
+	url = https://github.com/allenai/open-instruct
