@@ -7,7 +7,7 @@ def get_gradients(model: PreTrainedModel, batch: dict[str, torch.Tensor]) -> dic
     # set gradients to zero, so that gradients to not accumulate for each iteration
     model.zero_grad()
 
-    output = model(**batch, use_cache=False)
+    output = model(input_ids=batch["input_ids"], labels=batch["labels"], attention_mask=batch["attention_mask"], use_cache=False)
     loss = output.loss
 
     loss.backward()

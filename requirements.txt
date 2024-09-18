@@ -1,0 +1,15 @@
+--find-links https://download.pytorch.org/whl/cu124
+torch==2.4.1
+
+openai==1.46.0
+python-dotenv==1.0.1
+
+datasets==3.0.0
+transformers==4.44.2
+
+-e submodules/open-instruct
+
+deepspeed==0.15.1
+accelerate==0.34.2
+peft==0.12.0
+rich==13.8.1
