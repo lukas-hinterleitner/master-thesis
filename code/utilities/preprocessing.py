@@ -2,34 +2,8 @@ from functools import partial
 
 from datasets import DatasetDict, Dataset
 from open_instruct.finetune import encode_with_messages_format
-from openai import OpenAI
 from torch.utils.data import DataLoader
 from transformers import DataCollatorForSeq2Seq, PreTrainedModel, PreTrainedTokenizerBase
-
-from dotenv import load_dotenv
-
-load_dotenv()
-
-__client = OpenAI()
-
-__paraphrasing_system_prompt = """
-You are a paraphrasing expert who is specialized in rewriting text (questions, statements, etc.) without altering the content. 
-Keep in mind, that the meaning must not change after the paraphrasing. 
-Just output the paraphrased text without any additional information.
-"""
-
-def paraphrase_input(input: str):
-    response = __client.chat.completions.create(
-        model="gpt-4o-mini-2024-07-18",
-        messages=[
-            {"role": "system", "content": __paraphrasing_system_prompt},
-            {"role": "user", "content": input}
-        ],
-        seed=42,
-        temperature=1,
-    )
-
-    return response.choices[0].message.content
 
 
 def prepare_dataset(dataset: [Dataset | DatasetDict], model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase) -> DataLoader:
