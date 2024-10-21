@@ -1,17 +1,16 @@
 from functools import partial
 
 from datasets import DatasetDict, Dataset
-from open_instruct.finetune import encode_with_messages_format
+from open_instruct.finetune import encode_sft_example
 from torch.utils.data import DataLoader
 from transformers import DataCollatorForSeq2Seq, PreTrainedModel, PreTrainedTokenizerBase
 
 
 def prepare_dataset(dataset: [Dataset | DatasetDict], model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase) -> DataLoader:
     encode_function = partial(
-        encode_with_messages_format,
+        encode_sft_example,
         tokenizer=tokenizer,
         max_seq_length=2048,
-        add_bos=False,
     )
 
     lm_dataset = dataset.map(
