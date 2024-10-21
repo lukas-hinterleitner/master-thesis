@@ -8,5 +8,9 @@ python prepare_lima_data.py -t allenai/eleuther-ai-gpt-neox-20b-pii-special ../.
 ```
 
 Install open-instruct:
-cd code
-pip install -e ../submodules/open-instruct/
+pip install -e submodules/open-instruct/
+
+Run solution:
+
+git submodule init
+git submodule update
