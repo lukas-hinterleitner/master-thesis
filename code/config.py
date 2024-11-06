@@ -1,5 +1,16 @@
 import os
 
+from open_instruct.dataset_processor import DatasetConfig
+from transformers import PreTrainedModel
+
+def get_dataset_config(model: PreTrainedModel, chat_template = "tulu", train_only_on_prompt=True) -> DatasetConfig:
+    return DatasetConfig(
+        chat_template=chat_template,
+        max_token_length=model.config.max_position_embeddings,
+        train_only_on_prompt=train_only_on_prompt,
+        load_from_cache_file=False
+    )
+
 hf_model_id = "allenai/OLMo-1B-hf"
 
 data_folder_path = "../data"

@@ -1,7 +1,7 @@
 import torch
 from transformers import PreTrainedModel
 
-def get_gradients(model: PreTrainedModel, batch: dict[str, torch.Tensor]) -> dict[str, torch.Tensor]:
+def get_gradients(model: PreTrainedModel, batch) -> dict[str, torch.Tensor]:
     gradients = {}
 
     # set gradients to zero, so that gradients to not accumulate for each iteration

@@ -2,11 +2,15 @@ from functools import partial
 
 from datasets import DatasetDict, Dataset
 from open_instruct.finetune import encode_sft_example
+from open_instruct.dataset_processor import CHAT_TEMPLATES
 from torch.utils.data import DataLoader
 from transformers import DataCollatorForSeq2Seq, PreTrainedModel, PreTrainedTokenizerBase
 
 
 def prepare_dataset(dataset: [Dataset | DatasetDict], model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase) -> DataLoader:
+    if not tokenizer.chat_template:
+        tokenizer.chat_template = CHAT_TEMPLATES["tulu"]
+
     encode_function = partial(
         encode_sft_example,
         tokenizer=tokenizer,
@@ -26,7 +30,7 @@ def prepare_dataset(dataset: [Dataset | DatasetDict], model: PreTrainedModel, to
         desc="Tokenizing and reformatting instruction data",
     )
     lm_dataset.set_format(type="pt")
-    lm_dataset = lm_dataset.filter(lambda example: (example["labels"] != -100).any())
+    lm_dataset = lm_dataset.filter(lambda example: any(x != -100 for x in example["labels"]))
 
     train_dataloader = DataLoader(
         lm_dataset,

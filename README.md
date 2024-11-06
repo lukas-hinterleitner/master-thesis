@@ -1,16 +1,15 @@
-# master-thesis
-Explainability of Large Language Models based on input data.
+# Can gradient-based explanations find training data on similar data points?
 
-Notes: 
-Transfer lima input data: 
+## Setup
+
+### Initialize Git Submodules
 ```bash
-python prepare_lima_data.py -t allenai/eleuther-ai-gpt-neox-20b-pii-special ../../data/lima
-```
-
-Install open-instruct:
-pip install -e submodules/open-instruct/
-
-Run solution:
-
 git submodule init
 git submodule update
+```
+
+### Install necessary packages
+```bash
+pip install -r requirements.txt
+```
+

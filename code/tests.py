@@ -1,12 +1,12 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from datasets import load_from_disk
-from config import data_path, hf_model_id
-import torch
-import numpy as np
 import random
-import gc
 
-from utilities.dataset import prepare_dataset
+import numpy as np
+import torch
+from datasets import load_from_disk
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from utilities.preprocessing import prepare_dataset
+
+from config import data_path, hf_model_id
 from utilities.gradient_operations import get_gradients
 
 torch.manual_seed(42)
