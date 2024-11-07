@@ -1,13 +1,13 @@
 import torch
 from transformers import PreTrainedModel
 
-def get_gradients(model: PreTrainedModel, batch) -> dict[str, torch.Tensor]:
+def get_gradients(model: PreTrainedModel, batch, device: str) -> dict[str, torch.Tensor]:
     gradients = {}
 
     # set gradients to zero, so that gradients to not accumulate for each iteration
     model.zero_grad()
 
-    output = model(input_ids=batch["input_ids"], labels=batch["labels"], attention_mask=batch["attention_mask"], use_cache=False)
+    output = model(input_ids=batch["input_ids"].to(device), labels=batch["labels"].to(device), attention_mask=batch["attention_mask"].to(device), use_cache=False)
     loss = output.loss
 
     loss.backward()

@@ -4,7 +4,7 @@ from functools import partial
 from datasets import DatasetDict, Dataset
 from open_instruct.finetune import encode_sft_example
 from open_instruct.dataset_processor import CHAT_TEMPLATES
-from torch.utils.data import DataLoader, Subset
+from torch.utils.data import DataLoader
 from transformers import DataCollatorForSeq2Seq, PreTrainedModel, PreTrainedTokenizerBase
 
 
