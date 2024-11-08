@@ -22,5 +22,15 @@ lima_dataset_path = os.path.join(data_folder_path, "lima")
 lima_filtered_dataset_path = os.path.join(lima_dataset_path, "filtered")
 lima_filtered_paraphrased_dataset_path = os.path.join(data_folder_path, "paraphrased")
 
+sample_size = 5
+
+gradients_path = os.path.join(data_folder_path, "gradients")
+
+def get_gradients_file_path():
+    return os.path.join(gradients_path, f"sample_size_{sample_size}.csv")
+
+if not os.path.exists(gradients_path):
+    os.makedirs(gradients_path)
+
 if not os.path.exists(lima_filtered_paraphrased_dataset_path):
     os.makedirs(lima_filtered_paraphrased_dataset_path)
