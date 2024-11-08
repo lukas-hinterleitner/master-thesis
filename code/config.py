@@ -13,6 +13,9 @@ def get_dataset_config(model: PreTrainedModel, chat_template = "tulu", train_onl
 
 hf_model_id = "allenai/OLMo-1B-hf"
 
+# "openai-community/gpt2"
+# "allenai/OLMo-1B-hf"
+
 data_folder_path = "../data"
 
 lima_dataset_path = os.path.join(data_folder_path, "lima")

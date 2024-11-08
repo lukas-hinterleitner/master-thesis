@@ -14,14 +14,14 @@ def get_gradients(model: PreTrainedModel, batch, device: str) -> dict[str, torch
 
     for name, param in model.named_parameters():
         if param.grad is not None:
-            gradients[name] = param.grad.clone().detach()
+            gradients[name] = param.grad.clone().detach().cpu()
 
     return gradients
 
 
-def get_flattened_weight_vector(weight_dict: dict) -> torch.Tensor:
+def get_flattened_weight_vector(weight_dict: dict[str, torch.Tensor]) -> torch.Tensor:
     flattened_weights = []
     for weights in weight_dict.values():
-        flattened_weights.append(weights.flatten())
+        flattened_weights.append(weights.cpu().flatten())
 
     return torch.cat(flattened_weights)
