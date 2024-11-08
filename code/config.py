@@ -21,12 +21,13 @@ data_folder_path = "../data"
 lima_dataset_path = os.path.join(data_folder_path, "lima")
 lima_paraphrased_dataset_path = os.path.join(data_folder_path, "paraphrased")
 
-sample_size = 5
 
 gradients_path = os.path.join(data_folder_path, "gradient_similarity")
 
-def get_gradient_similarity_file_path():
+
+def get_gradient_similarity_file_path(sample_size):
     return os.path.join(gradients_path, f"sample_size_{sample_size}.csv")
+
 
 if not os.path.exists(gradients_path):
     os.makedirs(gradients_path)
