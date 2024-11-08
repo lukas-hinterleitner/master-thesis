@@ -24,9 +24,9 @@ lima_filtered_paraphrased_dataset_path = os.path.join(data_folder_path, "paraphr
 
 sample_size = 5
 
-gradients_path = os.path.join(data_folder_path, "gradients")
+gradients_path = os.path.join(data_folder_path, "gradient_similarity")
 
-def get_gradients_file_path():
+def get_gradient_similarity_file_path():
     return os.path.join(gradients_path, f"sample_size_{sample_size}.csv")
 
 if not os.path.exists(gradients_path):

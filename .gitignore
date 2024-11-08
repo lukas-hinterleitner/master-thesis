@@ -4,7 +4,7 @@
 # add paraphrased data
 data/*
 !data/paraphrased
-!data/gradients
+!data/gradient_similarity
 data/paraphrased/*.arrow
 !data/paraphrased/data-00000-of-00001.arrow
 
