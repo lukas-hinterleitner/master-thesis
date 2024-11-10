@@ -1,0 +1,23 @@
+# no package versions are here to ensure compatibility with pre-installed packages on google colab
+
+torch
+
+openai
+python-dotenv
+
+datasets
+transformers
+
+-e submodules/open-instruct
+
+# needed for open-instruct
+deepspeed
+accelerate
+peft
+rich
+
+pandas
+matplotlib
+seaborn
+ipywidgets
+tqdm
