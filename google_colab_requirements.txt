@@ -1,6 +1,7 @@
 # no package versions are here to ensure compatibility with pre-installed packages on google colab
 
 torch
+tensordict
 
 openai
 python-dotenv
@@ -16,8 +17,10 @@ accelerate
 peft
 rich
 
+numpy
 pandas
 matplotlib
 seaborn
 ipywidgets
 tqdm
+rank-bm25

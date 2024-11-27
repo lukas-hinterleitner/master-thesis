@@ -8,7 +8,7 @@ data/*
 data/paraphrased/*.arrow
 !data/paraphrased/data-00000-of-00001.arrow
 
-/code/playground.ipynb
+/code/playground.*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
