@@ -16,3 +16,11 @@ git submodule update
 pip install -r requirements.txt
 ```
 
+### Environment Variables
+Before executing Python scripts in this repository, make sure the PYTHONPATH environment 
+variable is set correctly. If not, you'll get ModuleNotFoundErrors.
+
+```bash
+export PYTHONPATH := :application
+```
+
