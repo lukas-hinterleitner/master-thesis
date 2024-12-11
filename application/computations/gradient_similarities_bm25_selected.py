@@ -47,7 +47,7 @@ dataset = load_from_disk(lima_paraphrased_dataset_path)
 #%%
 dataset.column_names
 #%%
-sample_size = 5 # original_dataset.num_rows
+sample_size = 100 # original_dataset.num_rows
 sample_size
 #%%
 original_dataset_config = get_dataset_config(model, sft_messages_key="messages")
