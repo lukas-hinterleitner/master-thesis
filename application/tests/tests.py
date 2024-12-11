@@ -4,10 +4,10 @@ import numpy as np
 import torch
 from datasets import load_from_disk
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from utilities.preprocessing import prepare_dataset
+from application.utilities.preprocessing import prepare_dataset
 
-from config import data_path, hf_model_id
-from utilities.gradient_operations import get_gradients
+from application.config import lima_paraphrased_dataset_path, hf_model_id, get_dataset_config
+from application.utilities.gradient_operations import get_gradients
 
 torch.manual_seed(42)
 np.random.seed(42)
@@ -20,10 +20,15 @@ tokenizer = AutoTokenizer.from_pretrained(hf_model_id)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+print(torch.cuda.get_device_name(0))
+
+model.to(device)
 model.eval()
 
-dataset = load_from_disk(data_path)
-train_dataloader = prepare_dataset(dataset=dataset, model=model, tokenizer=tokenizer)
+dataset_config = get_dataset_config(model)
+
+dataset = load_from_disk(lima_paraphrased_dataset_path)
+train_dataloader = prepare_dataset(dataset=dataset, dataset_config=dataset_config, tokenizer=tokenizer, sample_size=2)
 
 training_sample_0 = list(train_dataloader)[0]
 training_sample_1 = list(train_dataloader)[1]
@@ -35,9 +40,9 @@ else:
     print("As expected, tokenized inputs are not the same. ")
 
 # check idempotency of some input samples
-gradients_sample_0 = get_gradients(model, training_sample_0)
-gradients_sample_1 = get_gradients(model, training_sample_1)
-gradients_sample_0_later = get_gradients(model, training_sample_0)
+gradients_sample_0 = get_gradients(model, training_sample_0, device)
+gradients_sample_1 = get_gradients(model, training_sample_1, device)
+gradients_sample_0_later = get_gradients(model, training_sample_0, device)
 
 # gradient dictionary keys of sample_0, sample_0_later and sample_1 should be the same
 assert gradients_sample_0.keys() == gradients_sample_0_later.keys() == gradients_sample_1.keys(), "Gradient dictionaries must have same keys."

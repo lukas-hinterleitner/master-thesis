@@ -2,6 +2,9 @@
 
 ## Setup
 
+### Connection to LambdaLabs
+When connecting to a remote GPU server with LambdaLabs, follow the guidelines [here](https://medium.com/@val.mannucci/how-to-connect-lambdalabs-to-pycharm-via-ssh-85fca2b49a60).
+
 ### Initialize Git Submodules
 ```bash
 git submodule init
