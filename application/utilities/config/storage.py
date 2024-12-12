@@ -1,10 +1,9 @@
 import os
 
-data_folder_path = "../data"
+data_folder_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../data")
 
 lima_dataset_path = os.path.join(data_folder_path, "lima")
 lima_paraphrased_dataset_path = os.path.join(data_folder_path, "paraphrased")
-
 
 gradient_similarity_storage_path = os.path.join(data_folder_path, "gradient_similarity")
 gradient_similarity_bm25_selected_storage_path = os.path.join(data_folder_path, "gradient_similarity_bm25_selected")
