@@ -2,12 +2,14 @@
 /slides/
 
 # add paraphrased data
-application/data/*
-!application/data/paraphrased
-!application/data/gradient_similarity
-!application/data/gradient_similarity_bm25_selected
-application/data/paraphrased/*.arrow
-!application/data/paraphrased/data-00000-of-00001.arrow
+data/*
+!data/paraphrased
+!data/gradient_similarity
+!data/gradient_similarity_bm25_selected
+data/paraphrased/*.arrow
+!data/paraphrased/data-00000-of-00001.arrow
+
+**/.virtual_documents
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

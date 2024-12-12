@@ -2,13 +2,21 @@
 
 ## Setup
 
-### Connection to LambdaLabs
-When connecting to a remote GPU server with LambdaLabs, follow the guidelines [here](https://medium.com/@val.mannucci/how-to-connect-lambdalabs-to-pycharm-via-ssh-85fca2b49a60).
-
 ### Initialize Git Submodules
 ```bash
 git submodule init
 git submodule update
+```
+
+### Create Virtual Environment
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Check if virtual environment is used:
+```bash
+which python
 ```
 
 ### Install necessary packages
@@ -21,6 +29,6 @@ Before executing Python scripts in this repository, make sure the PYTHONPATH env
 variable is set correctly. If not, you'll get ModuleNotFoundErrors.
 
 ```bash
-export PYTHONPATH := :application
+export PYTHONPATH="${PYTHONPATH}:application"
 ```
 

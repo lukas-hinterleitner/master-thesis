@@ -1,7 +1,6 @@
 # no package versions are here to ensure compatibility with pre-installed packages on google colab
 
 torch
-tensordict
 
 openai
 python-dotenv
