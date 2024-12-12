@@ -5,12 +5,12 @@ from utilities.config.storage import get_gradient_similarity_bm25_selected_file_
 from utilities.dataset import get_tokenized_datasets
 from utilities.model import get_model, get_tokenizer
 
-model = get_model(use_gpu=False)
+model = get_model(use_gpu=True)
 tokenizer = get_tokenizer()
 
 sample_size = 5 # original_dataset.num_rows
 
-original_dataset_tokenized, paraphrased_dataset_tokenized = get_tokenized_datasets(model, tokenizer)
+original_dataset_tokenized, paraphrased_dataset_tokenized = get_tokenized_datasets(model, tokenizer, sample_size)
 
 gradient_similarities = calculate_bm25_selected_gradient_similarities(original_dataset_tokenized, paraphrased_dataset_tokenized, model)
 
