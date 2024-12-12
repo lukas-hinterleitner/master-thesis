@@ -8,6 +8,8 @@ from .gradient_operations import get_gradients, get_flattened_weight_vector
 
 import numpy as np
 
+__amount_comparisons = 5
+
 def __simple_tokenize(doc: str):
     return doc.split(" ")
 
@@ -30,12 +32,12 @@ def calculate_bm25_selected_gradient_similarities(original_dataset_tokenized, pa
         # select most similar samples using bm25
         bm25 = BM25Okapi([__simple_tokenize(doc) for doc in paraphrased_samples])
         scores = bm25.get_scores(__simple_tokenize(original["messages"][0]["content"]))
-        indices = np.argsort((-scores))[:5]
+        indices = np.argsort((-scores))[:__amount_comparisons]
         
         # check if paraphrased sample is also included
         current_sample_idx = paraphrased_dataset_tokenized["id"].index(original_id)
         if current_sample_idx not in indices:
-            indices[4] = current_sample_idx # replace least similar of the most similar ones with the actual paraphrase
+            indices[__amount_comparisons-1] = current_sample_idx # replace least similar of the most similar ones with the actual paraphrase
 
         gradient_similarities[original_id] = dict()
 
@@ -51,8 +53,6 @@ def calculate_bm25_selected_gradient_similarities(original_dataset_tokenized, pa
             gradient_similarities[original_id][paraphrased_id] = similarity
 
     progress_wrapper.set_description("Calculating gradients and corresponding similarities")
-
-    exit(11)
 
     end_time = time.time()
     execution_time = end_time - start_time
