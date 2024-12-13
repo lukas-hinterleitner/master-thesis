@@ -5,7 +5,7 @@ from .config.dataset import get_dataset_config
 from .config.storage import lima_paraphrased_dataset_path
 from .preprocessing import prepare_dataset
 
-def get_tokenized_datasets(model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase, sample_size: int =5):
+def get_tokenized_datasets(model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase, sample_size: int = None):
     original_dataset_config = get_dataset_config(model, sft_messages_key="messages")
     paraphrased_dataset_config = get_dataset_config(model, sft_messages_key="paraphrased_messages")
 

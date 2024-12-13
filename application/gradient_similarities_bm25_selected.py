@@ -8,7 +8,7 @@ from utilities.model import get_model, get_tokenizer
 model = get_model(use_gpu=True)
 tokenizer = get_tokenizer()
 
-sample_size = 100 # original_dataset.num_rows
+sample_size = 100
 
 original_dataset_tokenized, paraphrased_dataset_tokenized = get_tokenized_datasets(model, tokenizer, sample_size)
 

@@ -1,6 +1,7 @@
 from datasets import DatasetDict, Dataset
-from open_instruct.dataset_processor import CHAT_TEMPLATES, SFTDatasetProcessor, DatasetConfig
 from transformers import PreTrainedTokenizerBase
+
+from open_instruct.dataset_processor import CHAT_TEMPLATES, SFTDatasetProcessor, DatasetConfig
 
 def prepare_dataset(dataset: [Dataset | DatasetDict], tokenizer: PreTrainedTokenizerBase, dataset_config: DatasetConfig, sample_size: int = None) -> Dataset:
     if not tokenizer.chat_template:
