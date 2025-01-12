@@ -18,10 +18,10 @@ torch.backends.cudnn.benchmark = False
 model = get_model(use_gpu=True)
 tokenizer = get_tokenizer()
 
-sample_size = 5
+sample_size = 100
 
-original_dataset_tokenized = get_original_dataset_tokenized(model, tokenizer, sample_size)
-paraphrased_dataset = get_paraphrased_dataset()
+original_dataset_tokenized = get_original_dataset_tokenized(model, tokenizer)
+paraphrased_dataset = get_paraphrased_dataset(sample_size)
 
 gradient_similarities = calculate_bm25_selected_model_generated_gradient_similarities(
     original_dataset_tokenized,

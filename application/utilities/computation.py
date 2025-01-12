@@ -28,78 +28,77 @@ def __map_to_message_format(role: str, content: str) -> dict[str, str]:
     return {"role": role, "content": content}
 
 
-def __generate_model_output_from_paraphrased_inputs(dataset: Dataset, model: PreTrainedModel, tokenizer: PreTrainedTokenizer) -> Dataset:
-    def mapping_function(row):
-        user_message = list(filter(lambda x: x["role"] == "user", row["paraphrased_messages"]))
-        chat_template_applied = tokenizer.apply_chat_template([user_message], return_tensors="pt", add_generation_prompt=True)
-        generation = model.generate(chat_template_applied.to(model.device), max_new_tokens=512, do_sample=False)
-        decoded = tokenizer.decode(generation[0])
+def __generate_model_output_from_paraphrased_row(row: dict, model: PreTrainedModel, tokenizer: PreTrainedTokenizer) -> dict:
+    user_message = list(filter(lambda x: x["role"] == "user", row["paraphrased_messages"]))
+    chat_template_applied = tokenizer.apply_chat_template([user_message], return_tensors="pt", add_generation_prompt=True)
+    generation = model.generate(chat_template_applied.to(model.device), max_new_tokens=512, do_sample=False)
+    decoded = tokenizer.decode(generation[0])
 
-        # Extract assistant message
-        end_user = decoded.find(__ASSISTANT_TOKEN)
-        start_assistant = end_user + len(__ASSISTANT_TOKEN)
-        end_assistant = decoded.find(tokenizer.eos_token)
-        assistant_message = decoded[start_assistant:end_assistant].strip()
+    # Extract assistant message
+    end_user = decoded.find(__ASSISTANT_TOKEN)
+    start_assistant = end_user + len(__ASSISTANT_TOKEN)
+    end_assistant = decoded.find(tokenizer.eos_token)
+    assistant_message = decoded[start_assistant:end_assistant].strip()
 
-        row["paraphrased_messages"] = [
-            __map_to_message_format("user", user_message[0]["content"]),
-            __map_to_message_format("assistant", assistant_message)
-        ]
+    row["paraphrased_messages"] = [
+        __map_to_message_format("user", user_message[0]["content"]),
+        __map_to_message_format("assistant", assistant_message)
+    ]
 
-        return row
-
-    return dataset.map(
-        mapping_function,
-    )
+    return row
 
 
 def calculate_bm25_selected_gradient_similarities(
         original_dataset_tokenized: Dataset,
         paraphrased_dataset_tokenized: Dataset,
         model: PreTrainedModel,
-        similarity_function = CosineSimilarity(dim=0)) -> dict[str, dict[str, float]]:
-    start_time = time.time()
+        similarity_function=CosineSimilarity(dim=0)
+    ) -> dict[str, dict[str, float]]:
 
+    start_time = time.time()
     gradient_similarities = dict()
 
-    progress_wrapper = tqdm(original_dataset_tokenized, desc="Calculating gradients and corresponding similarities")
+    original_texts = [row["messages"][0]["content"] for row in original_dataset_tokenized]
+    bm25 = BM25Okapi([__simple_tokenize(doc) for doc in original_texts])
 
-    paraphrased_samples = [row["paraphrased_messages"][0]["content"] for row in paraphrased_dataset_tokenized]
+    progress_wrapper = tqdm(paraphrased_dataset_tokenized, desc="Calculating gradients and corresponding similarities")
 
-    for original in progress_wrapper:
-        original_id = original["id"]
+    for paraphrased_sample in progress_wrapper:
+        paraphrased_id = paraphrased_sample["id"]
 
-        original_gradients = get_gradients(model, original)
-        original_flattened_gradients = get_flattened_weight_vector(original_gradients)
+        paraphrased_gradients = get_gradients(model, paraphrased_sample)
+        paraphrased_flattened = get_flattened_weight_vector(paraphrased_gradients)
 
-        # select most similar samples using bm25
-        bm25 = BM25Okapi([__simple_tokenize(doc) for doc in paraphrased_samples])
-        scores = bm25.get_scores(__simple_tokenize(original["messages"][0]["content"]))
-        indices = np.argsort((-scores))[:__amount_comparisons]
-        
-        # check if paraphrased sample is also included
-        current_sample_idx = paraphrased_dataset_tokenized["id"].index(original_id)
-        if current_sample_idx not in indices:
-            indices[__amount_comparisons-1] = current_sample_idx # replace least similar of the most similar ones with the actual paraphrase
+        paraphrased_text = paraphrased_sample["paraphrased_messages"][0]["content"]
 
-        gradient_similarities[original_id] = dict()
+        scores = bm25.get_scores(__simple_tokenize(paraphrased_text))
+        top_indices = np.argsort(-scores)[:__amount_comparisons]
 
-        for paraphrased in paraphrased_dataset_tokenized.select(indices):
-            paraphrased_id = paraphrased["id"]
+        if paraphrased_id in original_dataset_tokenized["id"]:
+            matching_original_idx = original_dataset_tokenized["id"].index(paraphrased_id)
+            if matching_original_idx not in top_indices:
+                top_indices[-1] = matching_original_idx
 
-            progress_wrapper.set_description(desc=f"Processing original ({original_id}) and paraphrased ({paraphrased_id})")
+        gradient_similarities[paraphrased_id] = dict()
 
-            paraphrased_gradients = get_gradients(model, paraphrased)
-            paraphrased_flattened_gradients = get_flattened_weight_vector(paraphrased_gradients)
+        for original_sample in original_dataset_tokenized.select(top_indices):
+            original_id = original_sample["id"]
 
-            similarity = similarity_function(original_flattened_gradients, paraphrased_flattened_gradients).item()
-            gradient_similarities[original_id][paraphrased_id] = similarity
+            progress_wrapper.set_description(desc=f"Processing paraphrased ({paraphrased_id}) and original ({original_id})")
 
-    progress_wrapper.set_description("Calculating gradients and corresponding similarities")
+            # Compute gradient of the original
+            original_gradients = get_gradients(model, original_sample)
+            original_flattened = get_flattened_weight_vector(original_gradients)
+
+            # Calculate similarity
+            similarity = similarity_function(paraphrased_flattened, original_flattened).item()
+            gradient_similarities[paraphrased_id][original_id] = similarity
+
+    progress_wrapper.set_description("Finished calculating gradients and similarities")
 
     end_time = time.time()
     execution_time = end_time - start_time
-    print(f"Execution time: {execution_time} seconds")
+    print(f"Execution time: {execution_time:.2f} seconds")
 
     return gradient_similarities
 
@@ -114,42 +113,47 @@ def calculate_bm25_selected_model_generated_gradient_similarities(
 
     gradient_similarities = dict()
 
-    progress_wrapper = tqdm(original_dataset_tokenized, desc="Calculating gradients and corresponding similarities")
+    original_texts = [row["messages"][0]["content"] for row in original_dataset_tokenized]
+    bm25 = BM25Okapi([__simple_tokenize(doc) for doc in original_texts])
 
-    paraphrased_samples = [row["paraphrased_messages"][0]["content"] for row in paraphrased_dataset]
     paraphrased_config = get_dataset_config(model, sft_messages_key="paraphrased_messages")
 
-    for original in progress_wrapper:
-        original_id = original["id"]
+    progress_wrapper = tqdm(paraphrased_dataset, desc="Calculating gradients and corresponding similarities")
 
-        original_gradients = get_gradients(model, original)
-        original_flattened_gradients = get_flattened_weight_vector(original_gradients)
+    for paraphrased_sample in progress_wrapper:
+        paraphrased_id = paraphrased_sample["id"]
 
-        # select most similar samples using bm25
-        bm25 = BM25Okapi([__simple_tokenize(doc) for doc in paraphrased_samples])
-        scores = bm25.get_scores(__simple_tokenize(original["messages"][0]["content"]))
-        indices = np.argsort((-scores))[:__amount_comparisons]
+        # select most similar original samples using bm25
+        scores = bm25.get_scores(__simple_tokenize(paraphrased_sample["paraphrased_messages"][0]["content"]))
+        top_indices = np.argsort((-scores))[:__amount_comparisons]
 
         # check if paraphrased sample is also included
-        current_sample_idx = paraphrased_dataset["id"].index(original_id)
-        if current_sample_idx not in indices:
-            indices[
-                __amount_comparisons - 1] = current_sample_idx  # replace least similar of the most similar ones with the actual paraphrase
+        if paraphrased_id in original_dataset_tokenized["id"]:
+            matching_original_idx = original_dataset_tokenized["id"].index(paraphrased_id)
+            if matching_original_idx not in top_indices:
+                # Replace the last candidate with the ground-truth original
+                top_indices[-1] = matching_original_idx
 
-        gradient_similarities[original_id] = dict()
+        gradient_similarities[paraphrased_id] = dict()
 
-        model_generated_paraphrases_dataset = __generate_model_output_from_paraphrased_inputs(paraphrased_dataset.select(indices), model, tokenizer)
+        model_generated_paraphrased = __generate_model_output_from_paraphrased_row(paraphrased_sample, model, tokenizer)
 
-        for paraphrased in prepare_dataset(model_generated_paraphrases_dataset, tokenizer, paraphrased_config):
-            paraphrased_id = paraphrased["id"]
+        # prepare sample for gradient computation
+        paraphrased_sample_model_generated = prepare_dataset(Dataset.from_dict({k: [v] for k, v in model_generated_paraphrased.items()}), tokenizer, paraphrased_config)
 
-            progress_wrapper.set_description(desc=f"Processing original ({original_id}) and paraphrased ({paraphrased_id})")
+        paraphrased_gradients = get_gradients(model, paraphrased_sample_model_generated)
+        paraphrased_flattened_gradients = get_flattened_weight_vector(paraphrased_gradients)
 
-            paraphrased_gradients = get_gradients(model, paraphrased)
-            paraphrased_flattened_gradients = get_flattened_weight_vector(paraphrased_gradients)
+        for original_sample in original_dataset_tokenized.select(top_indices):
+            original_id = original_sample["id"]
 
-            similarity = similarity_function(original_flattened_gradients, paraphrased_flattened_gradients).item()
-            gradient_similarities[original_id][paraphrased_id] = similarity
+            progress_wrapper.set_description(desc=f"Processing paraphrased ({paraphrased_id}) and original ({original_id})")
+
+            original_gradients = get_gradients(model, original_sample)
+            original_flattened_gradients = get_flattened_weight_vector(original_gradients)
+
+            similarity = similarity_function(paraphrased_flattened_gradients, original_flattened_gradients).item()
+            gradient_similarities[paraphrased_id][original_id] = similarity
 
     progress_wrapper.set_description("Calculating gradients and corresponding similarities")
 

@@ -6,17 +6,18 @@ from .config.storage import lima_paraphrased_dataset_path
 from .preprocessing import prepare_dataset
 
 def get_tokenized_datasets(model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase, sample_size: int = None) -> tuple[Dataset, Dataset]:
-    original_dataset_tokenized = get_original_dataset_tokenized(model, tokenizer, sample_size)
+    original_dataset_tokenized = get_original_dataset_tokenized(model, tokenizer)
 
     paraphrased_dataset_config = get_dataset_config(model, sft_messages_key="paraphrased_messages")
 
     paraphrased_dataset_tokenized = prepare_dataset(
-        dataset=original_dataset_tokenized.select_columns["id", "paraphrased_messages"],
+        dataset=original_dataset_tokenized.select_columns(["id", "paraphrased_messages"]),
         tokenizer=tokenizer,
-        dataset_config=paraphrased_dataset_config
+        dataset_config=paraphrased_dataset_config,
+        sample_size=sample_size
     )
 
-    return original_dataset_tokenized, paraphrased_dataset_tokenized
+    return original_dataset_tokenized.remove_columns(["paraphrased_messages"]), paraphrased_dataset_tokenized
 
 
 def get_original_dataset_tokenized(model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase, sample_size: int = None) -> Dataset:
@@ -30,5 +31,10 @@ def get_original_dataset_tokenized(model: PreTrainedModel, tokenizer: PreTrained
         sample_size=sample_size
     )
 
-def get_paraphrased_dataset():
-    return load_from_disk(lima_paraphrased_dataset_path).select_columns(["id", "paraphrased_messages"])
+def get_paraphrased_dataset(sample_size:int = None):
+    paraphrased = load_from_disk(lima_paraphrased_dataset_path).select_columns(["id", "paraphrased_messages"])
+
+    if sample_size:
+        return paraphrased.select(range(sample_size))
+    else:
+        return paraphrased
