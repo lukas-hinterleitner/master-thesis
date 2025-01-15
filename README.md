@@ -10,8 +10,8 @@ git submodule update
 
 ### Create Virtual Environment
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+python3 -m venv master_thesis.venv
+source master_thesis.venv/bin/activate
 ```
 
 Check if virtual environment is used:

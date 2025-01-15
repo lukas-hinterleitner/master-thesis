@@ -1,24 +1,12 @@
-#--find-links https://download.pytorch.org/whl/cu124
-torch==2.5.1
-
-openai==1.52.2
-python-dotenv==1.0.1
-
-datasets==3.0.1
-transformers==4.46.2
-
 -e submodules/open-instruct
 
-# needed for open-instruct
-deepspeed==0.15.2
-accelerate==1.0.1
-peft==0.13.2
-rich==13.9.3
+# all other necessary packages are already installed with open-instruct
 
-numpy==2.1.3
+openai==1.59.7
+python-dotenv==1.0.1
+
 pandas==2.2.3
-matplotlib==3.9.2
 seaborn==0.13.2
 ipywidgets==8.1.5
-tqdm==4.67.0
+tqdm==4.67.1
 rank-bm25==0.2.2
