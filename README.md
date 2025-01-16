@@ -3,25 +3,43 @@
 ## Setup
 
 ### Initialize Git Submodules
-```bash
+```shell
 git submodule init
 git submodule update
 ```
 
 ### Create Virtual Environment
-```bash
+```shell
 python3 -m venv master_thesis.venv
 source master_thesis.venv/bin/activate
 ```
 
 Check if virtual environment is used:
-```bash
+```shell
 which python
 ```
 
 ### Install necessary packages
-```bash
+```shell
 pip install -r requirements.txt
+```
+
+## Before Execution
+Create a .env file in the folder _application_ with the following content:
+```shell
+HF_TOKEN=your_token_here
+
+# SET MODEL NAME FROM HUGGING FACE, e.g. amd/AMD-OLMo-1B-SFT
+MT_MODEL_NAME=model_name_here 
+
+# SET DEVICE TO RUN DEVICE ON CPU (FOR CPU USE cpu) OR GPU (FOR GPU USE cuda:0 OR cuda:1, WHERE 0 AND 1 ARE GPU IDS)
+MT_DEVICE=cuda:0
+
+# SAMPLE SIZE TO SELECT SIZE OF SUBSET OF DATA (DON'T SET IF YOU WANT TO USE WHOLE DATA)
+MT_SAMPLE_SIZE=100
+
+# ONLY NEEDED FOR PARAPHRASING (THIS HAS ALREADY BEEN DONE, SO NO NEED TO DECLARE HERE)
+OPENAI_API_KEY=your_key_here
 ```
 
 ## Information

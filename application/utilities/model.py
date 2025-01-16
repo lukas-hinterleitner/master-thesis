@@ -1,16 +1,15 @@
-import torch
-
 from transformers import AutoModelForCausalLM, AutoTokenizer, PreTrainedModel, PreTrainedTokenizer
 
-from .config.model import hf_model_id
+from .config.device import DEVICE
+from .config.model import MODEL_NAME
 
-def get_model(use_gpu=True) -> PreTrainedModel:
-    model = AutoModelForCausalLM.from_pretrained(hf_model_id)
 
-    device = torch.device('cuda' if torch.cuda.is_available() and use_gpu else 'cpu')
-    print(f"Device: {device}")
+def get_model() -> PreTrainedModel:
+    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
 
-    model.to(device)
+    print(f"Device: {DEVICE}")
+
+    model.to(DEVICE)
     model.eval()  # set to evaluation because we don't need to update weights
 
     print(f"Model parameters: {model.num_parameters()}")
@@ -20,4 +19,7 @@ def get_model(use_gpu=True) -> PreTrainedModel:
     return model
 
 def get_tokenizer() -> PreTrainedTokenizer:
-    return AutoTokenizer.from_pretrained(hf_model_id, return_tensors="pt")
+    return AutoTokenizer.from_pretrained(MODEL_NAME, return_tensors="pt")
+
+def get_model_name() -> str:
+    return MODEL_NAME

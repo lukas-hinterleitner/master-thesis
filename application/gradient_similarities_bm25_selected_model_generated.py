@@ -15,13 +15,11 @@ random.seed(42)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-model = get_model(use_gpu=True)
+model = get_model()
 tokenizer = get_tokenizer()
 
-sample_size = 100
-
 original_dataset_tokenized = get_original_dataset_tokenized(model, tokenizer)
-paraphrased_dataset = get_paraphrased_dataset(sample_size)
+paraphrased_dataset = get_paraphrased_dataset()
 
 gradient_similarities = calculate_bm25_selected_model_generated_gradient_similarities(
     original_dataset_tokenized,
@@ -30,5 +28,5 @@ gradient_similarities = calculate_bm25_selected_model_generated_gradient_similar
     tokenizer
 )
 
-with open(get_gradient_similarity_bm25_selected_model_generated_file_path(model.name_or_path, sample_size), "w") as output_file:
+with open(get_gradient_similarity_bm25_selected_model_generated_file_path(), "w") as output_file:
     json.dump(gradient_similarities, output_file, indent=4)
