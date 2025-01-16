@@ -16,8 +16,6 @@ def prepare_dataset(dataset: [Dataset | DatasetDict], tokenizer: PreTrainedToken
 
     tokenized_dataset.set_format(type="pt")
 
-    # remove filtering for now
-
     #filtered_dataset = dataset_processor.filter(tokenized_dataset)
     #filtered_dataset.set_format(type="pt")
 

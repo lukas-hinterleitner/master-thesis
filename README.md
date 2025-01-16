@@ -36,8 +36,7 @@ In the folder data/gradient_similarity_bm25_selected, the results are stored as 
         "id_orig_orig": 0.07739365100860596,
         "id_orig_orig": 0.008699750527739525,
         "id_orig_orig": 0.02530057355761528
-    },
-    ...
+    }
 ]
 ```
 
@@ -50,8 +49,7 @@ In the folder data/gradient_similarity_bm25_selected_model_generated, the result
         "id_orig_orig": 0.07739365100860596,
         "id_orig_orig": 0.008699750527739525,
         "id_orig_orig": 0.02530057355761528
-    },
-    ...
+    }
 ]
 ```
 

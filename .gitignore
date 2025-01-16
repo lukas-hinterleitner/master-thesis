@@ -5,6 +5,7 @@
 data/*
 data/paraphrased
 !data/gradient_similarity
+!data/dot_products
 !data/gradient_similarity_bm25_selected
 !data/gradient_similarity_bm25_selected_model_generated
 !data/paraphrased/data-00000-of-00001.arrow
