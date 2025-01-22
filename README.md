@@ -25,7 +25,7 @@ pip install -r requirements.txt
 ```
 
 ## Before Execution
-Create a .env file in the folder _application_ with the following content:
+Create a .env file in the folder _application_ _(application/.env)_ with the following content:
 ```shell
 HF_TOKEN=your_token_here
 

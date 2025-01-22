@@ -14,29 +14,29 @@ from .config.storage import (
 from .config.dataset import SAMPLE_SIZE
 from .config.model import MODEL_NAME
 
-def get_gradient_similarity_file_path():
-    path = str(os.path.join(gradient_similarity_storage_path, MODEL_NAME))
+def get_gradient_similarity_file_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):
+    path = str(os.path.join(gradient_similarity_storage_path, model_name))
 
     if not os.path.exists(path):
         os.makedirs(path)
 
-    return os.path.join(path, f"sample_size_{SAMPLE_SIZE}.csv")
+    return os.path.join(path, f"sample_size_{sample_size}.csv")
 
-def get_gradient_similarity_bm25_selected_file_path():
-    path = str(os.path.join(gradient_similarity_bm25_selected_storage_path, MODEL_NAME))
-
-    if not os.path.exists(path):
-        os.makedirs(path)
-
-    return os.path.join(path, f"sample_size_{SAMPLE_SIZE}.json")
-
-def get_gradient_similarity_bm25_selected_model_generated_file_path():
-    path = str(os.path.join(gradient_similarity_bm25_selected_model_generated_storage_path, MODEL_NAME))
+def get_gradient_similarity_bm25_selected_file_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):
+    path = str(os.path.join(gradient_similarity_bm25_selected_storage_path, model_name))
 
     if not os.path.exists(path):
         os.makedirs(path)
 
-    return os.path.join(path, f"sample_size_{SAMPLE_SIZE}.json")
+    return os.path.join(path, f"sample_size_{sample_size}.json")
+
+def get_gradient_similarity_bm25_selected_model_generated_file_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):
+    path = str(os.path.join(gradient_similarity_bm25_selected_model_generated_storage_path, model_name))
+
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    return os.path.join(path, f"sample_size_{sample_size}.json")
 
 
 def get_dot_product_bm25_selected_file_path(filename, model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):

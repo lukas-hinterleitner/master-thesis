@@ -49,94 +49,6 @@ def __generate_model_output_from_paraphrased_row(row: dict, model: PreTrainedMod
     return row
 
 
-def calculate_bm25_selected_layer_dot_products(
-        original_dataset_tokenized: Dataset,
-        paraphrased_dataset_tokenized: Dataset,
-        model: PreTrainedModel,
-    ) -> tuple[dict[str, dict[str, dict[str, float]]], dict[str, dict[str, float]], dict[str, dict[str, float]]]:
-
-    original_texts = [row["messages"][0]["content"] for row in original_dataset_tokenized]
-    bm25 = BM25Okapi([__simple_tokenize(doc) for doc in original_texts])
-
-    progress_wrapper = tqdm(paraphrased_dataset_tokenized, desc="Calculating layer gradients and dot products between them")
-
-    dot_products = dict()
-    paraphrased_dot_products = dict()
-    original_dot_products = dict()
-
-    for paraphrased_sample in progress_wrapper:
-        paraphrased_id:str = paraphrased_sample["id"]
-
-        paraphrased_gradients = get_gradients(model, paraphrased_sample)
-
-        paraphrased_text = paraphrased_sample["paraphrased_messages"][0]["content"]
-
-        scores = bm25.get_scores(__simple_tokenize(paraphrased_text))
-        top_indices = np.argsort(-scores)[:__amount_comparisons]
-
-        # calculate dot products for paraphrased sample
-        paraphrased_dot_products[paraphrased_id] = dict()
-
-        for layer, gradient in paraphrased_gradients.items():
-            paraphrased_dot_product = (
-                gradient
-                    .flatten().to(model.device)
-                    .dot(gradient
-                        .flatten().to(model.device)
-                    )
-                    .item()
-            )
-
-            paraphrased_dot_products[paraphrased_id][layer] = paraphrased_dot_product
-
-        if paraphrased_id in original_dataset_tokenized["id"]:
-            matching_original_idx = original_dataset_tokenized["id"].index(paraphrased_id)
-            if matching_original_idx not in top_indices:
-                top_indices[-1] = matching_original_idx
-
-        dot_products[paraphrased_id] = dict()
-
-        for original_sample in original_dataset_tokenized.select(top_indices):
-            original_id:str = original_sample["id"]
-
-            progress_wrapper.set_description(desc=f"Processing paraphrased ({paraphrased_id}) and original ({original_id})")
-
-            original_gradients = get_gradients(model, original_sample)
-
-            # calculate dot products for original sample
-            if original_id not in original_dot_products:
-                original_dot_products[original_id] = dict()
-
-                for layer, gradient in original_gradients.items():
-                    original_dot_product = (
-                        gradient
-                            .flatten().to(model.device)
-                            .dot(gradient
-                                .flatten().to(model.device)
-                            )
-                            .item()
-                    )
-
-                    original_dot_products[original_id][layer] = original_dot_product
-
-            # calculate dot products between paraphrased and original sample
-            dot_products[paraphrased_id][original_id] = dict()
-
-            for (layer, paraphrased_gradient), (_, original_gradient) in zip(paraphrased_gradients.items(), original_gradients.items()):
-                dot_product = (
-                    paraphrased_gradient
-                        .flatten().to(model.device)
-                        .dot(original_gradient
-                            .flatten().to(model.device)
-                        )
-                        .item()
-                )
-
-                dot_products[paraphrased_id][original_id][layer] = dot_product
-
-    return dot_products, paraphrased_dot_products, original_dot_products
-
-
 def calculate_bm25_selected_gradient_similarities(
         original_dataset_tokenized: Dataset,
         paraphrased_dataset_tokenized: Dataset,
@@ -220,7 +132,11 @@ def calculate_bm25_selected_model_generated_gradient_similarities(
         model_generated_paraphrased = __generate_model_output_from_paraphrased_row(paraphrased_sample, model, tokenizer)
 
         # prepare sample for gradient computation
-        paraphrased_sample_model_generated = prepare_dataset(Dataset.from_dict({k: [v] for k, v in model_generated_paraphrased.items()}), tokenizer, paraphrased_config)
+        paraphrased_sample_model_generated = prepare_dataset(
+            Dataset.from_dict({k: [v] for k, v in model_generated_paraphrased.items()}),
+            tokenizer,
+            paraphrased_config
+        )
 
         paraphrased_gradients = get_gradients(model, paraphrased_sample_model_generated)
         paraphrased_flattened_gradients = get_flattened_weight_vector(paraphrased_gradients)
@@ -239,3 +155,186 @@ def calculate_bm25_selected_model_generated_gradient_similarities(
     progress_wrapper.set_description("Calculating gradients and corresponding similarities")
 
     return gradient_similarities
+
+
+def calculate_bm25_selected_layer_dot_products(
+        original_dataset_tokenized: Dataset,
+        paraphrased_dataset_tokenized: Dataset,
+        model: PreTrainedModel,
+    ) -> tuple[dict[str, dict[str, dict[str, float]]], dict[str, dict[str, float]], dict[str, dict[str, float]]]:
+
+    original_texts = [row["messages"][0]["content"] for row in original_dataset_tokenized]
+    bm25 = BM25Okapi([__simple_tokenize(doc) for doc in original_texts])
+
+    progress_wrapper = tqdm(paraphrased_dataset_tokenized, desc="Calculating layer gradients and dot products between them")
+
+    dot_products = dict()
+    paraphrased_dot_products = dict()
+    original_dot_products = dict()
+
+    for paraphrased_sample in progress_wrapper:
+        paraphrased_id:str = paraphrased_sample["id"]
+
+        paraphrased_gradients = get_gradients(model, paraphrased_sample)
+
+        paraphrased_text = paraphrased_sample["paraphrased_messages"][0]["content"]
+
+        scores = bm25.get_scores(__simple_tokenize(paraphrased_text))
+        top_indices = np.argsort(-scores)[:__amount_comparisons]
+
+        # calculate dot products for paraphrased sample
+        paraphrased_dot_products[paraphrased_id] = dict()
+
+        for layer, gradient in paraphrased_gradients.items():
+            paraphrased_dot_product = (
+                gradient
+                    .flatten().to(model.device)
+                    .dot(gradient
+                        .flatten().to(model.device)
+                    )
+                    .item()
+            )
+
+            paraphrased_dot_products[paraphrased_id][layer] = paraphrased_dot_product
+
+        if paraphrased_id in original_dataset_tokenized["id"]:
+            matching_original_idx = original_dataset_tokenized["id"].index(paraphrased_id)
+            if matching_original_idx not in top_indices:
+                top_indices[-1] = matching_original_idx
+
+        dot_products[paraphrased_id] = dict()
+
+        for original_sample in original_dataset_tokenized.select(top_indices):
+            original_id:str = original_sample["id"]
+            progress_wrapper.set_description(desc=f"Processing paraphrased ({paraphrased_id}) and original ({original_id})")
+            original_gradients = get_gradients(model, original_sample)
+
+            # calculate dot products for original sample
+            if original_id not in original_dot_products:
+                original_dot_products[original_id] = dict()
+
+                for layer, gradient in original_gradients.items():
+                    original_dot_product = (
+                        gradient
+                            .flatten().to(model.device)
+                            .dot(gradient
+                                .flatten().to(model.device)
+                            )
+                            .item()
+                    )
+
+                    original_dot_products[original_id][layer] = original_dot_product
+
+            # calculate dot products between paraphrased and original sample
+            dot_products[paraphrased_id][original_id] = dict()
+
+            for (layer, paraphrased_gradient), (_, original_gradient) in zip(paraphrased_gradients.items(), original_gradients.items()):
+                dot_product = (
+                    paraphrased_gradient
+                        .flatten().to(model.device)
+                        .dot(original_gradient
+                            .flatten().to(model.device)
+                        )
+                        .item()
+                )
+
+                dot_products[paraphrased_id][original_id][layer] = dot_product
+
+    return dot_products, paraphrased_dot_products, original_dot_products
+
+
+def calculate_bm25_selected_model_generated_layer_dot_products(
+        original_dataset_tokenized: Dataset,
+        paraphrased_dataset: Dataset,
+        model: PreTrainedModel,
+        tokenizer: PreTrainedTokenizer
+    ) -> tuple[dict[str, dict[str, dict[str, float]]], dict[str, dict[str, float]], dict[str, dict[str, float]]]:
+    paraphrased_config = get_dataset_config(model, sft_messages_key="paraphrased_messages")
+
+    original_texts = [row["messages"][0]["content"] for row in original_dataset_tokenized]
+    bm25 = BM25Okapi([__simple_tokenize(doc) for doc in original_texts])
+
+    dot_products = dict()
+    paraphrased_dot_products = dict()
+    original_dot_products = dict()
+
+    progress_wrapper = tqdm(paraphrased_dataset, desc="Calculating model-generated layer gradients and dot products")
+
+    for paraphrased_sample in progress_wrapper:
+        paraphrased_id: str = paraphrased_sample["id"]
+
+        # Generate the final assistant output for the paraphrased sample
+        model_generated_paraphrased = __generate_model_output_from_paraphrased_row(
+            paraphrased_sample, model, tokenizer
+        )
+
+        # Prepare the newly generated sample for gradient computation
+        paraphrased_sample_model_generated = prepare_dataset(
+            Dataset.from_dict({k: [v] for k, v in model_generated_paraphrased.items()}),
+            tokenizer,
+            paraphrased_config
+        )
+
+        # Compute gradients for the paraphrased sample
+        paraphrased_gradients = get_gradients(model, paraphrased_sample_model_generated)
+
+        # Compute self dot products for paraphrased sample across each layer
+        paraphrased_dot_products[paraphrased_id] = dict()
+        for layer, gradient in paraphrased_gradients.items():
+            dot_val = (
+                gradient.flatten().to(model.device)
+                .dot(gradient.flatten().to(model.device))
+                .item()
+            )
+            paraphrased_dot_products[paraphrased_id][layer] = dot_val
+
+        # BM25 search to find top original samples
+        paraphrased_text = paraphrased_sample["paraphrased_messages"][0]["content"]
+        scores = bm25.get_scores(__simple_tokenize(paraphrased_text))
+        top_indices = np.argsort(-scores)[:__amount_comparisons]
+
+        # Ensure we include the ground truth original if it exists
+        if paraphrased_id in original_dataset_tokenized["id"]:
+            matching_original_idx = original_dataset_tokenized["id"].index(paraphrased_id)
+            if matching_original_idx not in top_indices:
+                top_indices[-1] = matching_original_idx
+
+        dot_products[paraphrased_id] = dict()
+
+        # For each of the top-ranked original samples, compute cross-layer dot products
+        for original_sample in original_dataset_tokenized.select(top_indices):
+            original_id: str = original_sample["id"]
+            progress_wrapper.set_description(desc=f"Processing paraphrased ({paraphrased_id}) and original ({original_id})")
+            original_gradients = get_gradients(model, original_sample)
+
+            # calculate dot products for original sample
+            if original_id not in original_dot_products:
+                original_dot_products[original_id] = dict()
+
+                for layer, gradient in original_gradients.items():
+                    original_dot_product = (
+                        gradient
+                        .flatten().to(model.device)
+                        .dot(gradient
+                             .flatten().to(model.device)
+                             )
+                        .item()
+                    )
+
+                    original_dot_products[original_id][layer] = original_dot_product
+
+            for (layer, paraphrased_gradient), (_, original_gradient) in zip(paraphrased_gradients.items(), original_gradients.items()):
+                dot_product = (
+                    paraphrased_gradient
+                        .flatten().to(model.device)
+                        .dot(original_gradient
+                            .flatten().to(model.device)
+                        )
+                        .item()
+                )
+
+                dot_products[paraphrased_id][original_id][layer] = dot_product
+
+    progress_wrapper.set_description("Finished calculating model-generated layer gradients and dot products")
+
+    return dot_products, paraphrased_dot_products, original_dot_products
