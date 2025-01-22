@@ -28,7 +28,6 @@ def get_original_dataset_tokenized(model: PreTrainedModel, tokenizer: PreTrained
         dataset=dataset,
         tokenizer=tokenizer,
         dataset_config=original_dataset_config,
-        sample_size=SAMPLE_SIZE
     )
 
 def get_paraphrased_dataset():
