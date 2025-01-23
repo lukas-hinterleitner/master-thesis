@@ -281,8 +281,7 @@ def calculate_bm25_selected_layer_dot_products(
             paraphrased_sample, model, is_model_generated=False
         )
         # 2) Self dot-products for paraphrased
-        paraphrased_dot_products[paraphrased_id] = compute_layerwise_self_dot_products(paraphrased_grad,
-                                                                                       device=model.device)
+        paraphrased_dot_products[paraphrased_id] = compute_layerwise_self_dot_products(paraphrased_grad, device=model.device)
 
         # 3) BM25 top matches
         paraphrased_text = paraphrased_sample["paraphrased_messages"][0]["content"]
@@ -343,9 +342,7 @@ def calculate_bm25_selected_model_generated_layer_dot_products(
             paraphrased_config=paraphrased_config
         )
         # 2) Self dot-products for paraphrased
-        paraphrased_dot_products[paraphrased_id] = compute_layerwise_self_dot_products(
-            paraphrased_grad, device=model.device
-        )
+        paraphrased_dot_products[paraphrased_id] = compute_layerwise_self_dot_products(paraphrased_grad, device=model.device)
 
         # 3) BM25 top matches
         paraphrased_text = paraphrased_sample["paraphrased_messages"][0]["content"]
