@@ -4,7 +4,7 @@ import random
 import numpy as np
 import torch
 
-from utilities.computation import calculate_bm25_selected_layer_dot_products
+from utilities.computation import calculate_bm25_selected_model_generated_layer_dot_products
 from utilities.storage import get_dot_product_bm25_selected_model_generated_file_path
 from utilities.dataset import get_tokenized_datasets
 from utilities.model import get_model, get_tokenizer
@@ -20,7 +20,7 @@ tokenizer = get_tokenizer()
 
 original_dataset_tokenized, paraphrased_dataset_tokenized = get_tokenized_datasets(model, tokenizer)
 
-dot_products, paraphrased_dot_products, original_dot_products = calculate_bm25_selected_layer_dot_products(original_dataset_tokenized, paraphrased_dataset_tokenized, model)
+dot_products, paraphrased_dot_products, original_dot_products = calculate_bm25_selected_model_generated_layer_dot_products(original_dataset_tokenized, paraphrased_dataset_tokenized, model, tokenizer)
 
 # store dot products
 with open(get_dot_product_bm25_selected_model_generated_file_path("dot_products"), "w") as output_file:
