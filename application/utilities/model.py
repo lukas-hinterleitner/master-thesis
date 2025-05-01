@@ -23,3 +23,11 @@ def get_tokenizer(model_name = MODEL_NAME) -> PreTrainedTokenizer:
 
 def get_config_model_name() -> str:
     return MODEL_NAME
+
+def get_num_parameters_per_layer(model: PreTrainedModel) -> dict[str, int]:
+    num_parameters_per_layer = {}
+    for name, param in model.named_parameters():
+        if param.requires_grad:
+            num_parameters_per_layer[name] = param.numel()
+
+    return num_parameters_per_layer
