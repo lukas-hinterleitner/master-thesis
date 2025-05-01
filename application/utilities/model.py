@@ -4,12 +4,12 @@ from .config.device import DEVICE
 from .config.model import MODEL_NAME
 
 
-def get_model() -> PreTrainedModel:
-    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+def get_model(model_name = MODEL_NAME, device = DEVICE) -> PreTrainedModel:
+    model = AutoModelForCausalLM.from_pretrained(model_name)
 
-    print(f"Device: {DEVICE}")
+    print(f"Device: {device}")
 
-    model.to(DEVICE)
+    model.to(device)
     model.eval()  # set to evaluation because we don't need to update weights
 
     print(f"Model parameters: {model.num_parameters()}")
@@ -18,8 +18,8 @@ def get_model() -> PreTrainedModel:
 
     return model
 
-def get_tokenizer() -> PreTrainedTokenizer:
-    return AutoTokenizer.from_pretrained(MODEL_NAME, return_tensors="pt")
+def get_tokenizer(model_name = MODEL_NAME) -> PreTrainedTokenizer:
+    return AutoTokenizer.from_pretrained(model_name, return_tensors="pt")
 
-def get_model_name() -> str:
+def get_config_model_name() -> str:
     return MODEL_NAME

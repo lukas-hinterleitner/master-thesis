@@ -6,9 +6,10 @@ from .config.storage import (
     gradient_similarity_bm25_selected_storage_path,
     gradient_similarity_bm25_selected_model_generated_storage_path,
 
-    dot_product_storage_path,
     dot_product_bm25_selected_storage_path,
-    dot_product_bm25_selected_model_generated_storage_path
+    dot_product_bm25_selected_model_generated_storage_path,
+
+    results_folder_path
 )
 
 from .config.dataset import SAMPLE_SIZE
@@ -94,3 +95,12 @@ def get_dot_product_bm25_selected_model_generated_files(model_name = MODEL_NAME,
         f.close()
 
     return dot_products, paraphrased_dot_products, original_dot_products
+
+
+def get_results_folder_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):
+    path = os.path.join(results_folder_path, model_name, str(sample_size))
+
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    return path

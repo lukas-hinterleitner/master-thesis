@@ -33,3 +33,8 @@ if not os.path.exists(dot_product_bm25_selected_storage_path):
 
 if not os.path.exists(dot_product_bm25_selected_model_generated_storage_path):
     os.makedirs(dot_product_bm25_selected_model_generated_storage_path)
+
+results_folder_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../results")
+
+if not os.path.exists(results_folder_path):
+    os.makedirs(results_folder_path)

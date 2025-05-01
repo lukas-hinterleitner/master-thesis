@@ -116,7 +116,7 @@ def compute_layerwise_dot_products(
     Returns dict: layer -> dot product.
     """
     out = {}
-    for (layer, grad1), (_, grad2) in zip(gradients1.items(), gradients2.items()):
+    for (layer, grad1), (_, grad2) in zip(gradients1.items(), gradients2.items(), strict=True):
         out[layer] = grad1.flatten().to(device).dot(grad2.flatten().to(device)).item()
     return out
 
