@@ -1,6 +1,8 @@
-import os
 import json
+import os
 
+from .config.dataset import SAMPLE_SIZE
+from .config.model import MODEL_NAME
 from .config.storage import (
     gradient_similarity_storage_path,
     gradient_similarity_bm25_selected_storage_path,
@@ -9,11 +11,9 @@ from .config.storage import (
     dot_product_bm25_selected_storage_path,
     dot_product_bm25_selected_model_generated_storage_path,
 
-    results_folder_path
+    results_folder_path, ExperimentType
 )
 
-from .config.dataset import SAMPLE_SIZE
-from .config.model import MODEL_NAME
 
 def get_gradient_similarity_file_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):
     path = str(os.path.join(gradient_similarity_storage_path, model_name))
@@ -97,8 +97,25 @@ def get_dot_product_bm25_selected_model_generated_files(model_name = MODEL_NAME,
     return dot_products, paraphrased_dot_products, original_dot_products
 
 
-def get_results_folder_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):
-    path = os.path.join(results_folder_path, model_name, str(sample_size))
+def get_results_parameters_per_layer_folder_path(model_name = MODEL_NAME):
+    path = os.path.join(results_folder_path, "parameters_per_layer", model_name)
+
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    return path
+
+
+def get_results_accuracy_per_layer_folder_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE, experiment_type: ExperimentType = ExperimentType.PARAPHRASED):
+    path = os.path.join(results_folder_path, "accuracy_per_layer", experiment_type.value, model_name, "sample_size", str(sample_size))
+
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    return path
+
+def get_results_layer_comparison_full_gradient_folder_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE, experiment_type: ExperimentType = ExperimentType.PARAPHRASED):
+    path = os.path.join(results_folder_path, "layer_comparison_full_gradient", experiment_type.value, model_name, "sample_size", str(sample_size))
 
     if not os.path.exists(path):
         os.makedirs(path)

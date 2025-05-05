@@ -1,4 +1,5 @@
 import os
+from enum import Enum
 
 data_folder_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../data")
 
@@ -38,3 +39,7 @@ results_folder_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "
 
 if not os.path.exists(results_folder_path):
     os.makedirs(results_folder_path)
+
+class ExperimentType(Enum):
+    PARAPHRASED = "paraphrased"
+    MODEL_GENERATED = "model_generated"
