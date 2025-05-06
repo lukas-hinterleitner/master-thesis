@@ -14,7 +14,7 @@ python3 -m venv master_thesis.venv
 source master_thesis.venv/bin/activate
 ```
 
-Check if virtual environment is used:
+Check if the virtual environment is used:
 ```shell
 which python
 ```
