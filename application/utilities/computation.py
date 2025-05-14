@@ -8,22 +8,15 @@ from torch.nn import CosineSimilarity
 from transformers import PreTrainedModel, PreTrainedTokenizer
 
 from .config.dataset import get_dataset_config
-from .gradient_operations import get_gradients, get_flattened_weight_vector
+from .model_operations import get_gradients, get_flattened_weight_vector, generate_model_output_from_paraphrased_sample
 from .preprocessing import prepare_dataset
 
 datasets.disable_progress_bar()
 
 __amount_comparisons = 5
 
-__USER_TOKEN = "<|user|>\n"
-__ASSISTANT_TOKEN = "\n<|assistant|>\n"
-
 def __simple_tokenize(doc: str):
     return doc.split(" ")
-
-
-def __map_to_message_format(role: str, content: str) -> dict[str, str]:
-    return {"role": role, "content": content}
 
 
 def build_bm25_index(original_dataset_tokenized: Dataset) -> BM25Okapi:
@@ -55,7 +48,7 @@ def select_top_bm25_matches(
         if matching_original_idx not in top_indices:
             top_indices[-1] = matching_original_idx
 
-    return top_indices
+    return top_indices.tolist()
 
 
 def get_paraphrased_sample_gradients(
@@ -73,7 +66,7 @@ def get_paraphrased_sample_gradients(
     """
     if is_model_generated:
         # 1. Generate text from the model
-        model_generated_paraphrased = __generate_model_output_from_paraphrased_row(
+        model_generated_paraphrased = generate_model_output_from_paraphrased_sample(
             paraphrased_sample, model, tokenizer
         )
         # 2. Convert it into a tokenized dataset sample
@@ -133,33 +126,8 @@ def compute_layerwise_self_dot_products(
         out[layer] = flat.dot(flat).item()
     return out
 
-def __generate_model_output_from_paraphrased_row(row: dict, model: PreTrainedModel, tokenizer: PreTrainedTokenizer) -> dict:
-    user_message = list(filter(lambda x: x["role"] == "user", row["paraphrased_messages"]))
-    chat_template_applied = tokenizer.apply_chat_template([user_message], return_tensors="pt", add_generation_prompt=True)
 
-    generation = model.generate(
-        chat_template_applied.to(model.device),
-        max_new_tokens=512,
-        do_sample=False,
-        attention_mask=torch.ones_like(chat_template_applied).to(model.device),
-    )
-    decoded = tokenizer.decode(generation[0])
-
-    # Extract assistant message
-    end_user = decoded.find(__ASSISTANT_TOKEN)
-    start_assistant = end_user + len(__ASSISTANT_TOKEN)
-    end_assistant = decoded.find(tokenizer.eos_token)
-    assistant_message = decoded[start_assistant:end_assistant].strip()
-
-    row["paraphrased_messages"] = [
-        __map_to_message_format("user", user_message[0]["content"]),
-        __map_to_message_format("assistant", assistant_message)
-    ]
-
-    return row
-
-
-def calculate_bm25_selected_gradient_similarities(
+def calculate_paraphrased_gradient_similarities(
     original_dataset_tokenized: Dataset,
     paraphrased_dataset_tokenized: Dataset,
     model: PreTrainedModel,
@@ -205,7 +173,7 @@ def calculate_bm25_selected_gradient_similarities(
     return gradient_similarities
 
 
-def calculate_bm25_selected_model_generated_gradient_similarities(
+def calculate_model_generated_gradient_similarities(
     original_dataset_tokenized: Dataset,
     paraphrased_dataset: Dataset,
     model: PreTrainedModel,
@@ -255,7 +223,7 @@ def calculate_bm25_selected_model_generated_gradient_similarities(
     return gradient_similarities
 
 
-def calculate_bm25_selected_layer_dot_products(
+def calculate_paraphrased_layer_dot_products(
         original_dataset_tokenized: Dataset,
         paraphrased_dataset_tokenized: Dataset,
         model: PreTrainedModel,
@@ -311,7 +279,7 @@ def calculate_bm25_selected_layer_dot_products(
     return dot_products, paraphrased_dot_products, original_dot_products
 
 
-def calculate_bm25_selected_model_generated_layer_dot_products(
+def calculate_model_generated_layer_dot_products(
     original_dataset_tokenized: Dataset,
     paraphrased_dataset: Dataset,
     model: PreTrainedModel,

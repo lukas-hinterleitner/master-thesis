@@ -4,8 +4,8 @@ import random
 import numpy as np
 import torch
 
-from utilities.computation import calculate_bm25_selected_model_generated_gradient_similarities
-from utilities.storage import get_gradient_similarity_bm25_selected_model_generated_file_path
+from utilities.computation import calculate_model_generated_gradient_similarities
+from utilities.storage import get_gradient_similarity_model_generated_file_path
 from utilities.dataset import get_original_dataset_tokenized, get_paraphrased_dataset
 from utilities.model import get_model, get_tokenizer
 
@@ -21,12 +21,12 @@ tokenizer = get_tokenizer()
 original_dataset_tokenized = get_original_dataset_tokenized(model, tokenizer)
 paraphrased_dataset = get_paraphrased_dataset()
 
-gradient_similarities = calculate_bm25_selected_model_generated_gradient_similarities(
+gradient_similarities = calculate_model_generated_gradient_similarities(
     original_dataset_tokenized,
     paraphrased_dataset,
     model,
     tokenizer
 )
 
-with open(get_gradient_similarity_bm25_selected_model_generated_file_path(), "w") as output_file:
+with open(get_gradient_similarity_model_generated_file_path(), "w") as output_file:
     json.dump(gradient_similarities, output_file, indent=4)

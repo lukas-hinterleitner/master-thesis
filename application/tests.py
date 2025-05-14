@@ -9,7 +9,7 @@ from config.model import hf_model_id
 from config.dataset import get_dataset_config
 from config.storage import lima_paraphrased_dataset_path
 
-from application.utilities.gradient_operations import get_gradients
+from application.utilities.model_operations import get_gradients
 from utilities.preprocessing import prepare_dataset
 
 torch.manual_seed(42)

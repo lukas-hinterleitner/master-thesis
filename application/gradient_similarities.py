@@ -16,7 +16,7 @@ from utilities.config.dataset import get_dataset_config
 from utilities.config.storage import lima_paraphrased_dataset_path, get_gradient_similarity_file_path
 
 from utilities.preprocessing import prepare_dataset
-from utilities.gradient_operations import get_gradients, get_flattened_weight_vector
+from utilities.model_operations import get_gradients, get_flattened_weight_vector
 #%%
 # Set seeds for reproducibility
 torch.manual_seed(42)
