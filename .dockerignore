@@ -6,3 +6,4 @@ papers
 application/images
 application/*.ipynb
 application/tests.py
+application/.env
