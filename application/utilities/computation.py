@@ -7,6 +7,8 @@ from rank_bm25 import BM25Okapi
 from torch.nn import CosineSimilarity
 from transformers import PreTrainedModel, PreTrainedTokenizer
 
+from trak.projectors import CudaProjector, ProjectionType
+
 from .config.dataset import get_dataset_config
 from .model_operations import get_gradients, get_flattened_weight_vector, generate_model_output_from_paraphrased_sample
 from .preprocessing import prepare_dataset
@@ -172,6 +174,83 @@ def calculate_paraphrased_gradient_similarities(
     progress.set_description("Finished calculating flattened similarities")
     return gradient_similarities
 
+
+def calculate_paraphrased_random_projected_gradient_similarities(
+    original_dataset_tokenized: Dataset,
+    paraphrased_dataset_tokenized: Dataset,
+    model: PreTrainedModel,
+    top_k: int = __amount_comparisons,
+) -> dict[str, dict[str, dict[int, float]]]:
+    bm25 = build_bm25_index(original_dataset_tokenized)
+    gradient_similarities_random_projected: dict[str, dict[str, dict[int, float]]] = {}
+
+    progress = tqdm(paraphrased_dataset_tokenized, desc="Calculating gradients + similarities using random projection")
+
+    for paraphrased_sample in progress:
+        paraphrased_id = paraphrased_sample["id"]
+        # 1) Compute paraphrased gradients
+        paraphrased_grads = get_paraphrased_sample_gradients(
+            paraphrased_sample,
+            model,
+            tokenizer=None,
+            is_model_generated=False
+        )
+        # 2) BM25 top matches
+        paraphrased_text = paraphrased_sample["paraphrased_messages"][0]["content"]
+        top_indices = select_top_bm25_matches(
+            paraphrased_text,
+            bm25,
+            original_dataset_tokenized,
+            paraphrased_id,
+            top_k
+        )
+        # 3) Loop over top matches and compute similarity
+        gradient_similarities_random_projected[paraphrased_id] = {}
+        for original_sample in original_dataset_tokenized.select(top_indices):
+            original_id = original_sample["id"]
+
+            progress.set_description(f"P({paraphrased_id}) vs O({original_id})")
+
+            original_grads = get_gradients(model, original_sample)
+
+            gradient_similarities_random_projected[paraphrased_id][original_id] = {}
+            for projection_dim in np.linspace(start=0, stop=model.num_parameters(), num=3, dtype=int)[1:]:
+                down_projected_original_layer_gradients = []
+                down_projected_paraphrased_layer_gradients = []
+
+                for (layer, original_layer_grad), (_, paraphrased_layer_grad) in zip(original_grads.items(), paraphrased_grads.items(), strict=True):
+                    # reduce the dimensionality of the gradients proportionally to the number of full gradients parameters
+                    layer_projection_dim = int(original_layer_grad.numel() / model.num_parameters() * projection_dim)
+
+                    projector = CudaProjector(
+                       grad_dim=original_layer_grad.numel(),
+                       proj_dim=layer_projection_dim,
+                       seed=42,
+                       device=model.device,
+                       proj_type=ProjectionType.rademacher,
+                       max_batch_size=8
+                    )
+
+                    down_projected_original_layer_gradient = projector.project(
+                        grads=original_layer_grad.reshape(1, -1).half().cuda(model.device),
+                        model_id=0
+                    ).cpu()
+
+                    down_projected_original_layer_gradients.append(down_projected_original_layer_gradient)
+
+                    down_projected_paraphrased_layer_gradient = projector.project(
+                        grads=paraphrased_layer_grad.reshape(1, -1).half().cuda(model.device),
+                        model_id=1
+                    ).cpu()
+
+                    down_projected_paraphrased_layer_gradients.append(down_projected_paraphrased_layer_gradient)
+
+
+
+                exit(0)
+
+    progress.set_description("Finished calculating flattened similarities")
+    return gradient_similarities_random_projected
 
 def calculate_model_generated_gradient_similarities(
     original_dataset_tokenized: Dataset,

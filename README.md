@@ -9,6 +9,8 @@ git submodule update
 ```
 
 ### Create Virtual Environment
+The project was developed with Python 3.11 since open-instruct requires it.
+
 ```shell
 python3 -m venv master_thesis.venv
 source master_thesis.venv/bin/activate
@@ -22,6 +24,7 @@ which python
 ### Install necessary packages
 ```shell
 pip install -r requirements.txt
+pip install --no-build-isolation traker[fast]==0.3.2
 ```
 
 ## Before Execution
@@ -70,4 +73,6 @@ In the folder data/gradient_similarity_bm25_selected_model_generated, the result
     }
 ]
 ```
+
+TODO: the above examples do not represent the new structures with individual layers, etc. --> add to readme
 

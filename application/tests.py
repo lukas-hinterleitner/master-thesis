@@ -61,3 +61,4 @@ for key in gradients_sample_0.keys():
     assert not gradients_sample_0[key].equal(gradients_sample_1[key]), f"Gradient '{key}' equal!"
 
 print("Gradients are different when using two different samples.")
+print("All tests passed.")

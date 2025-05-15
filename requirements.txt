@@ -3,7 +3,7 @@
 # all other necessary packages are already installed with open-instruct
 
 openai==1.59.7
-python-dotenv==1.0.1
+python-dotenv==1.1.0
 
 pandas==2.2.3
 seaborn==0.13.2

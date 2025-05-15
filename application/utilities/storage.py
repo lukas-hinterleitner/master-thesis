@@ -39,7 +39,6 @@ def get_gradient_similarity_model_generated_file_path(model_name = MODEL_NAME, s
 
     return os.path.join(path, f"sample_size_{sample_size}.json")
 
-
 def get_dot_product_paraphrased_file_path(filename, model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):
     path = os.path.join(dot_product_paraphrased_storage_path, str(model_name), "sample_size", str(sample_size))
 
@@ -96,7 +95,6 @@ def get_dot_product_model_generated_files(model_name = MODEL_NAME, sample_size =
 
     return dot_products, paraphrased_dot_products, original_dot_products
 
-
 def get_results_parameters_per_layer_folder_path(model_name = MODEL_NAME):
     path = os.path.join(results_folder_path, "parameters_per_layer", model_name)
 
@@ -104,7 +102,6 @@ def get_results_parameters_per_layer_folder_path(model_name = MODEL_NAME):
         os.makedirs(path)
 
     return path
-
 
 def get_results_accuracy_per_layer_folder_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE, experiment_type: ExperimentType = ExperimentType.PARAPHRASED):
     path = os.path.join(results_folder_path, "accuracy_per_layer", experiment_type.value, model_name, "sample_size", str(sample_size))
