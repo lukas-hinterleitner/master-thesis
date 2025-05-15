@@ -1,6 +1,6 @@
 #!/bin/bash
 # script name: extract_gradients.sh
-#SBATCH --container-image=loris3/cuda:latest
+#SBATCH --container-image=lukashinterleitner/master-thesis-data-science:latest
 #SBATCH --container-mount-home
 #SBATCH --mem=124G
 #SBATCH --cpus-per-task=24
