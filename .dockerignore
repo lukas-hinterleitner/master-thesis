@@ -3,7 +3,14 @@ README.md
 master_thesis.venv
 papers
 .cadence
+.github
+.git
+
 application/images
 application/*.ipynb
 application/tests.py
 application/.env
+
+submodules/open-instruct/**
+!submodules/open-instruct/open_instruct
+!submodules/open-instruct/*.*
