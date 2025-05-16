@@ -244,9 +244,6 @@ def calculate_paraphrased_random_projected_gradient_similarities(
                     ).cpu()
 
                     down_projected_paraphrased_layer_gradients.append(down_projected_paraphrased_layer_gradient)
-
-
-
                 exit(0)
 
     progress.set_description("Finished calculating flattened similarities")
