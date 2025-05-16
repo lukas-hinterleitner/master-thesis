@@ -1,5 +1,5 @@
 #!/bin/bash
-# script name: extract_gradients.sh
+# script name: gradient_similarities_paraphrased.sh
 #SBATCH --container-image=lukashinterleitner/master-thesis-data-science:latest
 #SBATCH --container-mount-home
 #SBATCH --mem=124G
@@ -10,4 +10,4 @@
 #SBATCH --nodelist=dgx-h100-em2
 #SBATCH --output=./out/slurm-%j.out
 
-python3 --version
+python3 application/gradient_similarities_paraphrased.py
