@@ -11,9 +11,5 @@
 #SBATCH --output=./out/slurm-%j.out
 
 python3 --version
-ls -a
-cd ..
-ls -a
-cd ..
-ls -a
+
 # python3 application/gradient_similarities_paraphrased.py
