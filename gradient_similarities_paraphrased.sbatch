@@ -6,7 +6,8 @@
 #SBATCH --cpus-per-task=24
 #SBATCH --gres=gpu:1
 #SBATCH --time=0-4:00:00
-#SBATCH --container-workdir=/home/$USER/master-thesis
+#SBATCH --container-mounts=$HOME/master-thesis:/app
+#SBATCH --container-workdir=/app
 #SBATCH --nodelist=dgx-h100-em2
 #SBATCH --output=./out/slurm-%j.out
 
