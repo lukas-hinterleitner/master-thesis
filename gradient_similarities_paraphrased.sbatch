@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=24
 #SBATCH --gres=gpu:1
 #SBATCH --time=0-12:00:00
-#SBATCH --nodelist=dgx1
+#SBATCH --nodelist=dgx-h100-em2
 #SBATCH --output=./out/slurm-%j.out
 
 python3 --version
