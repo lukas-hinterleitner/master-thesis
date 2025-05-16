@@ -6,7 +6,7 @@
 #SBATCH --mem=124G
 #SBATCH --cpus-per-task=24
 #SBATCH --gres=gpu:1
-#SBATCH --time=0-4:00:00
+#SBATCH --time=0-00:05:00
 #SBATCH --nodelist=dgx-h100-em2
 #SBATCH --output=./out/slurm-%j.out
 
