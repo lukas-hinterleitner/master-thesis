@@ -61,7 +61,7 @@ if not os.path.exists(dot_product_model_generated_storage_path):
 
 # results
 
-results_folder_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../results")
+results_folder_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../results")
 
 if not os.path.exists(results_folder_path):
     os.makedirs(results_folder_path)
