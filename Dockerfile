@@ -6,13 +6,15 @@ RUN apt install -y python3 python3-pip
 RUN apt clean
 RUN rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+COPY requirements.txt /requirements/requirements.txt
+COPY submodules/open-instruct /requirements/submodules/open-instruct
 
-COPY requirements.txt .
-COPY submodules/open-instruct ./submodules/open-instruct
+WORKDIR /requirements
 
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r /requirements/requirements.txt
 RUN pip install --no-cache-dir --no-build-isolation traker[fast]==0.3.2
+
+WORKDIR /app
 
 CMD ["python3"]
