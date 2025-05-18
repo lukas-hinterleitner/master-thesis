@@ -1,7 +1,7 @@
 import os
 from enum import Enum
 
-data_folder_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../data")
+data_folder_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../data")
 
 lima_dataset_path = os.path.join(data_folder_path, "lima")
 lima_paraphrased_dataset_path = os.path.join(data_folder_path, "paraphrased")
