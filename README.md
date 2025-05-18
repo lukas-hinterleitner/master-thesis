@@ -28,7 +28,7 @@ pip install --no-build-isolation traker[fast]==0.3.2
 ```
 
 ## Before Execution
-Create a .env file in the folder _application_ _(application/.env)_ with the following content:
+Create a .env file in the root folder of the repository with the following content:
 ```shell
 HF_TOKEN=your_token_here
 
