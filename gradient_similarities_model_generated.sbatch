@@ -8,8 +8,6 @@
 #SBATCH --gres=gpu:1
 #SBATCH --time=0-24:00:00
 #SBATCH --nodelist=dgx-h100-em2
-#SBATCH --output=./out/slurm-%j.out
+#SBATCH --output=./out/gradient_similarities_model_generated/slurm-%j.out
 
-#python3 --version
-
-python3 application/gradient_similarities_model_generated.py
+python3 main.py --setting model-generated --computation-type gradient-similarity

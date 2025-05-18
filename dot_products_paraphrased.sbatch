@@ -8,8 +8,6 @@
 #SBATCH --gres=gpu:1
 #SBATCH --time=0-24:00:00
 #SBATCH --nodelist=dgx-h100-em2
-#SBATCH --output=./out/slurm-%j.out
+#SBATCH --output=./out/dot_products_paraphrased/slurm-%j.out
 
-#python3 --version
-
-python3 application/dot_products_paraphrased.py
+python3 main.py --setting paraphrased --computation-type dot-product
