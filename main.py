@@ -2,6 +2,7 @@ import argparse
 import enum
 import json
 import random
+import time
 
 import numpy as np
 import torch
@@ -80,8 +81,6 @@ def main():
     print(f"Computation Type: {computation_type}")
     print(f"Use Random Projection: {use_random_projection}")
 
-    exit(0)
-
     torch.manual_seed(42)
     np.random.seed(42)
     random.seed(42)
@@ -90,6 +89,9 @@ def main():
 
     model = get_model()
     tokenizer = get_tokenizer()
+
+    # start time
+    start_time = time.time()
 
     if setting == Setting.PARAPHRASED:
 
@@ -162,6 +164,9 @@ def main():
 
             with open(get_gradient_similarity_model_generated_file_path(), "w") as output_file:
                 json.dump(gradient_similarities, output_file, indent=4)
+
+    elapsed_time = time.time() - start_time
+    print(f"Elapsed time: {elapsed_time:.2f} seconds")
 
 if __name__ == '__main__':
     main()

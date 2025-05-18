@@ -6,10 +6,10 @@ papers
 .github
 .git
 
-application/images
-application/*.ipynb
-application/tests.py
-application/.env
+images
+*.ipynb
+tests.py
+.env
 
 submodules/open-instruct/**
 !submodules/open-instruct/open_instruct
