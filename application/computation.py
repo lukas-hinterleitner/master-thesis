@@ -232,14 +232,14 @@ def calculate_paraphrased_random_projected_gradient_similarities(
                     )
 
                     down_projected_original_layer_gradient = projector.project(
-                        grads=original_layer_grad.unsqueeze(0).cuda(model.device),
+                        grads=original_layer_grad.reshape(1, -1).half().cuda(model.device),
                         model_id=0
                     ).cpu()
 
                     down_projected_original_layer_gradients.append(down_projected_original_layer_gradient)
 
                     down_projected_paraphrased_layer_gradient = projector.project(
-                        grads=paraphrased_layer_grad.unsqueeze(0).cuda(model.device),
+                        grads=paraphrased_layer_grad.reshape(1, -1).half().cuda(model.device),
                         model_id=1
                     ).cpu()
 
