@@ -218,48 +218,73 @@ def calculate_paraphrased_random_projected_gradient_similarities(
                 down_projected_original_layer_gradients = []
                 down_projected_paraphrased_layer_gradients = []
 
-                for (layer, original_layer_grad), (_, paraphrased_layer_grad) in zip(original_grads.items(), paraphrased_grads.items(), strict=True):
-                    # reduce the dimensionality of the gradients proportionally to the number of full gradients parameters
-                    layer_projection_dim = int(original_layer_grad.numel() / model.num_parameters() * projection_dim)
+                projector = CudaProjector(
+                    grad_dim=model.num_parameters(),
+                    proj_dim=projection_dim,
+                    seed=42,
+                    device=model.device,
+                    proj_type=ProjectionType.rademacher,
+                    max_batch_size=8
+                )
 
-                    projector = CudaProjector(
-                       grad_dim=original_layer_grad.numel(),
-                       proj_dim=layer_projection_dim,
-                       seed=42,
-                       device=model.device,
-                       proj_type=ProjectionType.rademacher,
-                       max_batch_size=8
-                    )
+                print(f"Projection dimension: {projection_dim}")
 
-                    down_projected_original_layer_gradient = projector.project(
-                        grads=original_layer_grad.reshape(1, -1).half().cuda(model.device),
-                        model_id=0
-                    ).cpu()
+                paraphrased_grad_random_projected = projector.project(
+                    grads=paraphrased_grads,
+                    model_id=0
+                )
 
-                    down_projected_original_layer_gradients.append(down_projected_original_layer_gradient)
+                original_grad_random_projected = projector.project(
+                    grads=original_grads,
+                    model_id=1
+                )
 
-                    down_projected_paraphrased_layer_gradient = projector.project(
-                        grads=paraphrased_layer_grad.reshape(1, -1).half().cuda(model.device),
-                        model_id=1
-                    ).cpu()
+                print(f"Original gradient shape: {original_grad_random_projected.shape}, Paraphrased gradient shape: {paraphrased_grad_random_projected.shape}")
 
-                    down_projected_paraphrased_layer_gradients.append(down_projected_paraphrased_layer_gradient)
+                exit(0)
 
-                    print(f"Layer: {layer}, Original gradient shape: {down_projected_original_layer_gradient.shape}, Paraphrased gradient shape: {down_projected_paraphrased_layer_gradient.shape}")
-
-                down_projected_original_gradient = torch.cat(down_projected_original_layer_gradients)
-                down_projected_paraphrased_gradient = torch.cat(down_projected_paraphrased_layer_gradients)
-
-                similarity_function = CosineSimilarity(dim=0)
-
-                print(f"Original gradient shape: {down_projected_original_gradient.shape}, Paraphrased gradient shape: {down_projected_paraphrased_gradient.shape}")
-
-                gradient_similarities_random_projected[paraphrased_id][original_id][projection_dim] = similarity_function(
-                    down_projected_paraphrased_gradient.flatten().cuda(model.device),
-                    down_projected_original_gradient.flatten().cuda(model.device)
-                ).item()
-
-                print(f"Gradient similarity for projection dimension {projection_dim}: {gradient_similarities_random_projected[paraphrased_id][original_id][projection_dim]}")
+                #for (layer, original_layer_grad), (_, paraphrased_layer_grad) in zip(original_grads.items(), paraphrased_grads.items(), strict=True):
+                #    # reduce the dimensionality of the gradients proportionally to the number of full gradients parameters
+                #    layer_projection_dim = int(original_layer_grad.numel() / model.num_parameters() * projection_dim)
+#
+                #    projector = CudaProjector(
+                #       grad_dim=original_layer_grad.numel(),
+                #       proj_dim=layer_projection_dim,
+                #       seed=42,
+                #       device=model.device,
+                #       proj_type=ProjectionType.rademacher,
+                #       max_batch_size=8
+                #    )
+#
+                #    down_projected_original_layer_gradient = projector.project(
+                #        grads=original_layer_grad.reshape(1, -1).half().cuda(model.device),
+                #        model_id=0
+                #    ).cpu()
+#
+                #    down_projected_original_layer_gradients.append(down_projected_original_layer_gradient)
+#
+                #    down_projected_paraphrased_layer_gradient = projector.project(
+                #        grads=paraphrased_layer_grad.reshape(1, -1).half().cuda(model.device),
+                #        model_id=1
+                #    ).cpu()
+#
+                #    down_projected_paraphrased_layer_gradients.append(down_projected_paraphrased_layer_gradient)
+#
+                #    print(f"Layer: {layer}, Original gradient shape: {down_projected_original_layer_gradient.shape}, Paraphrased gradient shape: {down_projected_paraphrased_layer_gradient.shape}")
+#
+                #down_projected_original_gradient = torch.cat(down_projected_original_layer_gradients)
+                #down_projected_paraphrased_gradient = torch.cat(down_projected_paraphrased_layer_gradients)
+#
+                #similarity_function = CosineSimilarity(dim=0)
+#
+                #print(f"Original gradient shape: {down_projected_original_gradient.shape}, Paraphrased gradient shape: {down_projected_paraphrased_gradient.shape}")
+#
+                #gradient_similarities_random_projected[paraphrased_id][original_id][projection_dim] = similarity_function(
+                #    down_projected_paraphrased_gradient.flatten().cuda(model.device),
+                #    down_projected_original_gradient.flatten().cuda(model.device)
+                #).item()
+#
+                #print(f"Gradient similarity for projection dimension {projection_dim}: {gradient_similarities_random_projected[paraphrased_id][original_id][projection_dim]}")
 
     progress.set_description("Finished calculating flattened similarities")
     return gradient_similarities_random_projected
