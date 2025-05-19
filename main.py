@@ -13,7 +13,8 @@ from application.computation import (
     calculate_paraphrased_layer_dot_products,
     calculate_model_generated_layer_dot_products,
     calculate_model_generated_gradient_similarities,
-    calculate_paraphrased_gradient_similarities
+    calculate_paraphrased_gradient_similarities,
+    calculate_paraphrased_random_projected_gradient_similarities
 )
 from application.dataset import (
     get_tokenized_datasets,
@@ -24,7 +25,9 @@ from application.storage import (
     get_dot_product_paraphrased_file_path,
     get_dot_product_model_generated_file_path,
     get_gradient_similarity_model_generated_file_path,
-    get_gradient_similarity_paraphrased_file_path
+    get_gradient_similarity_paraphrased_file_path,
+    get_gradient_similarity_paraphrased_random_projection_file_path,
+    get_gradient_similarity_model_generated_random_projection_file_path
 )
 
 class Setting(enum.Enum):
@@ -94,7 +97,6 @@ def main():
     start_time = time.time()
 
     if setting == Setting.PARAPHRASED:
-
         if computation_type == ComputationType.DOT_PRODUCT:
             # dot product paraphrased
 
@@ -118,16 +120,26 @@ def main():
 
             original_dataset_tokenized, paraphrased_dataset_tokenized = get_tokenized_datasets(model, tokenizer)
 
-            # todo: add random projection
+            if use_random_projection:
+                # random projection
+                gradient_similarities = calculate_paraphrased_random_projected_gradient_similarities(
+                    original_dataset_tokenized,
+                    paraphrased_dataset_tokenized,
+                    model
+                )
 
-            gradient_similarities = calculate_paraphrased_gradient_similarities(
-                original_dataset_tokenized,
-                paraphrased_dataset_tokenized,
-                model
-            )
+                with open(get_gradient_similarity_paraphrased_random_projection_file_path(), "w") as output_file:
+                    json.dump(gradient_similarities, output_file, indent=4)
+            else:
+                # no random projection
+                gradient_similarities = calculate_paraphrased_gradient_similarities(
+                    original_dataset_tokenized,
+                    paraphrased_dataset_tokenized,
+                    model
+                )
 
-            with open(get_gradient_similarity_paraphrased_file_path(), "w") as output_file:
-                json.dump(gradient_similarities, output_file, indent=4)
+                with open(get_gradient_similarity_paraphrased_file_path(), "w") as output_file:
+                    json.dump(gradient_similarities, output_file, indent=4)
 
     elif setting == Setting.MODEL_GENERATED:
         if computation_type == ComputationType.DOT_PRODUCT:

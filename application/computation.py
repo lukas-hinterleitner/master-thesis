@@ -232,19 +232,34 @@ def calculate_paraphrased_random_projected_gradient_similarities(
                     )
 
                     down_projected_original_layer_gradient = projector.project(
-                        grads=original_layer_grad.reshape(1, -1).half().cuda(model.device),
+                        grads=original_layer_grad.reshape(1, -1).cuda(model.device),
                         model_id=0
                     ).cpu()
 
                     down_projected_original_layer_gradients.append(down_projected_original_layer_gradient)
 
                     down_projected_paraphrased_layer_gradient = projector.project(
-                        grads=paraphrased_layer_grad.reshape(1, -1).half().cuda(model.device),
+                        grads=paraphrased_layer_grad.reshape(1, -1).cuda(model.device),
                         model_id=1
                     ).cpu()
 
                     down_projected_paraphrased_layer_gradients.append(down_projected_paraphrased_layer_gradient)
-                exit(0)
+
+                    print(f"Layer: {layer}, Original gradient shape: {down_projected_original_layer_gradient.shape}, Paraphrased gradient shape: {down_projected_paraphrased_layer_gradient.shape}")
+
+                down_projected_original_gradient = torch.cat(down_projected_original_layer_gradients)
+                down_projected_paraphrased_gradient = torch.cat(down_projected_paraphrased_layer_gradients)
+
+                similarity_function = CosineSimilarity(dim=0)
+
+                print(f"Original gradient shape: {down_projected_original_gradient.shape}, Paraphrased gradient shape: {down_projected_paraphrased_gradient.shape}")
+
+                gradient_similarities_random_projected[paraphrased_id][original_id][projection_dim] = similarity_function(
+                    down_projected_paraphrased_gradient.flatten().cuda(model.device),
+                    down_projected_original_gradient.flatten().cuda(model.device)
+                ).item()
+
+                print(f"Gradient similarity for projection dimension {projection_dim}: {gradient_similarities_random_projected[paraphrased_id][original_id][projection_dim]}")
 
     progress.set_description("Finished calculating flattened similarities")
     return gradient_similarities_random_projected

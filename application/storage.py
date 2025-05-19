@@ -8,10 +8,15 @@ from .config.storage import (
     gradient_similarity_paraphrased_storage_path,
     gradient_similarity_model_generated_storage_path,
 
+    gradient_similarity_random_projection_paraphrased_storage_path,
+    gradient_similarity_random_projection_model_generated_storage_path,
+
     dot_product_paraphrased_storage_path,
     dot_product_model_generated_storage_path,
 
-    results_folder_path, ExperimentType
+    results_folder_path, ExperimentType,
+
+
 )
 
 
@@ -33,6 +38,22 @@ def get_gradient_similarity_paraphrased_file_path(model_name = MODEL_NAME, sampl
 
 def get_gradient_similarity_model_generated_file_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):
     path = str(os.path.join(gradient_similarity_model_generated_storage_path, model_name))
+
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    return os.path.join(path, f"sample_size_{sample_size}.json")
+
+def get_gradient_similarity_paraphrased_random_projection_file_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):
+    path = str(os.path.join(gradient_similarity_random_projection_paraphrased_storage_path, model_name))
+
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    return os.path.join(path, f"sample_size_{sample_size}.json")
+
+def get_gradient_similarity_model_generated_random_projection_file_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):
+    path = str(os.path.join(gradient_similarity_random_projection_model_generated_storage_path, model_name))
 
     if not os.path.exists(path):
         os.makedirs(path)
