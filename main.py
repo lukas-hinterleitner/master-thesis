@@ -14,7 +14,8 @@ from application.computation import (
     calculate_model_generated_layer_dot_products,
     calculate_model_generated_gradient_similarities,
     calculate_paraphrased_gradient_similarities,
-    calculate_paraphrased_random_projected_gradient_similarities
+    calculate_paraphrased_random_projected_gradient_similarities,
+    calculate_model_generated_random_projected_gradient_similarities
 )
 from application.dataset import (
     get_tokenized_datasets,
@@ -165,17 +166,28 @@ def main():
             original_dataset_tokenized = get_original_dataset_tokenized(model, tokenizer)
             paraphrased_dataset = get_paraphrased_dataset()
 
-            # todo: add random projection
+            if use_random_projection:
+                # random projection
+                gradient_similarities = calculate_model_generated_random_projected_gradient_similarities(
+                    original_dataset_tokenized,
+                    paraphrased_dataset,
+                    model,
+                    tokenizer
+                )
 
-            gradient_similarities = calculate_model_generated_gradient_similarities(
-                original_dataset_tokenized,
-                paraphrased_dataset,
-                model,
-                tokenizer
-            )
+                with open(get_gradient_similarity_model_generated_random_projection_file_path(), "w") as output_file:
+                    json.dump(gradient_similarities, output_file, indent=4)
+            else:
+                # no random projection
+                gradient_similarities = calculate_model_generated_gradient_similarities(
+                    original_dataset_tokenized,
+                    paraphrased_dataset,
+                    model,
+                    tokenizer
+                )
 
-            with open(get_gradient_similarity_model_generated_file_path(), "w") as output_file:
-                json.dump(gradient_similarities, output_file, indent=4)
+                with open(get_gradient_similarity_model_generated_file_path(), "w") as output_file:
+                    json.dump(gradient_similarities, output_file, indent=4)
 
     elapsed_time = time.time() - start_time
     print(f"Elapsed time: {elapsed_time:.2f} seconds")
