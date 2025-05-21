@@ -185,83 +185,90 @@ def calculate_paraphrased_random_projected_gradient_similarities(
     gradient_similarities_random_projected: dict[str, dict[str, dict[int, float]]] = {}
 
     progress = tqdm(paraphrased_dataset_tokenized, desc="Calculating gradients + similarities using random projection")
+    similarity_function = CosineSimilarity(dim=0)
 
-    for paraphrased_sample in progress:
-        paraphrased_id = paraphrased_sample["id"]
-        # 1) Compute paraphrased gradients
-        paraphrased_grads = get_paraphrased_sample_gradients(
-            paraphrased_sample,
-            model,
-            tokenizer=None,
-            is_model_generated=False
-        )
-        # 2) BM25 top matches
-        paraphrased_text = paraphrased_sample["paraphrased_messages"][0]["content"]
-        top_indices = select_top_bm25_matches(
-            paraphrased_text,
-            bm25,
-            original_dataset_tokenized,
-            paraphrased_id,
-            top_k
-        )
-        # 3) Loop over top matches and compute similarity
-        gradient_similarities_random_projected[paraphrased_id] = {}
-        for original_sample in original_dataset_tokenized.select(top_indices):
-            original_id = original_sample["id"]
+    projection_dimensions = [
+        int(model.num_parameters() * 0.01),
+        int(model.num_parameters() * 0.05),
+    ]
 
-            progress.set_description(f"P({paraphrased_id}) vs O({original_id})")
+    for projection_dim in projection_dimensions:
+        print(f"Projection dimension: {projection_dim}")
 
-            original_grads = get_gradients(model, original_sample)
+        for paraphrased_sample in progress:
+            paraphrased_id = paraphrased_sample["id"]
+            # 1) Compute paraphrased gradients
+            paraphrased_grads = get_paraphrased_sample_gradients(
+                paraphrased_sample,
+                model,
+                tokenizer=None,
+                is_model_generated=False
+            )
 
-            gradient_similarities_random_projected[paraphrased_id][original_id] = {}
-            for projection_dim in np.linspace(start=0, stop=model.num_parameters(), num=3, dtype=int)[1:]:
-                down_projected_original_layer_gradients = []
-                down_projected_paraphrased_layer_gradients = []
+            # 2) BM25 top matches
+            paraphrased_text = paraphrased_sample["paraphrased_messages"][0]["content"]
+            top_indices = select_top_bm25_matches(
+                paraphrased_text,
+                bm25,
+                original_dataset_tokenized,
+                paraphrased_id,
+                top_k
+            )
 
-                for (layer, original_layer_grad), (_, paraphrased_layer_grad) in zip(original_grads.items(), paraphrased_grads.items(), strict=True):
-                    # reduce the dimensionality of the gradients proportionally to the number of full gradients parameters
-                    layer_projection_dim = int(original_layer_grad.numel() / model.num_parameters() * projection_dim)
+            paraphrased_grads_flattened = get_flattened_weight_vector(paraphrased_grads)
 
-                    print(f"{layer}: grad dim: [{original_layer_grad.numel()} -> projection dim: {layer_projection_dim}]")
+            projector = CudaProjector(
+                grad_dim=paraphrased_grads_flattened.numel(),
+                proj_dim=projection_dim,
+                seed=42,
+                device=model.device,
+                proj_type=ProjectionType.rademacher,
+                max_batch_size=8
+            )
 
-                    projector = CudaProjector(
-                       grad_dim=original_layer_grad.numel(),
-                       proj_dim=layer_projection_dim,
-                       seed=42,
-                       device=model.device,
-                       proj_type=ProjectionType.rademacher,
-                       max_batch_size=8
-                    )
+            print(f"Paraphrased gradient shape: {paraphrased_grads_flattened.shape}")
+            print(f"Paraphrased gradient reshaped shape: {paraphrased_grads_flattened.reshape(1, -1).shape}")
 
-                    down_projected_original_layer_gradient = projector.project(
-                        grads=original_layer_grad.reshape(1, -1).half().cuda(model.device),
-                        model_id=0
-                    ).cpu()
+            down_projected_paraphrased_gradient = projector.project(
+                grads=paraphrased_grads_flattened.half().cuda(model.device),
+                model_id=1
+            ).cpu()
 
-                    down_projected_original_layer_gradients.append(down_projected_original_layer_gradient)
+            print(f"Down projected paraphrased gradient shape: {down_projected_paraphrased_gradient.shape}")
 
-                    down_projected_paraphrased_layer_gradient = projector.project(
-                        grads=paraphrased_layer_grad.reshape(1, -1).half().cuda(model.device),
-                        model_id=1
-                    ).cpu()
+            # 3) Loop over top matches and compute similarity
+            gradient_similarities_random_projected[paraphrased_id] = {}
+            for original_sample in original_dataset_tokenized.select(top_indices):
+                original_id = original_sample["id"]
 
-                    down_projected_paraphrased_layer_gradients.append(down_projected_paraphrased_layer_gradient)
+                progress.set_description(f"P({paraphrased_id}) vs O({original_id})")
 
-                    print(f"Layer: {layer}, Original gradient shape: {down_projected_original_layer_gradient.shape}, Paraphrased gradient shape: {down_projected_paraphrased_layer_gradient.shape}")
+                original_grads = get_gradients(model, original_sample)
 
-                down_projected_original_gradient = torch.cat(down_projected_original_layer_gradients)
-                down_projected_paraphrased_gradient = torch.cat(down_projected_paraphrased_layer_gradients)
+                gradient_similarities_random_projected[paraphrased_id][original_id] = {}
 
-                similarity_function = CosineSimilarity(dim=0)
+                # get flattened vector of the original gradients
+                original_grads_flattened = get_flattened_weight_vector(original_grads)
 
-                print(f"Original gradient shape: {down_projected_original_gradient.shape}, Paraphrased gradient shape: {down_projected_paraphrased_gradient.shape}")
+                print(f"Original gradient shape: {original_grads_flattened.shape}")
+                print(f"Original gradient reshaped shape: {original_grads_flattened.reshape(1, -1).shape}")
 
-                gradient_similarities_random_projected[paraphrased_id][original_id][projection_dim] = similarity_function(
+                down_projected_original_gradient = projector.project(
+                    grads=original_grads_flattened.half().cuda(model.device),
+                    model_id=0
+                ).cpu()
+
+                print(f"Down projected original gradient shape: {down_projected_original_gradient.shape}")
+
+                similarity = similarity_function(
                     down_projected_paraphrased_gradient.flatten().cuda(model.device),
                     down_projected_original_gradient.flatten().cuda(model.device)
                 ).item()
 
-                print(f"Gradient similarity for projection dimension {projection_dim}: {gradient_similarities_random_projected[paraphrased_id][original_id][projection_dim]}")
+                print(f"Similarity: {similarity}")
+
+                exit(0)
+
 
     progress.set_description("Finished calculating flattened similarities")
     return gradient_similarities_random_projected
