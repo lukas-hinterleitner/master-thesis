@@ -230,8 +230,8 @@ def calculate_paraphrased_random_projected_gradient_similarities(
             print(f"Paraphrased gradient reshaped shape: {paraphrased_grads_flattened.reshape(1, -1).shape}")
 
             down_projected_paraphrased_gradient = projector.project(
-                grads=paraphrased_grads_flattened.half().cuda(model.device),
-                model_id=1
+                grads=paraphrased_grads_flattened.half().reshape(1, -1).cuda(model.device),
+                model_id=0
             ).cpu()
 
             print(f"Down projected paraphrased gradient shape: {down_projected_paraphrased_gradient.shape}")
@@ -254,7 +254,7 @@ def calculate_paraphrased_random_projected_gradient_similarities(
                 print(f"Original gradient reshaped shape: {original_grads_flattened.reshape(1, -1).shape}")
 
                 down_projected_original_gradient = projector.project(
-                    grads=original_grads_flattened.half().cuda(model.device),
+                    grads=original_grads_flattened.half().reshape(1, -1).cuda(model.device),
                     model_id=0
                 ).cpu()
 
