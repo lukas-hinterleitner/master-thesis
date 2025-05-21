@@ -182,7 +182,7 @@ def calculate_paraphrased_random_projected_gradient_similarities(
     top_k: int = __amount_comparisons,
 ) -> dict[str, dict[str, dict[int, float]]]:
     bm25 = build_bm25_index(original_dataset_tokenized)
-    gradient_similarities_random_projected: dict[str, dict[str, dict[int, float]]] = {}
+    gradient_similarities_random_projected: dict[int, dict[str, dict[str, float]]] = {}
 
     progress = tqdm(paraphrased_dataset_tokenized, desc="Calculating gradients + similarities using random projection")
     similarity_function = CosineSimilarity(dim=0)
@@ -192,8 +192,13 @@ def calculate_paraphrased_random_projected_gradient_similarities(
         int(model.num_parameters() * 0.05),
     ]
 
+    # make sure that projection dimensions are divisible by 512, if not round to the nearest
+    projection_dimensions = [int(round(dim / 512) * 512) for dim in projection_dimensions]
+
     for projection_dim in projection_dimensions:
         print(f"Projection dimension: {projection_dim}")
+
+        gradient_similarities_random_projected[projection_dim] = {}
 
         for paraphrased_sample in progress:
             paraphrased_id = paraphrased_sample["id"]
@@ -237,15 +242,13 @@ def calculate_paraphrased_random_projected_gradient_similarities(
             print(f"Down projected paraphrased gradient shape: {down_projected_paraphrased_gradient.shape}")
 
             # 3) Loop over top matches and compute similarity
-            gradient_similarities_random_projected[paraphrased_id] = {}
+            gradient_similarities_random_projected[projection_dim][paraphrased_id] = {}
             for original_sample in original_dataset_tokenized.select(top_indices):
                 original_id = original_sample["id"]
 
                 progress.set_description(f"P({paraphrased_id}) vs O({original_id})")
 
                 original_grads = get_gradients(model, original_sample)
-
-                gradient_similarities_random_projected[paraphrased_id][original_id] = {}
 
                 # get flattened vector of the original gradients
                 original_grads_flattened = get_flattened_weight_vector(original_grads)
@@ -264,6 +267,8 @@ def calculate_paraphrased_random_projected_gradient_similarities(
                     down_projected_paraphrased_gradient.flatten().cuda(model.device),
                     down_projected_original_gradient.flatten().cuda(model.device)
                 ).item()
+
+                gradient_similarities_random_projected[projection_dim][paraphrased_id][original_id] = similarity
 
                 print(f"Similarity: {similarity}")
 
