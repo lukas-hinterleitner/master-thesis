@@ -9,11 +9,6 @@ RUN rm -rf /var/lib/apt/lists/*
 
 WORKDIR /uv
 
-# Enable bytecode compilation
-#ENV UV_COMPILE_BYTECODE=1
-
-WORKDIR /uv
-
 COPY submodules/open-instruct /uv/submodules/open-instruct
 COPY uv.lock /uv/uv.lock
 COPY pyproject.toml /uv/pyproject.toml
