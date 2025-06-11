@@ -10,10 +10,7 @@ RUN rm -rf /var/lib/apt/lists/*
 WORKDIR /uv
 
 # Enable bytecode compilation
-ENV UV_COMPILE_BYTECODE=1
-
-# Copy from the cache instead of linking since it's a mounted volume
-ENV UV_LINK_MODE=copy
+#ENV UV_COMPILE_BYTECODE=1
 
 WORKDIR /uv
 

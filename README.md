@@ -13,8 +13,8 @@ All necessary packages can be installed using either [UV](https://docs.astral.sh
 
 #### Install necessary packages using UV
 ```bash
-uv sync
-uv sync --extra build --extra compile
+uv sync --locked --no-install-project
+uv sync --locked --no-install-project --extra build --extra compile
 ```
 
 #### Install necessary packages using PIP
