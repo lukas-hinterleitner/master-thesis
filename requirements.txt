@@ -85,7 +85,9 @@ colorful==0.5.6
     # via ray
 comm==0.2.2
     # via ipywidgets
-compressed-tensors==0.9.3
+compressed-tensors==0.9.3 ; sys_platform != 'darwin'
+    # via vllm
+compressed-tensors==0.10.1 ; sys_platform == 'darwin'
     # via vllm
 contourpy==1.3.2
     # via matplotlib
@@ -581,6 +583,7 @@ regex==2024.11.6
     #   nltk
     #   tiktoken
     #   transformers
+    #   vllm
 requests==2.32.4
     # via
     #   datasets
@@ -656,7 +659,9 @@ starlette==0.46.2
     # via
     #   fastapi
     #   prometheus-fastapi-instrumentator
-sympy==1.13.1
+sympy==1.13.1 ; sys_platform != 'darwin'
+    # via torch
+sympy==1.14.0 ; sys_platform == 'darwin'
     # via torch
 tensorboard==2.19.0
     # via open-instruct
@@ -673,12 +678,13 @@ tokenizers==0.21.1
     # via
     #   transformers
     #   vllm
-torch==2.6.0+cu124
+torch==2.6.0+cu124 ; sys_platform != 'darwin'
     # via
     #   accelerate
     #   bitsandbytes
     #   compressed-tensors
     #   deepspeed
+    #   gradient-similarity-analyzer
     #   open-instruct
     #   outlines
     #   peft
@@ -687,10 +693,36 @@ torch==2.6.0+cu124
     #   vllm
     #   xformers
     #   xgrammar
-torchaudio==2.6.0
+torch==2.7.0 ; sys_platform == 'darwin'
+    # via
+    #   accelerate
+    #   bitsandbytes
+    #   compressed-tensors
+    #   deepspeed
+    #   gradient-similarity-analyzer
+    #   open-instruct
+    #   outlines
+    #   peft
+    #   torchaudio
+    #   torchvision
+    #   vllm
+    #   xgrammar
+torchaudio==2.6.0 ; sys_platform != 'darwin'
     # via vllm
-torchvision==0.21.0
+torchaudio==2.7.0 ; sys_platform == 'darwin'
     # via vllm
+torchvision==0.21.0 ; sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32'
+    # via
+    #   gradient-similarity-analyzer
+    #   vllm
+torchvision==0.21.0+cu124 ; sys_platform == 'linux' or sys_platform == 'win32'
+    # via
+    #   gradient-similarity-analyzer
+    #   vllm
+torchvision==0.22.0 ; sys_platform == 'darwin'
+    # via
+    #   gradient-similarity-analyzer
+    #   vllm
 tqdm==4.67.1
     # via
     #   datasets
@@ -761,7 +793,9 @@ uvloop==0.21.0 ; platform_python_implementation != 'PyPy' and sys_platform != 'c
     # via uvicorn
 virtualenv==20.31.2
     # via ray
-vllm==0.8.5.post1
+vllm==0.8.5.post1 ; sys_platform != 'darwin'
+    # via open-instruct
+vllm==0.9.1 ; sys_platform == 'darwin'
     # via open-instruct
 wandb==0.18.1
     # via open-instruct
@@ -785,7 +819,9 @@ wrapt==1.17.2
     #   smart-open
 xformers==0.0.29.post2 ; platform_machine == 'x86_64' and sys_platform == 'linux'
     # via vllm
-xgrammar==0.1.18 ; platform_machine == 'aarch64' or platform_machine == 'x86_64'
+xgrammar==0.1.18 ; (platform_machine == 'aarch64' and sys_platform != 'darwin') or (platform_machine == 'x86_64' and sys_platform != 'darwin')
+    # via vllm
+xgrammar==0.1.19 ; (platform_machine == 'aarch64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'darwin')
     # via vllm
 xxhash==3.5.0
     # via datasets

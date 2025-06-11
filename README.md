@@ -9,11 +9,11 @@ git submodule update
 ```
 
 ### Installation
-All necessary packages can be installed using either UV or PIP.
+All necessary packages can be installed using either [UV](https://docs.astral.sh/uv/) or [PIP](https://pypi.org/project/pip/).
 
 #### Install necessary packages using UV
 ```bash
-uv sync --extra build
+uv sync
 uv sync --extra build --extra compile
 ```
 
@@ -22,8 +22,8 @@ The project was developed with Python 3.11 since open-instruct requires it. So i
 
 Create a virtual environment:
 ```shell
-python3 -m venv master_thesis.venv
-source master_thesis.venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
 Check if the virtual environment is used:

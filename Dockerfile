@@ -1,20 +1,34 @@
 FROM nvidia/cuda:12.6.3-cudnn-devel-ubuntu22.04
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
 LABEL authors="lukashinterleitner"
 
 RUN apt update && apt upgrade -y
-RUN apt install -y python3 python3-pip
+#RUN apt install -y python3 python3-pip
 RUN apt clean
 RUN rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt /requirements/requirements.txt
-COPY submodules/open-instruct /requirements/submodules/open-instruct
+WORKDIR /uv
 
-WORKDIR /requirements
+# Enable bytecode compilation
+ENV UV_COMPILE_BYTECODE=1
 
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel
-RUN pip install --no-cache-dir -r /requirements/requirements.txt
-RUN pip install --no-cache-dir --no-build-isolation traker[fast]==0.3.2
+# Copy from the cache instead of linking since it's a mounted volume
+ENV UV_LINK_MODE=copy
+
+WORKDIR /uv
+
+COPY submodules/open-instruct /uv/submodules/open-instruct
+
+# Install the project's dependencies using the lockfile and settings
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project --no-dev
 
 WORKDIR /app
+
+# Place executables in the environment at the front of the path
+ENV PATH="/uv/.venv/bin:$PATH"
 
 CMD ["python3"]
