@@ -4,7 +4,6 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 LABEL authors="lukashinterleitner"
 
 RUN apt update && apt upgrade -y
-#RUN apt install -y python3 python3-pip
 RUN apt clean
 RUN rm -rf /var/lib/apt/lists/*
 
@@ -24,7 +23,7 @@ COPY submodules/open-instruct /uv/submodules/open-instruct
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --locked --no-install-project --no-dev
+    uv sync --locked --no-install-project --no-dev --no-cache
 
 WORKDIR /app
 
