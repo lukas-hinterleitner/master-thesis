@@ -8,9 +8,19 @@ git submodule init
 git submodule update
 ```
 
-### Create Virtual Environment
-The project was developed with Python 3.11 since open-instruct requires it.
+### Installation
+All necessary packages can be installed using either UV or PIP.
 
+#### Install necessary packages using UV
+```bash
+uv sync --extra build
+uv sync --extra build --extra compile
+```
+
+#### Install necessary packages using PIP
+The project was developed with Python 3.11 since open-instruct requires it. So it is necessary to use Python 3.11.*.
+
+Create a virtual environment:
 ```shell
 python3 -m venv master_thesis.venv
 source master_thesis.venv/bin/activate
@@ -21,7 +31,7 @@ Check if the virtual environment is used:
 which python
 ```
 
-### Install necessary packages
+Install all necessary packages:
 ```shell
 pip install -r requirements.txt
 pip install --no-build-isolation traker[fast]==0.3.2
@@ -76,3 +86,7 @@ In the folder data/gradient_similarity_bm25_selected_model_generated, the result
 
 TODO: the above examples do not represent the new structures with individual layers, etc. --> add to readme
 
+### Create requirements.txt from UV config files:
+```shell
+uv export --format requirements-txt --no-hashes > requirements.txt
+```

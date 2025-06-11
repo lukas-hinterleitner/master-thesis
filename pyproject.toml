@@ -1,0 +1,34 @@
+[project]
+name = "gradient-similarity-analyzer"
+version = "0.1.0"
+description = "Calculates similarities between gradients of the LIMA fine-tuning dataset samples and paraphrased versions of it."
+readme = "README.md"
+requires-python = "==3.11.*"
+dependencies = [
+    "ipywidgets==8.1.5",
+    "open-instruct",
+    "openai==1.59.7",
+    "pandas==2.2.3",
+    "python-dotenv==1.1.0",
+    "rank-bm25==0.2.2",
+    "scikit-learn==1.6.1",
+    "seaborn==0.13.2",
+    "tqdm==4.67.1",
+]
+
+[tool.uv.sources]
+open-instruct = { path = "submodules/open-instruct", editable = true }
+
+
+[project.optional-dependencies]
+build = ["torch"]
+compile = ["traker[fast]"]
+
+[tool.uv]
+no-build-isolation-package = ["traker[fast]"]
+
+[[tool.uv.dependency-metadata]]
+name = "traker[fast]"
+version = "0.3.2"
+requires-dist = ["torch"]
+

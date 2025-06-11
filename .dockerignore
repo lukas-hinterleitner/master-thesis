@@ -1,6 +1,6 @@
 LICENSE
 README.md
-master_thesis.venv
+*.venv
 papers
 .cadence
 .github
@@ -14,3 +14,5 @@ tests.py
 submodules/open-instruct/**
 !submodules/open-instruct/open_instruct
 !submodules/open-instruct/*.*
+
+*.sbatch
