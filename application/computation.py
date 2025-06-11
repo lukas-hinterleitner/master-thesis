@@ -296,7 +296,7 @@ def __calculate_random_projected_similarities(
         print(f"Projection dimension: {proj_dim}")
         results[proj_dim] = {}
 
-        # One projector per dimension (identical seed guarantees parity with old code)
+        # One projector per dimension
         projector = CudaProjector(
             grad_dim=model.num_parameters(),
             proj_dim=proj_dim,
@@ -450,11 +450,6 @@ def __calculate_layerwise_dot_products(
 
     progress.set_description("Finished layer‑wise dot products")
     return dot_products, paraphrased_self, original_self
-
-
-# ---------------------------------------------------------------------------
-# Thin public wrappers – maintain *exact* original API & behaviour
-# ---------------------------------------------------------------------------
 
 
 # --- Flattened similarities -------------------------------------------------

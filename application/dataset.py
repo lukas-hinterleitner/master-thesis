@@ -30,10 +30,14 @@ def get_original_dataset_tokenized(model: PreTrainedModel, tokenizer: PreTrained
         dataset_config=original_dataset_config,
     )
 
-def get_paraphrased_dataset():
+def get_paraphrased_dataset(sample_size = SAMPLE_SIZE) -> Dataset:
     paraphrased = load_from_disk(lima_paraphrased_dataset_path).select_columns(["id", "paraphrased_messages"])
 
-    if SAMPLE_SIZE:
-        return paraphrased.select(range(SAMPLE_SIZE))
+    if sample_size:
+        return paraphrased.select(range(sample_size))
     else:
         return paraphrased
+
+def get_samples(sample_ids: list[str]) -> Dataset:
+    return load_from_disk(lima_paraphrased_dataset_path).filter(lambda example: example["id"] in sample_ids)
+

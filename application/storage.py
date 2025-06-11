@@ -139,3 +139,11 @@ def get_results_layer_comparison_full_gradient_folder_path(model_name = MODEL_NA
         os.makedirs(path)
 
     return path
+
+def get_results_self_similarities_over_layers_folder_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE, experiment_type: ExperimentType = ExperimentType.PARAPHRASED):
+    path = os.path.join(results_folder_path, "self_similarity_over_layers", experiment_type.value, model_name, "sample_size", str(sample_size))
+
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    return path
