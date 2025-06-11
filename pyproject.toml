@@ -3,7 +3,7 @@ name = "gradient-similarity-analyzer"
 version = "0.1.0"
 description = "Calculates similarities between gradients of the LIMA fine-tuning dataset samples and paraphrased versions of it."
 readme = "README.md"
-requires-python = "==3.11.*"
+requires-python = ">=3.10,<3.12"
 dependencies = [
     "ipywidgets==8.1.5",
     "open-instruct",
