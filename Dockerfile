@@ -18,12 +18,10 @@ ENV UV_LINK_MODE=copy
 WORKDIR /uv
 
 COPY submodules/open-instruct /uv/submodules/open-instruct
+COPY uv.lock /uv/uv.lock
+COPY pyproject.toml /uv/pyproject.toml
 
-# Install the project's dependencies using the lockfile and settings
-RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=uv.lock,target=uv.lock \
-    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --locked --no-install-project --no-dev --no-cache
+RUN uv sync --locked --no-install-project --no-dev --no-cache
 
 WORKDIR /app
 
