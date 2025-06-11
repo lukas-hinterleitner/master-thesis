@@ -21,4 +21,6 @@ WORKDIR /app
 # Place executables in the environment at the front of the path
 ENV PATH="/uv/.venv/bin:$PATH"
 
+RUN python3 --version
+
 CMD ["python3"]
