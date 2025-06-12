@@ -711,11 +711,11 @@ torchaudio==2.6.0 ; sys_platform != 'darwin'
     # via vllm
 torchaudio==2.7.0 ; sys_platform == 'darwin'
     # via vllm
-torchvision==0.21.0 ; sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32'
+torchvision==0.21.0 ; sys_platform != 'darwin' and sys_platform != 'win32'
     # via
     #   gradient-similarity-analyzer
     #   vllm
-torchvision==0.21.0+cu124 ; sys_platform == 'linux' or sys_platform == 'win32'
+torchvision==0.21.0+cu124 ; sys_platform == 'win32'
     # via
     #   gradient-similarity-analyzer
     #   vllm
