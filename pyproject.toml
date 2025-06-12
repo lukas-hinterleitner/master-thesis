@@ -37,10 +37,10 @@ explicit = true
 
 [project.optional-dependencies]
 build = ["torch"]
-compile = ["traker"]
+compile = ["traker[fast]"]
 
 [tool.uv]
-no-build-isolation-package = ["traker"]
+no-build-isolation-package = ["traker[fast]"]
 
 [[tool.uv.dependency-metadata]]
 name = "traker"

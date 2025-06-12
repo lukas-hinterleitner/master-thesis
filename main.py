@@ -6,6 +6,7 @@ import time
 
 import numpy as np
 import torch
+import trak
 
 from application.model import get_model, get_tokenizer
 
@@ -122,6 +123,8 @@ def main():
             original_dataset_tokenized, paraphrased_dataset_tokenized = get_tokenized_datasets(model, tokenizer)
 
             if use_random_projection:
+                trak.test_install(use_fast_jl=True)
+
                 # random projection
                 gradient_similarities = calculate_paraphrased_random_projected_gradient_similarities(
                     original_dataset_tokenized,
@@ -167,6 +170,8 @@ def main():
             paraphrased_dataset = get_paraphrased_dataset()
 
             if use_random_projection:
+                trak.test_install(use_fast_jl=True)
+
                 # random projection
                 gradient_similarities = calculate_model_generated_random_projected_gradient_similarities(
                     original_dataset_tokenized,
