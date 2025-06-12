@@ -684,7 +684,6 @@ torch==2.6.0+cu124 ; sys_platform != 'darwin'
     #   bitsandbytes
     #   compressed-tensors
     #   deepspeed
-    #   gradient-similarity-analyzer
     #   open-instruct
     #   outlines
     #   peft
@@ -699,7 +698,6 @@ torch==2.7.0 ; sys_platform == 'darwin'
     #   bitsandbytes
     #   compressed-tensors
     #   deepspeed
-    #   gradient-similarity-analyzer
     #   open-instruct
     #   outlines
     #   peft
@@ -711,18 +709,10 @@ torchaudio==2.6.0 ; sys_platform != 'darwin'
     # via vllm
 torchaudio==2.7.0 ; sys_platform == 'darwin'
     # via vllm
-torchvision==0.21.0 ; sys_platform != 'darwin' and sys_platform != 'win32'
-    # via
-    #   gradient-similarity-analyzer
-    #   vllm
-torchvision==0.21.0+cu124 ; sys_platform == 'win32'
-    # via
-    #   gradient-similarity-analyzer
-    #   vllm
+torchvision==0.21.0 ; sys_platform != 'darwin'
+    # via vllm
 torchvision==0.22.0 ; sys_platform == 'darwin'
-    # via
-    #   gradient-similarity-analyzer
-    #   vllm
+    # via vllm
 tqdm==4.67.1
     # via
     #   datasets
