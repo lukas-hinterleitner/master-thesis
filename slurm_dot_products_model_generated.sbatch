@@ -10,4 +10,4 @@
 #SBATCH --nodelist=dgx-h100-em2
 #SBATCH --output=./out/dot_products_model_generated/slurm-%j.out
 
-uv run main.py --setting model-generated --computation-type dot-product
+python3 main.py --setting model-generated --computation-type dot-product

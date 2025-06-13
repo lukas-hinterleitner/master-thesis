@@ -10,4 +10,4 @@
 #SBATCH --nodelist=dgx-h100-em2
 #SBATCH --output=./out/gradient_similarities_paraphrased_random_projection/slurm-%j.out
 
-uv run main.py --setting paraphrased --computation-type gradient-similarity --use-random-projection
+python3 main.py --setting paraphrased --computation-type gradient-similarity --use-random-projection

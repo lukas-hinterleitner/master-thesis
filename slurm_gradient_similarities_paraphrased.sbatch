@@ -10,4 +10,4 @@
 #SBATCH --nodelist=dgx-h100-em2
 #SBATCH --output=./out/gradient_similarities_paraphrased/slurm-%j.out
 
-uv run main.py --setting paraphrased --computation-type gradient-similarity
+python3 main.py --setting paraphrased --computation-type gradient-similarity
