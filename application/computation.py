@@ -16,6 +16,7 @@ from trak.projectors import CudaProjector, ProjectionType  # fast J‑L projecto
 
 # Local project utilities ----------------------------------------------------
 from application.config.dataset import get_dataset_config  # dataset‑specific settings
+from application.model import get_num_parameters_per_layer
 from application.model_operations import (
     get_gradients,
     get_flattened_weight_vector,
@@ -296,15 +297,8 @@ def __calculate_random_projected_similarities(
         results[proj_dim] = {}
 
         # Calculate layer-wise projection dimensions proportionally
-        layer_params = {}
+        layer_params = get_num_parameters_per_layer(model)
         total_params = model.num_parameters()
-
-        # Count parameters per layer
-        for name, param in model.named_parameters():
-            layer_name = name.split('.')[0]  # Extract top-level layer name
-            if layer_name not in layer_params:
-                layer_params[layer_name] = 0
-            layer_params[layer_name] += param.numel()
 
         # Calculate proportional projection dimensions
         layer_proj_dims = {
