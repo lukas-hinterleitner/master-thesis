@@ -257,7 +257,6 @@ def __calculate_flattened_similarities(
 
 # ---------------------------------------------------------------------------
 
-
 def __calculate_random_projected_similarities(
     original_dataset_tokenized: Dataset,
     paraphrased_dataset_iterable: Dataset | IterableDataset,
@@ -296,20 +295,27 @@ def __calculate_random_projected_similarities(
         print(f"Projection dimension: {proj_dim}")
         results[proj_dim] = {}
 
-        # One projector per dimension
-        projector = CudaProjector(
-            grad_dim=model.num_parameters(),
-            proj_dim=proj_dim,
-            seed=42,
-            device=model.device,
-            proj_type=ProjectionType.rademacher,
-            max_batch_size=8,
-        )
+        # Calculate layer-wise projection dimensions proportionally
+        layer_params = {}
+        total_params = model.num_parameters()
+
+        # Count parameters per layer
+        for name, param in model.named_parameters():
+            layer_name = name.split('.')[0]  # Extract top-level layer name
+            if layer_name not in layer_params:
+                layer_params[layer_name] = 0
+            layer_params[layer_name] += param.numel()
+
+        # Calculate proportional projection dimensions
+        layer_proj_dims = {
+            layer: max(512, int(512 * round((count / total_params * proj_dim) / 512)))
+            for layer, count in layer_params.items()
+        }
 
         progress = tqdm(
             paraphrased_dataset_iterable,
-            desc="Gradients + similarities (random projection%s)"
-            % (" (model‑generated)" if is_model_generated else ""),
+            desc="Gradients + similarities (layer-wise projection%s)"
+                 % (" (model‑generated)" if is_model_generated else ""),
             position=1,
             leave=False,
         )
@@ -317,7 +323,7 @@ def __calculate_random_projected_similarities(
         for paraphrased_sample in progress:
             paraphrased_id = paraphrased_sample["id"]
 
-            # 1) Paraphrased gradients --------------------------------------------
+            # 1) Paraphrased gradients
             paraphrased_grad = __get_paraphrased_gradients(
                 paraphrased_sample,
                 model,
@@ -325,36 +331,94 @@ def __calculate_random_projected_similarities(
                 tokenizer=tokenizer,
                 paraphrased_config=paraphrased_config,
             )
-            paraphrased_flat = get_flattened_weight_vector(paraphrased_grad).half()
-            down_paraphrased = projector.project(
-                grads=paraphrased_flat.reshape(1, -1).cuda(model.device), model_id=0
-            ).cpu()
 
-            # 2) Candidates via BM25 --------------------------------------------
+            # Project each layer separately and concatenate results
+            down_paraphrased_parts = []
+            for layer_name, layer_grad in paraphrased_grad.items():
+                if layer_name not in layer_proj_dims:
+                    continue
+
+                # Create layer-specific projector
+                layer_projector = CudaProjector(
+                    grad_dim=layer_grad.numel(),
+                    proj_dim=layer_proj_dims[layer_name],
+                    seed=42 + hash(layer_name) % 10000,  # Different seed per layer
+                    device=model.device,
+                    proj_type=ProjectionType.rademacher,
+                    max_batch_size=8,
+                )
+
+                # Project and collect
+                flat_layer = layer_grad.flatten().half()
+                projected = layer_projector.project(
+                    grads=flat_layer.reshape(1, -1).cuda(model.device),
+                    model_id=0
+                ).cpu()
+
+                down_paraphrased_parts.append(projected.flatten())
+
+                # Clear CUDA cache after each layer
+                torch.cuda.empty_cache()
+
+            # Concatenate all layer projections
+            down_paraphrased = torch.cat(down_paraphrased_parts)
+
+            # 2) Candidates via BM25
             paraphrased_text = paraphrased_sample["paraphrased_messages"][0]["content"]
             top_indices = select_top_bm25_matches(
                 paraphrased_text, bm25, original_dataset_tokenized, paraphrased_id, top_k
             )
 
-            # 3) Compare to originals -------------------------------------------
+            # 3) Compare to originals
             results[proj_dim][paraphrased_id] = {}
             for original_sample in original_dataset_tokenized.select(top_indices):
                 original_id = original_sample["id"]
                 progress.set_description(f"P({paraphrased_id}) vs O({original_id})")
 
                 original_grad = get_gradients(model, original_sample)
-                original_flat = get_flattened_weight_vector(original_grad).half()
-                down_original = projector.project(
-                    grads=original_flat.reshape(1, -1).cuda(model.device), model_id=0
-                ).cpu()
 
+                # Project original gradients layer-wise
+                down_original_parts = []
+                for layer_name, layer_grad in original_grad.items():
+                    if layer_name not in layer_proj_dims:
+                        continue
+
+                    # Create layer-specific projector (same seeds as above)
+                    layer_projector = CudaProjector(
+                        grad_dim=layer_grad.numel(),
+                        proj_dim=layer_proj_dims[layer_name],
+                        seed=42 + hash(layer_name) % 10000,  # Same seed as paraphrased
+                        device=model.device,
+                        proj_type=ProjectionType.rademacher,
+                        max_batch_size=8,
+                    )
+
+                    # Project and collect
+                    flat_layer = layer_grad.flatten().half()
+                    projected = layer_projector.project(
+                        grads=flat_layer.reshape(1, -1).cuda(model.device),
+                        model_id=0
+                    ).cpu()
+
+                    down_original_parts.append(projected.flatten())
+
+                    # Clear CUDA cache after each layer
+                    torch.cuda.empty_cache()
+
+                # Concatenate all layer projections
+                down_original = torch.cat(down_original_parts)
+
+                # Calculate similarity
                 sim = similarity_function(
-                    down_paraphrased.flatten().cuda(model.device),
-                    down_original.flatten().cuda(model.device),
+                    down_paraphrased.cuda(model.device),
+                    down_original.cuda(model.device),
                 ).item()
                 results[proj_dim][paraphrased_id][original_id] = sim
 
-        progress.set_description("Finished random‑projected similarities")
+                # Clear CUDA cache after each comparison
+                torch.cuda.empty_cache()
+
+        progress.set_description("Finished layer-wise random‑projected similarities")
 
     return results
 
