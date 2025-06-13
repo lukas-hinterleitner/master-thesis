@@ -1,9 +1,9 @@
 from transformers import PreTrainedModel, PreTrainedTokenizerBase
 from datasets import load_from_disk, Dataset
 
-from .config.dataset import get_dataset_config, SAMPLE_SIZE
-from .config.storage import lima_paraphrased_dataset_path
-from .preprocessing import prepare_dataset
+from application.config.dataset import get_dataset_config, SAMPLE_SIZE
+from application.config.storage import lima_paraphrased_dataset_path
+from application.preprocessing import prepare_dataset
 
 def get_tokenized_datasets(model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase) -> tuple[Dataset, Dataset]:
     original_dataset_tokenized = get_original_dataset_tokenized(model, tokenizer)

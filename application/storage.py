@@ -1,9 +1,9 @@
 import json
 import os
 
-from .config.dataset import SAMPLE_SIZE
-from .config.model import MODEL_NAME
-from .config.storage import (
+from application.config.dataset import SAMPLE_SIZE
+from application.config.model import MODEL_NAME
+from application.config.storage import (
     gradient_similarity_storage_path,
     gradient_similarity_paraphrased_storage_path,
     gradient_similarity_model_generated_storage_path,
@@ -15,8 +15,6 @@ from .config.storage import (
     dot_product_model_generated_storage_path,
 
     results_folder_path, ExperimentType,
-
-
 )
 
 

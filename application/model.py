@@ -1,7 +1,7 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer, PreTrainedModel, PreTrainedTokenizer
 
-from .config.device import DEVICE
-from .config.model import MODEL_NAME
+from application.config.device import DEVICE
+from application.config.model import MODEL_NAME
 
 
 def get_model(model_name = MODEL_NAME, device = DEVICE) -> PreTrainedModel:

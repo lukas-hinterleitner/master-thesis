@@ -15,13 +15,13 @@ from transformers import PreTrainedModel, PreTrainedTokenizer
 from trak.projectors import CudaProjector, ProjectionType  # fast J‑L projector
 
 # Local project utilities ----------------------------------------------------
-from .config.dataset import get_dataset_config  # dataset‑specific settings
-from .model_operations import (
+from application.config.dataset import get_dataset_config  # dataset‑specific settings
+from application.model_operations import (
     get_gradients,
     get_flattened_weight_vector,
     generate_model_output_from_paraphrased_sample,
 )
-from .preprocessing import prepare_dataset
+from application.preprocessing import prepare_dataset
 
 # Disable noisy HF progress bars globally – we use tqdm explicitly instead.
 datasets.disable_progress_bar()

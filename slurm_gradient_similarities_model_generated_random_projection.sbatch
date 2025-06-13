@@ -10,4 +10,4 @@
 #SBATCH --nodelist=dgx-h100-em2
 #SBATCH --output=./out/gradient_similarities_model_generated_random_projection/slurm-%j.out
 
-python3 main.py --setting model-generated --computation-type gradient-similarity --use-random-projection
+uv run main.py --setting model-generated --computation-type gradient-similarity --use-random-projection

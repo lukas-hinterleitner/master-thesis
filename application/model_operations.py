@@ -4,7 +4,7 @@ from transformers import PreTrainedModel, PreTrainedTokenizer
 def get_gradients(model: PreTrainedModel, batch) -> dict[str, torch.Tensor]:
     gradients = {}
 
-    # set gradients to zero, so that gradients to not accumulate for each iteration
+    # set gradients to zero so that gradients to not accumulate for each iteration
     model.zero_grad()
 
     device = model.device
