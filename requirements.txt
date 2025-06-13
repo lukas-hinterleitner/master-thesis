@@ -14,6 +14,7 @@ aiohttp==3.12.12
     # via
     #   aiohttp-cors
     #   fsspec
+    #   litellm
     #   ray
     #   vllm
 aiohttp-cors==0.8.1
@@ -63,6 +64,7 @@ charset-normalizer==3.4.2
     # via requests
 click==8.2.1
     # via
+    #   litellm
     #   nltk
     #   ray
     #   rich-toolkit
@@ -196,9 +198,10 @@ httpcore==1.0.9
     # via httpx
 httptools==0.6.4
     # via uvicorn
-httpx==0.28.1
+httpx==0.27.2
     # via
     #   fastapi
+    #   litellm
     #   openai
 huggingface-hub==0.32.6
     # via
@@ -215,8 +218,11 @@ idna==3.10
     #   httpx
     #   requests
     #   yarl
+immutabledict==1.2.0
+    # via open-instruct
 importlib-metadata==8.0.0
     # via
+    #   litellm
     #   opentelemetry-api
     #   vllm
 interegular==0.3.3
@@ -237,6 +243,7 @@ jedi==0.19.2
 jinja2==3.1.6
     # via
     #   fastapi
+    #   litellm
     #   outlines
     #   torch
 jiter==0.10.0
@@ -247,6 +254,7 @@ joblib==1.5.1
     #   scikit-learn
 jsonschema==4.24.0
     # via
+    #   litellm
     #   mistral-common
     #   outlines
     #   outlines-core
@@ -257,10 +265,14 @@ jupyterlab-widgets==3.0.15
     # via ipywidgets
 kiwisolver==1.4.8
     # via matplotlib
+langdetect==1.0.9
+    # via open-instruct
 lark==1.2.2
     # via
     #   outlines
     #   vllm
+litellm==1.60.0
+    # via open-instruct
 llguidance==0.7.29 ; platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'x86_64'
     # via vllm
 llvmlite==0.44.0
@@ -382,6 +394,7 @@ nvitop==1.5.1
 openai==1.59.7
     # via
     #   gradient-similarity-analyzer
+    #   litellm
     #   vllm
 opencensus==0.11.4
     # via ray
@@ -522,6 +535,7 @@ pydantic==2.11.5
     #   compressed-tensors
     #   deepspeed
     #   fastapi
+    #   litellm
     #   lm-format-enforcer
     #   mistral-common
     #   openai
@@ -545,6 +559,7 @@ python-dateutil==2.9.0.post0
 python-dotenv==1.1.0
     # via
     #   gradient-similarity-analyzer
+    #   litellm
     #   uvicorn
 python-json-logger==3.3.0
     # via vllm
@@ -642,6 +657,7 @@ shellingham==1.5.4
 six==1.17.0
     # via
     #   docker-pycreds
+    #   langdetect
     #   opencensus
     #   python-dateutil
     #   tensorboard
@@ -652,6 +668,7 @@ smmap==5.0.2
 sniffio==1.3.1
     # via
     #   anyio
+    #   httpx
     #   openai
 stack-data==0.6.3
     # via ipython
@@ -671,11 +688,13 @@ threadpoolctl==3.6.0
     # via scikit-learn
 tiktoken==0.9.0
     # via
+    #   litellm
     #   mistral-common
     #   vllm
     #   xgrammar
 tokenizers==0.21.1
     # via
+    #   litellm
     #   transformers
     #   vllm
 torch==2.6.0+cu124 ; sys_platform != 'darwin'

@@ -12,9 +12,14 @@ git submodule update
 All necessary packages can be installed using either [UV](https://docs.astral.sh/uv/) or [PIP](https://pypi.org/project/pip/).
 
 #### Install necessary packages using UV
-```bash
+```shell
 uv sync
 uv pip install --no-build-isolation traker[fast]==0.3.2
+```
+
+Activate virtual environment: 
+```shell
+source .venv/bin/activate
 ```
 
 #### Install necessary packages using PIP
