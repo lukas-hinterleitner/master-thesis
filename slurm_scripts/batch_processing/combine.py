@@ -3,6 +3,7 @@ import json
 import os
 import sys
 from pathlib import Path
+from collections import OrderedDict
 
 project_root = Path(__file__).resolve().parents[2]
 sys.path.append(str(project_root))
@@ -48,6 +49,20 @@ def combine_gradient_similarity_results(file_paths, output_path):
                     combined_results[dimension] = {}
                 combined_results[dimension].update(results)
 
+    # Sort the combined results by their first key
+    if combined_results:
+        # Check if it's nested (random projection results) or flat structure
+        first_key = next(iter(combined_results))
+        if isinstance(combined_results[first_key], dict):
+            # Nested structure - sort each dimension's results by key
+            sorted_results = OrderedDict()
+            for dimension in sorted(combined_results.keys()):
+                sorted_results[dimension] = OrderedDict(sorted(combined_results[dimension].items()))
+            combined_results = sorted_results
+        else:
+            # Flat structure - sort by main keys
+            combined_results = OrderedDict(sorted(combined_results.items()))
+
     with open(output_path, 'w') as f:
         json.dump(combined_results, f, indent=4)
 
@@ -78,6 +93,11 @@ def combine_dot_product_results(file_paths, output_path_template):
             results = json.load(f)
             combined_original_dot_products.update(results)
 
+    # Sort all results by their keys
+    combined_dot_products = OrderedDict(sorted(combined_dot_products.items()))
+    combined_paraphrased_dot_products = OrderedDict(sorted(combined_paraphrased_dot_products.items()))
+    combined_original_dot_products = OrderedDict(sorted(combined_original_dot_products.items()))
+
     # Write combined results
     with open(output_path_template.format("dot_products"), 'w') as f:
         json.dump(combined_dot_products, f, indent=4)
@@ -98,12 +118,12 @@ def main():
         "--result-type",
         type=str,
         choices=[
-            "paraphrased-gradient", 
-            "paraphrased-gradient-projection",
-            "paraphrased-dot-product",
-            "model-generated-gradient",
-            "model-generated-gradient-projection",
-            "model-generated-dot-product"
+            "paraphrased-gradient-similarities",
+            "paraphrased-random-projected-gradient-similarities",
+            "paraphrased-layer-dot-products",
+            "model-generated-gradient-similarities",
+            "model-generated-random-projected-gradient-similarities",
+            "model-generated-layer-dot-products"
         ],
         required=True,
         help="Type of results to combine"
@@ -115,19 +135,19 @@ def main():
     model_name = MODEL_NAME
 
     # Determine paths based on result type
-    if args.result_type == "paraphrased-gradient":
+    if args.result_type == "paraphrased-gradient-similarities":
         base_path = os.path.join(gradient_similarity_paraphrased_storage_path, model_name)
         file_pattern = "sample_size_*_part_*_*.json"
         output_path = os.path.join(base_path, "sample_size_full.json")
         combine_function = combine_gradient_similarity_results
 
-    elif args.result_type == "paraphrased-gradient-projection":
+    elif args.result_type == "paraphrased-random-projected-gradient-similarities":
         base_path = os.path.join(gradient_similarity_random_projection_paraphrased_storage_path, model_name)
         file_pattern = "sample_size_*_part_*_*.json"
         output_path = os.path.join(base_path, "sample_size_full.json")
         combine_function = combine_gradient_similarity_results
 
-    elif args.result_type == "paraphrased-dot-product":
+    elif args.result_type == "paraphrased-layer-dot-products":
         base_path = os.path.join(dot_product_paraphrased_storage_path, model_name, "sample_size", "full")
         os.makedirs(base_path, exist_ok=True)
         file_pattern = "*_part_*_*.json"
@@ -138,19 +158,19 @@ def main():
         combine_dot_product_results(file_paths, output_path_template)
         return
 
-    elif args.result_type == "model-generated-gradient":
+    elif args.result_type == "model-generated-gradient-similarities":
         base_path = os.path.join(gradient_similarity_model_generated_storage_path, model_name)
         file_pattern = "sample_size_*_part_*_*.json"
         output_path = os.path.join(base_path, "sample_size_full.json")
         combine_function = combine_gradient_similarity_results
 
-    elif args.result_type == "model-generated-gradient-projection":
+    elif args.result_type == "model-generated-random-projected-gradient-similarities":
         base_path = os.path.join(gradient_similarity_random_projection_model_generated_storage_path, model_name)
         file_pattern = "sample_size_*_part_*_*.json"
         output_path = os.path.join(base_path, "sample_size_full.json")
         combine_function = combine_gradient_similarity_results
 
-    elif args.result_type == "model-generated-dot-product":
+    elif args.result_type == "model-generated-layer-dot-products":
         base_path = os.path.join(dot_product_model_generated_storage_path, model_name, "sample_size", "full")
         os.makedirs(base_path, exist_ok=True)
         file_pattern = "*_part_*_*.json"
@@ -171,7 +191,7 @@ def main():
     print(f"Found {len(file_paths)} partial result files")
 
     # Combine results
-    if args.result_type in ["paraphrased-dot-product", "model-generated-dot-product"]:
+    if args.result_type in ["paraphrased-layer-dot-products", "model-generated-layer-dot-products"]:
         combine_dot_product_results(file_paths, output_path)
     else:
         combine_gradient_similarity_results(file_paths, output_path)
