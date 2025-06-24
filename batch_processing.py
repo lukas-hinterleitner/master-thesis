@@ -49,10 +49,14 @@ def create_slurm_script(partition_idx, start_idx, end_idx, script_dir, setting, 
     """
     os.makedirs(script_dir, exist_ok=True)
 
+    # Create a descriptive folder_name for the output
+    folder_name = f"{setting}_{computation_type}"
+
     # Create a descriptive name for the job
     job_name = f"{setting}_{computation_type}"
     if use_random_projection:
         job_name += "_random_projection"
+        folder_name += "_random_projection"
     job_name += f"_part_{partition_idx}"
 
     script_path = os.path.join(script_dir, f"{job_name}.sbatch")
@@ -73,7 +77,7 @@ def create_slurm_script(partition_idx, start_idx, end_idx, script_dir, setting, 
 #SBATCH --gres=gpu:1
 #SBATCH --time=1-12:00:00
 #SBATCH --nodelist=dgx-h100-em2
-#SBATCH --output=./out/batch_processed/{job_name}/slurm-%j.out
+#SBATCH --output=./out/batch_processed/{folder_name}/part_{partition_idx}/slurm-%j.out
 #SBATCH --job-name={job_name}
 
 python3 main.py {cmd_args}
