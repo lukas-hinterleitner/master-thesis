@@ -73,7 +73,7 @@ def create_slurm_script(partition_idx, start_idx, end_idx, script_dir, setting, 
 #SBATCH --gres=gpu:1
 #SBATCH --time=1-12:00:00
 #SBATCH --nodelist=dgx-h100-em2
-#SBATCH --output=./out/{job_name}/slurm-%j.out
+#SBATCH --output=./out/batch_processed/{job_name}/slurm-%j.out
 #SBATCH --job-name={job_name}
 
 python3 main.py {cmd_args}
