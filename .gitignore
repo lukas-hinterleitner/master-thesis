@@ -180,3 +180,5 @@ cython_debug/
 /.cadence/
 out
 papers
+slurm_scripts/*.sbatch
+
