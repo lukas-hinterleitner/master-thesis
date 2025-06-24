@@ -27,13 +27,13 @@ This script will create and submit multiple SLURM jobs, dividing the dataset int
 To generate and submit jobs for a specific computation type:
 
 ```bash
-python slurm_scripts/batch_processing/batch_processing.py --setting [paraphrased|model-generated] --computation-type [dot-product|gradient-similarity] [--use-random-projection] --num-partitions 10
+python slurm_scripts/batch_processing/compute.py --setting [paraphrased|model-generated] --computation-type [dot-product|gradient-similarity] [--use-random-projection] --num-partitions 10
 ```
 
 For example, to submit jobs for paraphrased gradient similarity with 10 partitions:
 
 ```bash
-python slurm_scripts/batch_processing/batch_processing.py --setting paraphrased --computation-type gradient-similarity --num-partitions 10
+python slurm_scripts/batch_processing/compute.py --setting paraphrased --computation-type gradient-similarity --num-partitions 10
 ```
 
 ### Option 3: Dry run (generate scripts without submitting)
@@ -41,7 +41,7 @@ python slurm_scripts/batch_processing/batch_processing.py --setting paraphrased 
 To generate SLURM scripts without submitting them (useful for review):
 
 ```bash
-python slurm_scripts/batch_processing/batch_processing.py --setting paraphrased --computation-type gradient-similarity --num-partitions 10 --dry-run
+python slurm_scripts/batch_processing/compute.py --setting paraphrased --computation-type gradient-similarity --num-partitions 10 --dry-run
 ```
 
 ## Combining Results
