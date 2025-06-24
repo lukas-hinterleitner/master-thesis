@@ -5,6 +5,8 @@ papers
 .cadence
 .github
 .git
+.gitignore
+.gitmodules
 
 images
 *.ipynb
@@ -16,6 +18,5 @@ submodules/open-instruct/**
 !submodules/open-instruct/*.*
 
 *.sbatch
-batch_processing.py
-combine_results.py
+slurm_scripts
 README_SLURM.md
