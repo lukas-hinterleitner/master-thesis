@@ -16,3 +16,6 @@ submodules/open-instruct/**
 !submodules/open-instruct/*.*
 
 *.sbatch
+batch_processing.py
+combine_results.py
+README_SLURM.md
