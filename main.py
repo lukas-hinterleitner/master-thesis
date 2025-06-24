@@ -8,9 +8,9 @@ import numpy as np
 import torch
 import trak
 
-from application.model import get_model, get_tokenizer
+from src.model import get_model, get_tokenizer
 
-from application.computation import (
+from src.computation import (
     calculate_paraphrased_layer_dot_products,
     calculate_model_generated_layer_dot_products,
     calculate_model_generated_gradient_similarities,
@@ -18,12 +18,12 @@ from application.computation import (
     calculate_paraphrased_random_projected_gradient_similarities,
     calculate_model_generated_random_projected_gradient_similarities
 )
-from application.dataset import (
+from src.dataset import (
     get_tokenized_datasets,
     get_original_dataset_tokenized,
     get_paraphrased_dataset
 )
-from application.storage import (
+from src.storage import (
     get_dot_product_paraphrased_file_path,
     get_dot_product_model_generated_file_path,
     get_gradient_similarity_model_generated_file_path,

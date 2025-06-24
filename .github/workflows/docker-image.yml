@@ -5,14 +5,14 @@ on:
     branches: [ "main" ]
     paths:
       - 'Dockerfile'
-      - 'application/submodules/open-instruct/**'
+      - '../../src/submodules/open-instruct/**'
       - 'pyproject.toml'
       - 'uv.lock'
   pull_request:
     branches: [ "main" ]
     paths:
       - 'Dockerfile'
-      - 'application/submodules/open-instruct/**'
+      - '../../src/submodules/open-instruct/**'
       - 'pyproject.toml'
       - 'uv.lock'
 

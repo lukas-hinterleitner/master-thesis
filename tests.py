@@ -5,12 +5,12 @@ import torch
 from datasets import load_from_disk
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from application.config.model import hf_model_id
-from application.config.dataset import get_dataset_config
-from application.config.storage import lima_paraphrased_dataset_path
+from src.config.model import MODEL_NAME
+from src.config.dataset import get_dataset_config
+from src.config.storage import lima_paraphrased_dataset_path
 
-from application.model_operations import get_gradients
-from application.preprocessing import prepare_dataset
+from src.model_operations import get_gradients
+from src.preprocessing import prepare_dataset
 
 torch.manual_seed(42)
 np.random.seed(42)
@@ -18,8 +18,8 @@ random.seed(42)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-model = AutoModelForCausalLM.from_pretrained(hf_model_id)
-tokenizer = AutoTokenizer.from_pretrained(hf_model_id)
+model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
