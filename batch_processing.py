@@ -72,6 +72,7 @@ def create_slurm_script(partition_idx, start_idx, end_idx, script_dir, setting, 
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:1
 #SBATCH --time=1-12:00:00
+#SBATCH --nodelist=dgx-h100-em2
 #SBATCH --output=./out/{job_name}/slurm-%j.out
 #SBATCH --job-name={job_name}
 
