@@ -93,5 +93,5 @@ TODO: the above examples do not represent the new structures with individual lay
 
 ### Create requirements.txt from UV config files:
 ```shell
-uv export --format requirements-txt --no-hashes > requirements.txt
+uv export --format requirements-txt --no-hashes -o requirements.txt
 ```
