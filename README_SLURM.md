@@ -17,7 +17,7 @@ Ensure you have set up the environment as described in the main README.md file.
 To generate and submit all jobs for all computation types:
 
 ```bash
-bash slurm_scripts/run_all.sh
+bash slurm_scripts/batch_processing/compute_all.sh
 ```
 
 This script will create and submit multiple SLURM jobs, dividing the dataset into partitions.
@@ -51,7 +51,7 @@ After all jobs have completed, you need to combine the partial results into a si
 ### Option 1: Combine all results at once
 
 ```bash
-bash slurm_scripts/combine_all_results.sh
+bash slurm_scripts/batch_processing/combine_all.sh
 ```
 
 This will combine all partial results for all computation types.

@@ -2,9 +2,13 @@ import argparse
 import math
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 from datasets import load_from_disk
+
+project_root = Path(__file__).resolve().parents[2]
+sys.path.append(str(project_root))
 
 from src.config.storage import lima_paraphrased_dataset_path
 

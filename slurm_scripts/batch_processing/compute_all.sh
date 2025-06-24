@@ -26,6 +26,6 @@ python slurm_scripts/batch_processing/compute.py --setting model-generated --com
 
 # Generate and submit jobs for model-generated dot product
 echo "Generating model-generated dot product jobs..."
-python slurm_scripts/batch_processing/compute.py --setting model-generated --computation-type dot-product --num-partitions $NUM_PARTITIONS
+python slurm_scripts/batch_processing/batch_processing.py --setting model-generated --computation-type dot-product --num-partitions $NUM_PARTITIONS
 
 echo "All jobs submitted!"
