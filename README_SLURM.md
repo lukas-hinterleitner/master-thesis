@@ -27,13 +27,13 @@ This script will create and submit multiple SLURM jobs, dividing the dataset int
 To generate and submit jobs for a specific computation type:
 
 ```bash
-python src/batch_processing.py --setting [paraphrased|model-generated] --computation-type [dot-product|gradient-similarity] [--use-random-projection] --num-partitions 10
+python batch_processing.py --setting [paraphrased|model-generated] --computation-type [dot-product|gradient-similarity] [--use-random-projection] --num-partitions 10
 ```
 
 For example, to submit jobs for paraphrased gradient similarity with 10 partitions:
 
 ```bash
-python src/batch_processing.py --setting paraphrased --computation-type gradient-similarity --num-partitions 10
+python batch_processing.py --setting paraphrased --computation-type gradient-similarity --num-partitions 10
 ```
 
 ### Option 3: Dry run (generate scripts without submitting)
@@ -41,7 +41,7 @@ python src/batch_processing.py --setting paraphrased --computation-type gradient
 To generate SLURM scripts without submitting them (useful for review):
 
 ```bash
-python src/batch_processing.py --setting paraphrased --computation-type gradient-similarity --num-partitions 10 --dry-run
+python batch_processing.py --setting paraphrased --computation-type gradient-similarity --num-partitions 10 --dry-run
 ```
 
 ## Combining Results
@@ -59,7 +59,7 @@ This will combine all partial results for all computation types.
 ### Option 2: Combine specific result types
 
 ```bash
-python src/combine_results.py --result-type [result-type]
+python combine_results.py --result-type [result-type]
 ```
 
 Where [result-type] is one of:
@@ -73,7 +73,7 @@ Where [result-type] is one of:
 For example:
 
 ```bash
-python src/combine_results.py --result-type paraphrased-gradient
+python combine_results.py --result-type paraphrased-gradient
 ```
 
 ## Checking Job Status
