@@ -10,7 +10,7 @@ dependencies = [
     "open-instruct",
     "openai==1.59.7",
     "pandas==2.2.3",
-    "python-dotenv==1.1.0",
+    "python-dotenv==1.1.1",
     "rank-bm25==0.2.2",
     "scikit-learn==1.6.1",
     "seaborn==0.13.2",
