@@ -7,6 +7,7 @@ import time
 import numpy as np
 import torch
 import trak
+import os
 
 from src.model import get_model, get_tokenizer
 
@@ -73,6 +74,20 @@ def parse_args():
         help="Use random projection for the computation. Only relevant for gradient similarity."
     )
 
+    parser.add_argument(
+        "--partition-start",
+        type=int,
+        default=None,
+        help="Start index of the dataset partition to process"
+    )
+
+    parser.add_argument(
+        "--partition-end",
+        type=int,
+        default=None,
+        help="End index of the dataset partition to process"
+    )
+
     return parser.parse_args()
 
 def main():
@@ -81,10 +96,14 @@ def main():
     setting = Setting(args.setting)
     computation_type = ComputationType(args.computation_type)
     use_random_projection = args.use_random_projection
+    partition_start = args.partition_start
+    partition_end = args.partition_end
 
     print(f"Setting: {setting}")
     print(f"Computation Type: {computation_type}")
     print(f"Use Random Projection: {use_random_projection}")
+    if partition_start is not None and partition_end is not None:
+        print(f"Processing partition: {partition_start}-{partition_end}")
 
     torch.manual_seed(42)
     np.random.seed(42)
@@ -101,26 +120,36 @@ def main():
     if setting == Setting.PARAPHRASED:
         if computation_type == ComputationType.DOT_PRODUCT:
             # dot product paraphrased
-
-            original_dataset_tokenized, paraphrased_dataset_tokenized = get_tokenized_datasets(model, tokenizer)
+            original_dataset_tokenized, paraphrased_dataset_tokenized = get_tokenized_datasets(
+                model, tokenizer, partition_start, partition_end)
 
             dot_products, paraphrased_dot_products, original_dot_products = calculate_paraphrased_layer_dot_products(
                 original_dataset_tokenized, paraphrased_dataset_tokenized, model)
 
+            # Generate partition-specific filenames if processing a partition
+            filename_suffix = ""
+            if partition_start is not None and partition_end is not None:
+                filename_suffix = f"_part_{partition_start}_{partition_end}"
+
             # store dot products
-            with open(get_dot_product_paraphrased_file_path("dot_products"), "w") as output_file:
+            with open(get_dot_product_paraphrased_file_path(f"dot_products{filename_suffix}"), "w") as output_file:
                 json.dump(dot_products, output_file, indent=4)
 
-            with open(get_dot_product_paraphrased_file_path("paraphrased_dot_products"), "w") as output_file:
+            with open(get_dot_product_paraphrased_file_path(f"paraphrased_dot_products{filename_suffix}"), "w") as output_file:
                 json.dump(paraphrased_dot_products, output_file, indent=4)
 
-            with open(get_dot_product_paraphrased_file_path("original_dot_products"), "w") as output_file:
+            with open(get_dot_product_paraphrased_file_path(f"original_dot_products{filename_suffix}"), "w") as output_file:
                 json.dump(original_dot_products, output_file, indent=4)
 
         elif computation_type == ComputationType.GRADIENT_SIMILARITY:
             # gradient similarity paraphrased
+            original_dataset_tokenized, paraphrased_dataset_tokenized = get_tokenized_datasets(
+                model, tokenizer, partition_start, partition_end)
 
-            original_dataset_tokenized, paraphrased_dataset_tokenized = get_tokenized_datasets(model, tokenizer)
+            # Generate partition-specific filenames if processing a partition
+            filename_suffix = ""
+            if partition_start is not None and partition_end is not None:
+                filename_suffix = f"_part_{partition_start}_{partition_end}"
 
             if use_random_projection:
                 trak.test_install(use_fast_jl=True)
@@ -132,7 +161,13 @@ def main():
                     model
                 )
 
-                with open(get_gradient_similarity_paraphrased_random_projection_file_path(), "w") as output_file:
+                output_path = get_gradient_similarity_paraphrased_random_projection_file_path()
+                if filename_suffix:
+                    # Insert suffix before file extension
+                    base, ext = os.path.splitext(output_path)
+                    output_path = f"{base}{filename_suffix}{ext}"
+
+                with open(output_path, "w") as output_file:
                     json.dump(gradient_similarities, output_file, indent=4)
             else:
                 # no random projection
@@ -142,32 +177,48 @@ def main():
                     model
                 )
 
-                with open(get_gradient_similarity_paraphrased_file_path(), "w") as output_file:
+                output_path = get_gradient_similarity_paraphrased_file_path()
+                if filename_suffix:
+                    # Insert suffix before file extension
+                    base, ext = os.path.splitext(output_path)
+                    output_path = f"{base}{filename_suffix}{ext}"
+
+                with open(output_path, "w") as output_file:
                     json.dump(gradient_similarities, output_file, indent=4)
 
     elif setting == Setting.MODEL_GENERATED:
         if computation_type == ComputationType.DOT_PRODUCT:
             # dot product model generated
-
-            original_dataset_tokenized, paraphrased_dataset_tokenized = get_tokenized_datasets(model, tokenizer)
+            original_dataset_tokenized, paraphrased_dataset_tokenized = get_tokenized_datasets(
+                model, tokenizer, partition_start, partition_end)
 
             dot_products, paraphrased_dot_products, original_dot_products = calculate_model_generated_layer_dot_products(
                 original_dataset_tokenized, paraphrased_dataset_tokenized, model, tokenizer)
 
+            # Generate partition-specific filenames if processing a partition
+            filename_suffix = ""
+            if partition_start is not None and partition_end is not None:
+                filename_suffix = f"_part_{partition_start}_{partition_end}"
+
             # store dot products
-            with open(get_dot_product_model_generated_file_path("dot_products"), "w") as output_file:
+            with open(get_dot_product_model_generated_file_path(f"dot_products{filename_suffix}"), "w") as output_file:
                 json.dump(dot_products, output_file, indent=4)
 
-            with open(get_dot_product_model_generated_file_path("paraphrased_dot_products"), "w") as output_file:
+            with open(get_dot_product_model_generated_file_path(f"paraphrased_dot_products{filename_suffix}"), "w") as output_file:
                 json.dump(paraphrased_dot_products, output_file, indent=4)
 
-            with open(get_dot_product_model_generated_file_path("original_dot_products"), "w") as output_file:
+            with open(get_dot_product_model_generated_file_path(f"original_dot_products{filename_suffix}"), "w") as output_file:
                 json.dump(original_dot_products, output_file, indent=4)
 
         elif computation_type == ComputationType.GRADIENT_SIMILARITY:
             # gradient similarity model generated
             original_dataset_tokenized = get_original_dataset_tokenized(model, tokenizer)
-            paraphrased_dataset = get_paraphrased_dataset()
+            paraphrased_dataset = get_paraphrased_dataset(partition_start=partition_start, partition_end=partition_end)
+
+            # Generate partition-specific filenames if processing a partition
+            filename_suffix = ""
+            if partition_start is not None and partition_end is not None:
+                filename_suffix = f"_part_{partition_start}_{partition_end}"
 
             if use_random_projection:
                 trak.test_install(use_fast_jl=True)
@@ -180,7 +231,13 @@ def main():
                     tokenizer
                 )
 
-                with open(get_gradient_similarity_model_generated_random_projection_file_path(), "w") as output_file:
+                output_path = get_gradient_similarity_model_generated_random_projection_file_path()
+                if filename_suffix:
+                    # Insert suffix before file extension
+                    base, ext = os.path.splitext(output_path)
+                    output_path = f"{base}{filename_suffix}{ext}"
+
+                with open(output_path, "w") as output_file:
                     json.dump(gradient_similarities, output_file, indent=4)
             else:
                 # no random projection
@@ -191,7 +248,13 @@ def main():
                     tokenizer
                 )
 
-                with open(get_gradient_similarity_model_generated_file_path(), "w") as output_file:
+                output_path = get_gradient_similarity_model_generated_file_path()
+                if filename_suffix:
+                    # Insert suffix before file extension
+                    base, ext = os.path.splitext(output_path)
+                    output_path = f"{base}{filename_suffix}{ext}"
+
+                with open(output_path, "w") as output_file:
                     json.dump(gradient_similarities, output_file, indent=4)
 
     elapsed_time = time.time() - start_time

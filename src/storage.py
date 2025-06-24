@@ -24,7 +24,11 @@ def get_gradient_similarity_file_path(model_name = MODEL_NAME, sample_size = SAM
     if not os.path.exists(path):
         os.makedirs(path)
 
-    return os.path.join(path, f"sample_size_{sample_size}.csv")
+    # If sample_size is None, the path will have 'full' instead of a number
+    if sample_size is None:
+        return os.path.join(path, "sample_size_full.csv")
+    else:
+        return os.path.join(path, f"sample_size_{sample_size}.csv")
 
 def get_gradient_similarity_paraphrased_file_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):
     path = str(os.path.join(gradient_similarity_paraphrased_storage_path, model_name))
@@ -32,7 +36,11 @@ def get_gradient_similarity_paraphrased_file_path(model_name = MODEL_NAME, sampl
     if not os.path.exists(path):
         os.makedirs(path)
 
-    return os.path.join(path, f"sample_size_{sample_size}.json")
+    # If sample_size is None, the path will have 'full' instead of a number
+    if sample_size is None:
+        return os.path.join(path, "sample_size_full.json")
+    else:
+        return os.path.join(path, f"sample_size_{sample_size}.json")
 
 def get_gradient_similarity_model_generated_file_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):
     path = str(os.path.join(gradient_similarity_model_generated_storage_path, model_name))
@@ -40,7 +48,11 @@ def get_gradient_similarity_model_generated_file_path(model_name = MODEL_NAME, s
     if not os.path.exists(path):
         os.makedirs(path)
 
-    return os.path.join(path, f"sample_size_{sample_size}.json")
+    # If sample_size is None, the path will have 'full' instead of a number
+    if sample_size is None:
+        return os.path.join(path, "sample_size_full.json")
+    else:
+        return os.path.join(path, f"sample_size_{sample_size}.json")
 
 def get_gradient_similarity_paraphrased_random_projection_file_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):
     path = str(os.path.join(gradient_similarity_random_projection_paraphrased_storage_path, model_name))
@@ -48,7 +60,11 @@ def get_gradient_similarity_paraphrased_random_projection_file_path(model_name =
     if not os.path.exists(path):
         os.makedirs(path)
 
-    return os.path.join(path, f"sample_size_{sample_size}.json")
+    # If sample_size is None, the path will have 'full' instead of a number
+    if sample_size is None:
+        return os.path.join(path, "sample_size_full.json")
+    else:
+        return os.path.join(path, f"sample_size_{sample_size}.json")
 
 def get_gradient_similarity_model_generated_random_projection_file_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):
     path = str(os.path.join(gradient_similarity_random_projection_model_generated_storage_path, model_name))
@@ -56,10 +72,18 @@ def get_gradient_similarity_model_generated_random_projection_file_path(model_na
     if not os.path.exists(path):
         os.makedirs(path)
 
-    return os.path.join(path, f"sample_size_{sample_size}.json")
+    # If sample_size is None, the path will have 'full' instead of a number
+    if sample_size is None:
+        return os.path.join(path, "sample_size_full.json")
+    else:
+        return os.path.join(path, f"sample_size_{sample_size}.json")
 
 def get_dot_product_paraphrased_file_path(filename, model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):
-    path = os.path.join(dot_product_paraphrased_storage_path, str(model_name), "sample_size", str(sample_size))
+    # If sample_size is None, the path will have 'full' instead of a number
+    if sample_size is None:
+        path = os.path.join(dot_product_paraphrased_storage_path, str(model_name), "sample_size", "full")
+    else:
+        path = os.path.join(dot_product_paraphrased_storage_path, str(model_name), "sample_size", str(sample_size))
 
     if not os.path.exists(path):
         os.makedirs(path)
@@ -67,7 +91,11 @@ def get_dot_product_paraphrased_file_path(filename, model_name = MODEL_NAME, sam
     return os.path.join(path, f"{filename}.json")
 
 def get_dot_product_paraphrased_files(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE) -> tuple[dict[str, dict[str, dict[str, float]]], dict[str, dict[str, float]], dict[str, dict[str, float]]]:
-    path = os.path.join(dot_product_paraphrased_storage_path, str(model_name), "sample_size", str(sample_size))
+    # If sample_size is None, the path will have 'full' instead of a number
+    if sample_size is None:
+        path = os.path.join(dot_product_paraphrased_storage_path, str(model_name), "sample_size", "full")
+    else:
+        path = os.path.join(dot_product_paraphrased_storage_path, str(model_name), "sample_size", str(sample_size))
 
     # load dot_products.json
     with open(os.path.join(path, "dot_products.json")) as f:
@@ -87,7 +115,11 @@ def get_dot_product_paraphrased_files(model_name = MODEL_NAME, sample_size = SAM
     return dot_products, paraphrased_dot_products, original_dot_products
 
 def get_dot_product_model_generated_file_path(filename, model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):
-    path = os.path.join(dot_product_model_generated_storage_path, str(model_name), "sample_size", str(sample_size))
+    # If sample_size is None, the path will have 'full' instead of a number
+    if sample_size is None:
+        path = os.path.join(dot_product_model_generated_storage_path, str(model_name), "sample_size", "full")
+    else:
+        path = os.path.join(dot_product_model_generated_storage_path, str(model_name), "sample_size", str(sample_size))
 
     if not os.path.exists(path):
         os.makedirs(path)
@@ -95,7 +127,11 @@ def get_dot_product_model_generated_file_path(filename, model_name = MODEL_NAME,
     return os.path.join(path, f"{filename}.json")
 
 def get_dot_product_model_generated_files(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE) -> tuple[dict[str, dict[str, dict[str, float]]], dict[str, dict[str, float]], dict[str, dict[str, float]]]:
-    path = os.path.join(dot_product_model_generated_storage_path, str(model_name), "sample_size", str(sample_size))
+    # If sample_size is None, the path will have 'full' instead of a number
+    if sample_size is None:
+        path = os.path.join(dot_product_model_generated_storage_path, str(model_name), "sample_size", "full")
+    else:
+        path = os.path.join(dot_product_model_generated_storage_path, str(model_name), "sample_size", str(sample_size))
 
     # load dot_products.json
     with open(os.path.join(path, "dot_products.json")) as f:
@@ -132,7 +168,11 @@ def get_results_parameters_per_layer_folder_path(model_name = MODEL_NAME):
     return path
 
 def get_results_accuracy_per_layer_folder_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE, experiment_type: ExperimentType = ExperimentType.PARAPHRASED):
-    path = os.path.join(results_folder_path, "accuracy_per_layer", experiment_type.value, model_name, "sample_size", str(sample_size))
+    # If sample_size is None, the path will have 'full' instead of a number
+    if sample_size is None:
+        path = os.path.join(results_folder_path, "accuracy_per_layer", experiment_type.value, model_name, "sample_size", "full")
+    else:
+        path = os.path.join(results_folder_path, "accuracy_per_layer", experiment_type.value, model_name, "sample_size", str(sample_size))
 
     if not os.path.exists(path):
         os.makedirs(path)
@@ -140,7 +180,11 @@ def get_results_accuracy_per_layer_folder_path(model_name = MODEL_NAME, sample_s
     return path
 
 def get_results_layer_comparison_full_gradient_folder_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE, experiment_type: ExperimentType = ExperimentType.PARAPHRASED):
-    path = os.path.join(results_folder_path, "layer_comparison_full_gradient", experiment_type.value, model_name, "sample_size", str(sample_size))
+    # If sample_size is None, the path will have 'full' instead of a number
+    if sample_size is None:
+        path = os.path.join(results_folder_path, "layer_comparison_full_gradient", experiment_type.value, model_name, "sample_size", "full")
+    else:
+        path = os.path.join(results_folder_path, "layer_comparison_full_gradient", experiment_type.value, model_name, "sample_size", str(sample_size))
 
     if not os.path.exists(path):
         os.makedirs(path)
@@ -148,7 +192,11 @@ def get_results_layer_comparison_full_gradient_folder_path(model_name = MODEL_NA
     return path
 
 def get_results_self_similarities_over_layers_folder_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE, experiment_type: ExperimentType = ExperimentType.PARAPHRASED):
-    path = os.path.join(results_folder_path, "self_similarity_over_layers", experiment_type.value, model_name, "sample_size", str(sample_size))
+    # If sample_size is None, the path will have 'full' instead of a number
+    if sample_size is None:
+        path = os.path.join(results_folder_path, "self_similarity_over_layers", experiment_type.value, model_name, "sample_size", "full")
+    else:
+        path = os.path.join(results_folder_path, "self_similarity_over_layers", experiment_type.value, model_name, "sample_size", str(sample_size))
 
     if not os.path.exists(path):
         os.makedirs(path)
