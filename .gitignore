@@ -12,6 +12,8 @@ data/paraphrased
 !data/paraphrased/state.json
 !data/paraphrased/dataset_info.json
 
+data/**/*_part_*.json
+
 **/.virtual_documents
 
 # Byte-compiled / optimized / DLL files
