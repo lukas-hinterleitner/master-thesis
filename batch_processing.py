@@ -68,10 +68,10 @@ def create_slurm_script(partition_idx, start_idx, end_idx, script_dir, setting, 
 #SBATCH --container-image=lukashinterleitner/master-thesis-data-science:latest
 #SBATCH --container-mounts=/srv/home/users/$USER/master-thesis:/app
 #SBATCH --container-mount-home
-#SBATCH --mem=124G
-#SBATCH --cpus-per-task=16
+#SBATCH --mem=86G
+#SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:1
-#SBATCH --time=14-00:00:00
+#SBATCH --time=3-00:00:00
 #SBATCH --output=./out/{job_name}/slurm-%j.out
 #SBATCH --job-name={job_name}
 
