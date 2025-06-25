@@ -45,12 +45,8 @@ pip install --no-build-isolation traker[fast]==0.3.2
 ```
 
 ### Docker Setup (Alternative)
-You can also use the provided Dockerfile to create a container with all dependencies:
-
-```shell
-docker build -t gradient-similarity-analyzer .
-docker run -it --gpus all gradient-similarity-analyzer
-```
+Docker images are automatically built and pushed to the Docker Hub repository [here](https://hub.docker.com/r/lukashinterleitner/master-thesis-data-science).
+This docker image is then used in the SLURM scripts to run the analysis on a SLURM cluster and support batch processing over multiple nodes.
 
 ## Before Execution
 Create a .env file in the root folder of the repository with the following content:
