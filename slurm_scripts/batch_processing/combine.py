@@ -47,30 +47,28 @@ def combine_gradient_similarity_results(file_paths, output_path):
         with open(file_path, 'r') as f:
             partial_results = json.load(f)
 
-        # For standard gradient similarity results
-        if isinstance(partial_results, dict) and not any(isinstance(v, dict) for v in partial_results.values()):
-            combined_results.update(partial_results)
-
-        # For nested results (like random projection results with dimensions as keys)
-        elif isinstance(partial_results, dict):
+        # For random projection results (nested by dimension)
+        if isinstance(partial_results, dict) and all(isinstance(v, dict) for v in partial_results.values()) and not any(k.startswith("lima_") for k in partial_results.keys()):
             for dimension, results in partial_results.items():
                 if dimension not in combined_results:
                     combined_results[dimension] = {}
                 combined_results[dimension].update(results)
+        # For standard gradient similarity results (also nested, but differently)
+        elif isinstance(partial_results, dict):
+            combined_results.update(partial_results)
 
-    # Sort the combined results by their first key
+    # Sort the combined results
     if combined_results:
-        # Check if it's nested (random projection results) or flat structure
-        first_key = next(iter(combined_results))
-        if isinstance(combined_results[first_key], dict):
-            # Nested structure - sort each dimension's results by key
+        # Check if it's random projection results (nested by dimension)
+        if combined_results and not any(k.startswith("lima_") for k in combined_results.keys()):
+            # Random projection structure - sort each dimension's results
             sorted_results = OrderedDict()
             for dimension in sorted(combined_results.keys()):
-                sorted_results[dimension] = OrderedDict(sorted(combined_results[dimension].items()))
+                sorted_results[dimension] = OrderedDict(sorted(combined_results[dimension].items(), key=sort_key))
             combined_results = sorted_results
         else:
-            # Flat structure - sort by main keys
-            combined_results = OrderedDict(sorted(combined_results.items()))
+            # Standard structure - also nested but with lima_ keys at top level
+            combined_results = OrderedDict(sorted(combined_results.items(), key=sort_key))
 
     with open(output_path, 'w') as f:
         json.dump(combined_results, f, indent=4)
