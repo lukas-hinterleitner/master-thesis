@@ -1,4 +1,6 @@
-# Can gradient-based explanations find training data on similar data points?
+# Gradient Similarity Analyzer 
+# readme (to be changed)
+This project calculates similarities between gradients of the LIMA fine-tuning dataset samples and their paraphrased or model-generated versions. It explores whether gradient-based explanations can find training data on similar data points.
 
 ## Setup
 
@@ -42,6 +44,14 @@ pip install -r requirements.txt
 pip install --no-build-isolation traker[fast]==0.3.2
 ```
 
+### Docker Setup (Alternative)
+You can also use the provided Dockerfile to create a container with all dependencies:
+
+```shell
+docker build -t gradient-similarity-analyzer .
+docker run -it --gpus all gradient-similarity-analyzer
+```
+
 ## Before Execution
 Create a .env file in the root folder of the repository with the following content:
 ```shell
@@ -60,38 +70,84 @@ MT_SAMPLE_SIZE=100
 OPENAI_API_KEY=your_key_here
 ```
 
-## Information
-The gradient-similarity results are stored in data/gradient_similarity_*.json.
+## Usage
 
-In the folder data/gradient_similarity_bm25_selected, the results are stored as followed:
-```json
-[
-    "id_para_para": {
-        "id_orig_orig": 0.6585582494735718,
-        "id_orig_orig": 0.0036986665800213814,
-        "id_orig_orig": 0.07739365100860596,
-        "id_orig_orig": 0.008699750527739525,
-        "id_orig_orig": 0.02530057355761528
-    }
-]
+The project supports two main types of analysis:
+1. Calculating gradient similarities between original and modified datasets
+2. Computing dot products between layer outputs of original and modified datasets
+
+### Running the Analysis
+
+Execute the main script with the following arguments:
+
+```shell
+python main.py --setting [paraphrased|model-generated] --computation-type [dot-product|gradient-similarity] [--use-random-projection]
 ```
 
-In the folder data/gradient_similarity_bm25_selected_model_generated, the results are stored as followed:
-```json
-[
-    "id_para_gen": {
-        "id_orig_orig": 0.6585582494735718,
-        "id_orig_orig": 0.0036986665800213814,
-        "id_orig_orig": 0.07739365100860596,
-        "id_orig_orig": 0.008699750527739525,
-        "id_orig_orig": 0.02530057355761528
-    }
-]
+Arguments:
+- `--setting`: Specify whether to use paraphrased or model-generated versions of the dataset
+- `--computation-type`: Choose between dot-product or gradient-similarity computation
+- `--use-random-projection`: (Optional) Use random projection for gradient similarity calculation to improve efficiency
+- `--partition-start` and `--partition-end`: (Optional) Process only a specific partition of the dataset
+
+Examples:
+```shell
+# Calculate gradient similarity between original and paraphrased samples
+python main.py --setting paraphrased --computation-type gradient-similarity
+
+# Calculate dot products between original and model-generated samples
+python main.py --setting model-generated --computation-type dot-product
+
+# Calculate gradient similarity with random projection 
+python main.py --setting paraphrased --computation-type gradient-similarity --use-random-projection
 ```
 
-TODO: the above examples do not represent the new structures with individual layers, etc. --> add to readme
+## Distributed Processing
 
-### Create requirements.txt from UV config files:
+For large datasets, the computation can be distributed across multiple processes. See [README_SLURM.md](README_SLURM.md) for instructions on running the analysis on a SLURM cluster.
+
+## Output Files
+
+Results are stored in the `data/` directory with the following structure:
+
+- `data/gradient_similarity/paraphrased/`: Gradient similarity results for paraphrased samples
+- `data/gradient_similarity/model_generated/`: Gradient similarity results for model-generated samples  
+- `data/gradient_similarity/random_projection/`: Results using random projection technique
+- `data/dot_products/paraphrased/`: Dot product results for paraphrased samples
+- `data/dot_products/model_generated/`: Dot product results for model-generated samples
+
+Results follow a JSON structure containing similarity scores between original and modified samples across different model layers.
+
+## Analysis
+
+After running the computations, analysis notebooks are available in the `notebooks/` directory:
+- `analysis.ipynb`: General analysis of similarity results
+- `paraphrased_dataset.ipynb`: Analysis specific to paraphrased dataset
+- `playground_bm25.ipynb`: BM25 retrieval experiments
+- `playground_model_generation.ipynb`: Model generation experiments
+
+### Results Overview
+
+The analysis examines multiple dimensions of gradient similarities:
+
+#### Model Coverage
+The project analyzes models from multiple providers:
+- AMD models (e.g., AMD-OLMo)
+- AllenAI models
+- OpenAI Community models (for testing purposes)
+
+#### Analysis Types
+Different analytical perspectives are explored:
+
+1. **Accuracy Per Layer**: Measures how accurately gradient similarities can identify matching samples across different model layers.
+
+2. **Layer Comparison**: Analyzes how gradients differ between layers and which layers contribute most to similarity detection.
+
+3. **Parameter Distribution**: Examines the distribution and importance of parameters within each layer.
+
+4. **Self-Similarity**: Measures how similar a layer's gradients are to itself across different samples and modifications.
+
+## Create requirements.txt from UV config files
 ```shell
 uv export --format requirements-txt --no-hashes -o requirements.txt
 ```

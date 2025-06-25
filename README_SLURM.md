@@ -1,14 +1,14 @@
 # Distributed Processing with SLURM
 
-This document explains how to run the computations in a distributed manner using SLURM job scheduling.
+This document explains how to run the gradient similarity computations in a distributed manner using SLURM job scheduling.
 
 ## Overview
 
-The code supports processing the entire dataset in parallel by dividing it into smaller partitions and distributing them across multiple SLURM jobs. This significantly speeds up computation compared to sequential execution.
+The code supports processing the entire dataset in parallel by dividing it into smaller partitions and distributing them across multiple SLURM jobs. This significantly speeds up computation compared to sequential execution, which is especially important for large language models and datasets.
 
 ## Setup
 
-Ensure your environment is set up as described in the main `README.md`.
+Ensure your environment is set up as described in the main `README.md`. Make sure all dependencies are installed and the .env file is properly configured.
 
 ## Running Distributed Jobs
 
@@ -90,10 +90,17 @@ Use this to check SLURM job status:
 squeue -u your_username
 ```
 
+To view detailed information about a specific job:
+
+```bash
+scontrol show job [job_id]
+```
+
 ## Output Files
 
 - Partial result files follow the naming pattern: `*_part_*_*.json`.
 - Combined results are saved with the suffix `_full.json`.
+- All results are stored in the appropriate subdirectories under the `data/` directory.
 
 ## SLURM Script Details
 
@@ -108,3 +115,5 @@ Generated scripts include:
 - Check logs in the `./out/` directory
 - Confirm dataset paths are correct
 - Ensure output directories are writable
+- If you encounter "Out of memory" errors, try reducing the partition size or requesting more memory
+- For GPU-related issues, check if the correct GPU is being allocated using `nvidia-smi`
