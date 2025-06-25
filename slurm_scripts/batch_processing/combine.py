@@ -76,13 +76,18 @@ def combine_dot_product_results(file_paths, output_path_template):
     combined_original_dot_products = {}
 
     # Process dot_products files
-    for file_path in [p for p in file_paths if "dot_products_part" in p.name]:
+    for file_path in [p for p in file_paths if "dot_products_part" in p.name and "paraphrased_dot_products_part" not in p.name and "original_dot_products_part" not in p.name]:
         with open(file_path, 'r') as f:
             results = json.load(f)
             for paraphrased_id, original_comparisons in results.items():
                 if paraphrased_id not in combined_dot_products:
                     combined_dot_products[paraphrased_id] = {}
-                combined_dot_products[paraphrased_id].update(original_comparisons)
+
+                for original_id, layer_dot_product_comparisons in original_comparisons.items():
+                    if original_id not in combined_dot_products[paraphrased_id]:
+                        combined_dot_products[paraphrased_id][original_id] = {}
+
+                    combined_dot_products[paraphrased_id][original_id].update(layer_dot_product_comparisons)
 
     # Process paraphrased_dot_products files
     for file_path in [p for p in file_paths if "paraphrased_dot_products_part" in p.name]:
