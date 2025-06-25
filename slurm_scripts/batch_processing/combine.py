@@ -29,6 +29,15 @@ def find_partial_results(base_path, pattern="*_part_*_*.json"):
     path = Path(base_path)
     return list(path.glob(pattern))
 
+# Sort the combined results numerically by the number after "lima_"
+def sort_key(item):
+    key = item[0]
+    if key.startswith("lima_"):
+        try:
+            return int(key.split("_")[1])
+        except (IndexError, ValueError):
+            return key
+    return key
 
 def combine_gradient_similarity_results(file_paths, output_path):
     """Combine gradient similarity results from multiple files"""
@@ -102,9 +111,9 @@ def combine_dot_product_results(file_paths, output_path_template):
             combined_original_dot_products.update(results)
 
     # Sort all results by their keys
-    combined_dot_products = OrderedDict(sorted(combined_dot_products.items()))
-    combined_paraphrased_dot_products = OrderedDict(sorted(combined_paraphrased_dot_products.items()))
-    combined_original_dot_products = OrderedDict(sorted(combined_original_dot_products.items()))
+    combined_dot_products = OrderedDict(sorted(combined_dot_products.items(), key=sort_key))
+    combined_paraphrased_dot_products = OrderedDict(sorted(combined_paraphrased_dot_products.items(), key=sort_key))
+    combined_original_dot_products = OrderedDict(sorted(combined_original_dot_products.items(), key=sort_key))
 
     # Write combined results
     with open(output_path_template.format("dot_products"), 'w') as f:
