@@ -13,7 +13,7 @@ def get_model(model_name = MODEL_NAME, device = DEVICE) -> PreTrainedModel:
     model.eval()  # set to evaluation because we don't need to update weights
 
     print(f"Model parameters: {model.num_parameters()}")
-    print("======================")
+    print("=" * 50)
     print(model)
 
     return model
