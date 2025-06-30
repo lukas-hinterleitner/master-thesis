@@ -1,4 +1,8 @@
-# Gradient Similarity Analyzer 
+# Gradient Similarity and LLM Layer Analyzer 
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Flukas-hinterleitner%2Fmaster-thesis%2Frefs%2Fheads%2Fmain%2Fpyproject.toml)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/lukas-hinterleitner/master-thesis/docker-image.yml)
+
 # readme (to be changed)
 This project calculates similarities between gradients of the LIMA fine-tuning dataset samples and their paraphrased or model-generated versions. It explores whether gradient-based explanations can find training data on similar data points.
 
