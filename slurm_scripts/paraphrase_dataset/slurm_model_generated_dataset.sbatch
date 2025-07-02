@@ -8,7 +8,7 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --gres=gpu:1
 #SBATCH --time=0-24:00:00
-#SBATCH --nodelist=dgx-h100-em2,dgx1
+#SBATCH --nodelist=dgx1
 #SBATCH --output=./out/model_generated_dataset/slurm-%j.out
 
 echo "Starting model-generated dataset creation..."
