@@ -70,6 +70,49 @@ MT_SAMPLE_SIZE=100
 OPENAI_API_KEY=your_key_here
 ```
 
+## Dataset Preparation
+
+Before running the main analysis, you need to prepare the datasets. This doesn't need to be done for the model amd/AMD-OLMo-1B-SFT, as the repository already contains the necessary datasets.
+The project supports two types of modified datasets:
+
+### 1. Paraphrased Dataset
+Creates paraphrased versions of the original LIMA dataset samples using OpenAI's API.
+
+### 2. Model-Generated Dataset
+Creates model-generated responses to paraphrased questions using the specified model.
+
+**Important**: The model-generated dataset requires the paraphrased dataset to exist first.
+
+### Creating Datasets
+
+Use the `paraphrase.py` script to create the required datasets:
+
+```shell
+# Create only the paraphrased dataset
+python paraphrase.py --dataset-type paraphrased
+
+# Create only the model-generated dataset (requires paraphrased dataset to exist)
+python paraphrase.py --dataset-type model-generated
+
+# Create both datasets sequentially
+python paraphrase.py --dataset-type both
+```
+
+#### Dataset Creation Options:
+- `--dataset-type paraphrased`: Creates paraphrased versions of LIMA dataset samples
+- `--dataset-type model-generated`: Creates model-generated responses to paraphrased questions (requires paraphrased dataset)
+- `--dataset-type both`: Creates both datasets in the correct order
+
+#### Dataset Dependencies:
+- **Paraphrased dataset**: Independent, can be created first
+- **Model-generated dataset**: Depends on paraphrased dataset existing first
+
+The script will automatically:
+- Validate dataset dependencies
+- Check for existing datasets
+- Provide clear error messages if prerequisites are missing
+- Create necessary directory structures
+
 ## Usage
 
 The project supports two main types of analysis:
@@ -110,6 +153,8 @@ For large datasets, the computation can be distributed across multiple processes
 
 Results are stored in the `data/` directory with the following structure:
 
+- `data/datasets/paraphrased/`: Paraphrased dataset files
+- `data/datasets/model_generated/`: Model-generated dataset files
 - `data/gradient_similarity/paraphrased/`: Gradient similarity results for paraphrased samples
 - `data/gradient_similarity/model_generated/`: Gradient similarity results for model-generated samples  
 - `data/gradient_similarity/random_projection/`: Results using random projection technique

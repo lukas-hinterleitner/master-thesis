@@ -4,11 +4,20 @@ from enum import Enum
 data_folder_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../data")
 
 lima_dataset_path = os.path.join(data_folder_path, "lima")
-lima_paraphrased_dataset_path = os.path.join(data_folder_path, "paraphrased")
+
+datasets_path = os.path.join(data_folder_path, "datasets")
+
+if not os.path.exists(data_folder_path):
+    os.makedirs(data_folder_path)
+
+lima_paraphrased_dataset_path = os.path.join(data_folder_path, datasets_path, "paraphrased")
+lima_model_generated_dataset_path = os.path.join(data_folder_path, datasets_path, "model_generated")
 
 if not os.path.exists(lima_paraphrased_dataset_path):
     os.makedirs(lima_paraphrased_dataset_path)
 
+if not os.path.exists(lima_model_generated_dataset_path):
+    os.makedirs(lima_model_generated_dataset_path)
 
 class ExperimentType(Enum):
     PARAPHRASED = "paraphrased"

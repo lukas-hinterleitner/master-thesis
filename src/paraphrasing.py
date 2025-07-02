@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 from openai import OpenAI
+from openai.types.chat import ChatCompletionSystemMessageParam, ChatCompletionUserMessageParam
 
 load_dotenv()
 
@@ -15,8 +16,8 @@ def paraphrase_input(input: str):
     response = __client.chat.completions.create(
         model="gpt-4o-mini-2024-07-18",
         messages=[
-            {"role": "system", "content": __paraphrasing_system_prompt},
-            {"role": "user", "content": input}
+            ChatCompletionSystemMessageParam(content=__paraphrasing_system_prompt, role="system"),
+            ChatCompletionUserMessageParam(content=input, role="user"),
         ],
         seed=42,
         temperature=1,

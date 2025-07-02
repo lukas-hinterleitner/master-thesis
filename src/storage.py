@@ -4,6 +4,9 @@ import os
 from src.config.dataset import SAMPLE_SIZE
 from src.config.model import MODEL_NAME
 from src.config.storage import (
+    lima_model_generated_dataset_path,
+    lima_paraphrased_dataset_path,
+
     gradient_similarity_storage_path,
     gradient_similarity_paraphrased_storage_path,
     gradient_similarity_model_generated_storage_path,
@@ -16,6 +19,23 @@ from src.config.storage import (
 
     results_folder_path, ExperimentType,
 )
+
+def get_paraphrased_dataset_folder_path():
+    path = os.path.join(lima_paraphrased_dataset_path)
+
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    return path
+
+
+def get_model_generated_dataset_folder_path(model_name = MODEL_NAME):
+    path = os.path.join(lima_model_generated_dataset_path, model_name)
+
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    return path
 
 
 def get_gradient_similarity_file_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):

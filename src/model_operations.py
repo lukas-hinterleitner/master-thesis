@@ -38,7 +38,7 @@ __USER_TOKEN = "<|user|>\n"
 __ASSISTANT_TOKEN = "\n<|assistant|>\n"
 
 
-def __map_to_message_format(role: str, content: str) -> dict[str, str]:
+def map_to_message_format(role: str, content: str) -> dict[str, str]:
     return {"role": role, "content": content}
 
 
@@ -52,6 +52,7 @@ def generate_model_output_from_paraphrased_sample(sample: dict, model: PreTraine
         do_sample=False,
         attention_mask=torch.ones_like(chat_template_applied).to(model.device),
     )
+
     decoded = tokenizer.decode(generation[0])
 
     # Extract assistant message
@@ -61,8 +62,8 @@ def generate_model_output_from_paraphrased_sample(sample: dict, model: PreTraine
     assistant_message = decoded[start_assistant:end_assistant].strip()
 
     sample["paraphrased_messages"] = [
-        __map_to_message_format("user", user_message[0]["content"]),
-        __map_to_message_format("assistant", assistant_message)
+        map_to_message_format("user", user_message[0]["content"]),
+        map_to_message_format("assistant", assistant_message)
     ]
 
     return sample
