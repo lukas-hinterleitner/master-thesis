@@ -72,9 +72,7 @@ def create_model_generated_dataset():
             generated_output = generate_model_output_from_paraphrased_sample(row, model, tokenizer)
             model_generated.append((row["id"], generated_output))
         except Exception as e:
-            print(f"Error generating output for sample {row['id']}: {e}")
-            # Use original paraphrased messages as fallback
-            model_generated.append((row["id"], row["paraphrased_messages"]))
+            raise RuntimeError(f"Error generating output for sample {row['id']}: {e}") from e
 
     # Create new dataset with model-generated content
     lima_data_model_generated = paraphrased_dataset.add_column("model_generated_id", [m[0] for m in model_generated])
