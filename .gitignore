@@ -3,12 +3,15 @@
 
 # add paraphrased data
 data/*
-data/datasets/paraphrased
 !data/gradient_similarity
 !data/dot_products
-!data/**/paraphrased/data-00000-of-00001.arrow
-!data/**/paraphrased/state.json
-!data/**/paraphrased/dataset_info.json
+!data/datasets/paraphrased/data-00000-of-00001.arrow
+!data/datasets/paraphrased/state.json
+!data/datasets/paraphrased/dataset_info.json
+
+!data/datasets/model_generated/**/data-00000-of-00001.arrow
+!data/datasets/model_generated/**/state.json
+!data/datasets/model_generated/**/dataset_info.json
 
 #data/**/*_part_*.json
 
