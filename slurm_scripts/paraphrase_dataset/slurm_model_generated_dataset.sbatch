@@ -1,6 +1,5 @@
 #!/bin/bash
 # script name: model_generated_dataset.sh
-#SBATCH --job-name=model_generated_dataset
 #SBATCH --container-image=lukashinterleitner/master-thesis-data-science:latest
 #SBATCH --container-mounts=/srv/home/users/$USER/master-thesis:/app
 #SBATCH --container-mount-home

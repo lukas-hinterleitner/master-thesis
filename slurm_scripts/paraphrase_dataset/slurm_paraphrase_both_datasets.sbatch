@@ -1,6 +1,5 @@
 #!/bin/bash
 # script name: paraphrase_both_datasets.sh
-#SBATCH --job-name=paraphrase_both_datasets
 #SBATCH --container-image=lukashinterleitner/master-thesis-data-science:latest
 #SBATCH --container-mounts=/srv/home/users/$USER/master-thesis:/app
 #SBATCH --container-mount-home
