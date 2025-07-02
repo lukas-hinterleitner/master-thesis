@@ -1,6 +1,5 @@
 import argparse
 from datasets import load_dataset
-from src.paraphrasing import paraphrase_input
 from src.model_operations import generate_model_output_from_paraphrased_sample, map_to_message_format
 from src.storage import get_paraphrased_dataset_folder_path, get_model_generated_dataset_folder_path
 from src.model import get_model, get_tokenizer
@@ -9,6 +8,8 @@ from tqdm import tqdm
 
 
 def create_paraphrased_dataset():
+    from src.paraphrasing import paraphrase_input
+
     """Create paraphrased dataset from LIMA data."""
     data = load_dataset("allenai/tulu-v2-sft-mixture", split="train")
 
@@ -50,6 +51,9 @@ def create_paraphrased_dataset():
 
 
 def create_model_generated_dataset():
+    from src.config.dataset import get_dataset_config
+    from src.preprocessing import get_chat_template
+
     """Create model-generated dataset from paraphrased LIMA data."""
     # Load the paraphrased dataset
     try:
@@ -64,6 +68,9 @@ def create_model_generated_dataset():
     # Load model and tokenizer
     model = get_model()
     tokenizer = get_tokenizer()
+
+    if not tokenizer.chat_template:
+        tokenizer.chat_template = get_chat_template(get_dataset_config(model, sft_messages_key="paraphrased_messages"))
 
     model_generated = []
 
