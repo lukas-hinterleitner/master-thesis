@@ -2,7 +2,9 @@ from transformers import PreTrainedModel, PreTrainedTokenizerBase
 from datasets import load_from_disk, Dataset
 
 from src.config.dataset import get_dataset_config, SAMPLE_SIZE
+from src.config.model import MODEL_NAME
 from src.config.storage import lima_paraphrased_dataset_path
+from src.storage import get_model_generated_dataset_folder_path
 from src.preprocessing import prepare_dataset
 
 def get_tokenized_datasets(model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase, partition_start=None, partition_end=None) -> tuple[Dataset, Dataset]:
@@ -50,6 +52,24 @@ def get_paraphrased_dataset(sample_size = SAMPLE_SIZE, partition_start=None, par
         return paraphrased.select(range(sample_size))
     else:
         return paraphrased
+
+def get_model_generated_dataset(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE, partition_start=None, partition_end=None) -> Dataset:
+    model_generated_path = get_model_generated_dataset_folder_path(model_name)
+
+    try:
+        model_generated_dataset = load_from_disk(model_generated_path).select_columns(["id", "model_generated_messages"])
+        print(f"Loaded model-generated dataset from: {model_generated_path}")
+    except Exception as e:
+        # raise error
+        raise RuntimeError(f"Error loading model-generated dataset from {model_generated_path}. Please create the model-generated dataset first using --dataset-type model-generated")
+
+    # Handle partition-based subsetting (takes precedence over sample_size)
+    if partition_start is not None and partition_end is not None:
+        return model_generated_dataset.select(range(partition_start, partition_end))
+    elif sample_size:
+        return model_generated_dataset.select(range(sample_size))
+    else:
+        return model_generated_dataset
 
 def get_samples(sample_ids: list[str]) -> Dataset:
     return load_from_disk(lima_paraphrased_dataset_path).filter(lambda example: example["id"] in sample_ids)

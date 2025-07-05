@@ -76,7 +76,7 @@ def create_model_generated_dataset():
 
     for row in tqdm(paraphrased_dataset, desc="Creating model-generated dataset"):
         try:
-            generated_output = generate_model_output_from_paraphrased_sample(row, model, tokenizer)
+            generated_output = generate_model_output_from_paraphrased_sample(row, model, tokenizer)["model_generated_messages"]
             model_generated.append((row["id"], generated_output))
         except Exception as e:
             raise RuntimeError(f"Error generating output for sample {row['id']}: {e}") from e
