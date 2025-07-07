@@ -7,7 +7,7 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --gres=gpu:1
 #SBATCH --time=1-12:00:00
-#SBATCH --nodelist=dgx1
+#SBATCH --nodelist=dgx-h100-em2
 #SBATCH --output=./out/paraphrase_both_datasets/slurm-%j.out
 
 echo "Starting creation of both paraphrased and model-generated datasets..."
