@@ -6,7 +6,7 @@
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=8
 #SBATCH --time=0-8:00:00
-#SBATCH --nodelist=dgx-h100-em2
+#SBATCH --nodelist=galadriel
 #SBATCH --output=./out/paraphrase_dataset/slurm-%j.out
 
 
