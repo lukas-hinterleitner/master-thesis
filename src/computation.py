@@ -1,7 +1,7 @@
 import datasets
 import numpy as np
 import torch
-from datasets import Dataset, IterableDataset
+from datasets import Dataset
 from rank_bm25 import BM25Okapi
 from torch.nn import CosineSimilarity
 from tqdm import tqdm
