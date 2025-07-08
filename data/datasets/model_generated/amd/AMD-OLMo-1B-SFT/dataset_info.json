@@ -49,36 +49,18 @@
         }
       }
     ],
-    "model_generated_messages": {
-      "id": {
-        "dtype": "string",
-        "_type": "Value"
-      },
-      "messages": [
-        {
-          "content": {
-            "dtype": "string",
-            "_type": "Value"
-          },
-          "role": {
-            "dtype": "string",
-            "_type": "Value"
-          }
+    "model_generated_messages": [
+      {
+        "content": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "role": {
+          "dtype": "string",
+          "_type": "Value"
         }
-      ],
-      "paraphrased_messages": [
-        {
-          "content": {
-            "dtype": "string",
-            "_type": "Value"
-          },
-          "role": {
-            "dtype": "string",
-            "_type": "Value"
-          }
-        }
-      ]
-    }
+      }
+    ]
   },
   "homepage": "",
   "license": "",
