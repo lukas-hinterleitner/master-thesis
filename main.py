@@ -19,11 +19,13 @@ from src.computation import (
     calculate_paraphrased_random_projected_gradient_similarities,
     calculate_model_generated_random_projected_gradient_similarities
 )
+
 from src.dataset import (
-    get_tokenized_datasets,
     get_original_dataset_tokenized,
-    get_paraphrased_dataset
+    get_paraphrased_dataset_tokenized,
+    get_model_generated_dataset_tokenized
 )
+
 from src.storage import (
     get_dot_product_paraphrased_file_path,
     get_dot_product_model_generated_file_path,

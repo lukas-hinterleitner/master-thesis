@@ -2,6 +2,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, PreTrainedModel, P
 
 from src.config.device import DEVICE
 from src.config.model import MODEL_NAME
+from src.config.dataset import get_chat_template
 
 
 def get_model(model_name = MODEL_NAME, device = DEVICE) -> PreTrainedModel:
@@ -19,7 +20,10 @@ def get_model(model_name = MODEL_NAME, device = DEVICE) -> PreTrainedModel:
     return model
 
 def get_tokenizer(model_name = MODEL_NAME) -> PreTrainedTokenizer:
-    return AutoTokenizer.from_pretrained(model_name, return_tensors="pt")
+    tokenizer = AutoTokenizer.from_pretrained(model_name, return_tensors="pt")
+    tokenizer.chat_template = get_chat_template()
+
+    return tokenizer
 
 def get_config_model_name() -> str:
     return MODEL_NAME

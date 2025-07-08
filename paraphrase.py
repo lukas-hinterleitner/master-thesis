@@ -51,9 +51,6 @@ def create_paraphrased_dataset():
 
 
 def create_model_generated_dataset():
-    from src.config.dataset import get_dataset_config
-    from src.preprocessing import get_chat_template
-
     """Create model-generated dataset from paraphrased LIMA data."""
     # Load the paraphrased dataset
     try:
@@ -68,9 +65,6 @@ def create_model_generated_dataset():
     # Load model and tokenizer
     model = get_model()
     tokenizer = get_tokenizer()
-
-    if not tokenizer.chat_template:
-        tokenizer.chat_template = get_chat_template(get_dataset_config(model, sft_messages_key="paraphrased_messages"))
 
     model_generated = []
 
