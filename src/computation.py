@@ -44,6 +44,75 @@ def __simple_tokenize(doc: str):
 
 
 # ---------------------------------------------------------------------------
+# Layer-wise projection helpers
+# ---------------------------------------------------------------------------
+
+def __project_gradients_layerwise(
+    gradients: dict[str, torch.Tensor],
+    layer_proj_dims: dict[str, int],
+    device: torch.device,
+) -> torch.Tensor:
+    """
+    Projects gradients layer-wise using CudaProjector and concatenates the results.
+
+    :param gradients: Dictionary mapping layer names to gradient tensors
+    :param layer_proj_dims: Dictionary mapping layer names to projection dimensions
+    :param device: Device to perform computations on
+    :return: Concatenated projected gradients tensor
+    """
+    projected_parts = []
+
+    for layer_name, layer_grad in gradients.items():
+        if layer_name not in layer_proj_dims:
+            continue
+
+        # Create layer-specific projector
+        layer_projector = CudaProjector(
+            grad_dim=layer_grad.numel(),
+            proj_dim=layer_proj_dims[layer_name],
+            seed=42 + hash(layer_name) % 10000,  # Different seed per layer
+            device=device,
+            proj_type=ProjectionType.rademacher,
+            max_batch_size=8,
+        )
+
+        # Project and collect
+        flat_layer = layer_grad.flatten().half()
+        projected = layer_projector.project(
+            grads=flat_layer.reshape(1, -1).cuda(device),
+            model_id=0
+        ).cpu()
+
+        projected_parts.append(projected.flatten())
+
+        # Clear CUDA cache after each layer
+        torch.cuda.empty_cache()
+
+    # Concatenate all layer projections
+    return torch.cat(projected_parts)
+
+
+def __calculate_layer_projection_dimensions(
+    model: PreTrainedModel,
+    proj_dim: int,
+) -> dict[str, int]:
+    """
+    Calculate proportional projection dimensions for each layer.
+
+    :param model: The pre-trained model
+    :param proj_dim: Total projection dimension
+    :return: Dictionary mapping layer names to their projection dimensions
+    """
+    layer_params = get_num_parameters_per_layer(model)
+    total_params = model.num_parameters()
+
+    return {
+        layer: max(512, int(512 * round((count / total_params * proj_dim) / 512)))
+        for layer, count in layer_params.items()
+    }
+
+
+# ---------------------------------------------------------------------------
 # BM25 helpers
 # ---------------------------------------------------------------------------
 
@@ -221,14 +290,7 @@ def __calculate_random_projected_similarities(
         results[proj_dim] = {}
 
         # Calculate layer-wise projection dimensions proportionally
-        layer_params = get_num_parameters_per_layer(model)
-        total_params = model.num_parameters()
-
-        # Calculate proportional projection dimensions
-        layer_proj_dims = {
-            layer: max(512, int(512 * round((count / total_params * proj_dim) / 512)))
-            for layer, count in layer_params.items()
-        }
+        layer_proj_dims = __calculate_layer_projection_dimensions(model, proj_dim)
 
         progress = tqdm(
             paraphrased_dataset_tokenized,
@@ -244,36 +306,8 @@ def __calculate_random_projected_similarities(
             # 1) Paraphrased gradients
             paraphrased_grad = get_gradients(model, paraphrased_sample)
 
-            # Project each layer separately and concatenate results
-            down_paraphrased_parts = []
-            for layer_name, layer_grad in paraphrased_grad.items():
-                if layer_name not in layer_proj_dims:
-                    continue
-
-                # Create layer-specific projector
-                layer_projector = CudaProjector(
-                    grad_dim=layer_grad.numel(),
-                    proj_dim=layer_proj_dims[layer_name],
-                    seed=42 + hash(layer_name) % 10000,  # Different seed per layer
-                    device=model.device,
-                    proj_type=ProjectionType.rademacher,
-                    max_batch_size=8,
-                )
-
-                # Project and collect
-                flat_layer = layer_grad.flatten().half()
-                projected = layer_projector.project(
-                    grads=flat_layer.reshape(1, -1).cuda(model.device),
-                    model_id=0
-                ).cpu()
-
-                down_paraphrased_parts.append(projected.flatten())
-
-                # Clear CUDA cache after each layer
-                torch.cuda.empty_cache()
-
-            # Concatenate all layer projections
-            down_paraphrased = torch.cat(down_paraphrased_parts)
+            # Project paraphrased gradients layer-wise
+            down_projected_paraphrased = __project_gradients_layerwise(paraphrased_grad, layer_proj_dims, model.device)
 
             # 2) Candidates via BM25
             paraphrased_text = paraphrased_sample[messages_key][0]["content"]
@@ -290,40 +324,12 @@ def __calculate_random_projected_similarities(
                 original_grad = get_gradients(model, original_sample)
 
                 # Project original gradients layer-wise
-                down_original_parts = []
-                for layer_name, layer_grad in original_grad.items():
-                    if layer_name not in layer_proj_dims:
-                        continue
-
-                    # Create layer-specific projector (same seeds as above)
-                    layer_projector = CudaProjector(
-                        grad_dim=layer_grad.numel(),
-                        proj_dim=layer_proj_dims[layer_name],
-                        seed=42 + hash(layer_name) % 10000,  # Same seed as paraphrased
-                        device=model.device,
-                        proj_type=ProjectionType.rademacher,
-                        max_batch_size=8,
-                    )
-
-                    # Project and collect
-                    flat_layer = layer_grad.flatten().half()
-                    projected = layer_projector.project(
-                        grads=flat_layer.reshape(1, -1).cuda(model.device),
-                        model_id=0
-                    ).cpu()
-
-                    down_original_parts.append(projected.flatten())
-
-                    # Clear CUDA cache after each layer
-                    torch.cuda.empty_cache()
-
-                # Concatenate all layer projections
-                down_original = torch.cat(down_original_parts)
+                down_projected_original = __project_gradients_layerwise(original_grad, layer_proj_dims, model.device)
 
                 # Calculate similarity
                 sim = similarity_function(
-                    down_paraphrased.cuda(model.device),
-                    down_original.cuda(model.device),
+                    down_projected_paraphrased.cuda(model.device),
+                    down_projected_original.cuda(model.device),
                 ).item()
                 results[proj_dim][paraphrased_id][original_id] = sim
 
