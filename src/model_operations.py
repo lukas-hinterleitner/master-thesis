@@ -1,7 +1,7 @@
 import torch
 from transformers import PreTrainedModel, PreTrainedTokenizer
 
-def get_gradients(model: PreTrainedModel, batch) -> dict[str, torch.Tensor]:
+def get_gradients(model: PreTrainedModel, sample) -> dict[str, torch.Tensor]:
     gradients = {}
 
     # set gradients to zero so that gradients to not accumulate for each iteration
@@ -9,11 +9,11 @@ def get_gradients(model: PreTrainedModel, batch) -> dict[str, torch.Tensor]:
 
     device = model.device
 
-    output = model(input_ids=batch["input_ids"].reshape(1,-1).to(device),
-                   labels=batch["labels"].reshape(1,-1).to(device),
-                   attention_mask=batch["attention_mask"].reshape(1,-1).to(device),
+    output = model(input_ids=sample["input_ids"].reshape(1, -1).to(device),
+                   labels=sample["labels"].reshape(1, -1).to(device),
+                   attention_mask=sample["attention_mask"].reshape(1, -1).to(device),
                    use_cache=False
-    )
+                   )
 
     loss = output.loss
 

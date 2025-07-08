@@ -122,8 +122,13 @@ def main():
     if setting == Setting.PARAPHRASED:
         if computation_type == ComputationType.DOT_PRODUCT:
             # dot product paraphrased
-            original_dataset_tokenized, paraphrased_dataset_tokenized = get_tokenized_datasets(
-                model, tokenizer, partition_start, partition_end)
+            original_dataset_tokenized = get_original_dataset_tokenized(model, tokenizer)
+            paraphrased_dataset_tokenized = get_paraphrased_dataset_tokenized(
+                model=model,
+                tokenizer=tokenizer,
+                partition_start=partition_start,
+                partition_end=partition_end
+            )
 
             dot_products, paraphrased_dot_products, original_dot_products = calculate_paraphrased_layer_dot_products(
                 original_dataset_tokenized, paraphrased_dataset_tokenized, model)
@@ -145,8 +150,13 @@ def main():
 
         elif computation_type == ComputationType.GRADIENT_SIMILARITY:
             # gradient similarity paraphrased
-            original_dataset_tokenized, paraphrased_dataset_tokenized = get_tokenized_datasets(
-                model, tokenizer, partition_start, partition_end)
+            original_dataset_tokenized = get_original_dataset_tokenized(model, tokenizer)
+            paraphrased_dataset_tokenized = get_paraphrased_dataset_tokenized(
+                model,
+                tokenizer,
+                partition_start=partition_start,
+                partition_end=partition_end
+            )
 
             # Generate partition-specific filenames if processing a partition
             filename_suffix = ""
@@ -191,11 +201,19 @@ def main():
     elif setting == Setting.MODEL_GENERATED:
         if computation_type == ComputationType.DOT_PRODUCT:
             # dot product model generated
-            original_dataset_tokenized, paraphrased_dataset_tokenized = get_tokenized_datasets(
-                model, tokenizer, partition_start, partition_end)
+            original_dataset_tokenized = get_original_dataset_tokenized(model, tokenizer)
+            model_generated_dataset_tokenized = get_model_generated_dataset_tokenized(
+                model=model,
+                tokenizer=tokenizer,
+                partition_start=partition_start,
+                partition_end=partition_end
+            )
 
             dot_products, paraphrased_dot_products, original_dot_products = calculate_model_generated_layer_dot_products(
-                original_dataset_tokenized, paraphrased_dataset_tokenized, model, tokenizer)
+                original_dataset_tokenized,
+                model_generated_dataset_tokenized,
+                model
+            )
 
             # Generate partition-specific filenames if processing a partition
             filename_suffix = ""
@@ -215,7 +233,12 @@ def main():
         elif computation_type == ComputationType.GRADIENT_SIMILARITY:
             # gradient similarity model generated
             original_dataset_tokenized = get_original_dataset_tokenized(model, tokenizer)
-            paraphrased_dataset = get_paraphrased_dataset(partition_start=partition_start, partition_end=partition_end)
+            model_generated_dataset_tokenized = get_model_generated_dataset_tokenized(
+                model=model,
+                tokenizer=tokenizer,
+                partition_start=partition_start,
+                partition_end=partition_end
+            )
 
             # Generate partition-specific filenames if processing a partition
             filename_suffix = ""
@@ -228,9 +251,8 @@ def main():
                 # random projection
                 gradient_similarities = calculate_model_generated_random_projected_gradient_similarities(
                     original_dataset_tokenized,
-                    paraphrased_dataset,
-                    model,
-                    tokenizer
+                    model_generated_dataset_tokenized,
+                    model
                 )
 
                 output_path = get_gradient_similarity_model_generated_random_projection_file_path()
@@ -245,9 +267,8 @@ def main():
                 # no random projection
                 gradient_similarities = calculate_model_generated_gradient_similarities(
                     original_dataset_tokenized,
-                    paraphrased_dataset,
-                    model,
-                    tokenizer
+                    model_generated_dataset_tokenized,
+                    model
                 )
 
                 output_path = get_gradient_similarity_model_generated_file_path()
