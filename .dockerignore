@@ -20,3 +20,7 @@ submodules/open-instruct/**
 *.sbatch
 slurm_scripts
 README_SLURM.md
+
+notebooks
+results
+requirements.txt

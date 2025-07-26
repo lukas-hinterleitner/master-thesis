@@ -9,13 +9,15 @@ dependencies = [
     "ipywidgets==8.1.5",
     "open-instruct",
     "openai==1.59.7",
-    "pandas==2.2.3",
+    "pandas==2.3.0",
+    "pandas-stubs==2.3.0.250703",
     "python-dotenv==1.1.1",
     "rank-bm25==0.2.2",
     "scikit-learn==1.6.1",
     "seaborn==0.13.2",
     "tqdm==4.67.1",
-    "torch==2.6.0"
+    "torch==2.6.0",
+    "notebook==7.4.4"
 ]
 
 [tool.uv.sources]
