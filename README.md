@@ -1,10 +1,121 @@
-# Gradient Similarity and LLM Layer Analyzer 
+# Select or Project? Evaluating Lower-dimensional Vectors for LLM Training Data Explanations
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 ![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Flukas-hinterleitner%2Fmaster-thesis%2Frefs%2Fheads%2Fmain%2Fpyproject.toml)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/lukas-hinterleitner/master-thesis/docker-image.yml)
 
-# readme (to be changed)
-This project calculates similarities between gradients of the LIMA fine-tuning dataset samples and their paraphrased or model-generated versions. It explores whether gradient-based explanations can find training data on similar data points.
+This project calculates similarities between gradients of the LIMA fine-tuning dataset samples and their paraphrased or model-generated versions. It explores whether gradient-based explanations can find training data on similar data points. 
+The project is designed to work with the AMD-OLMo-1B-SFT model, but can be adapted for other models as well.
+It includes scripts for dataset preparation, analysis, and visualization of results. The project supports both local execution and distributed processing on SLURM clusters.
+
+## Table of Contents
+
+- [Project Structure](#project-structure)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Setup](#setup)
+- [Dataset Preparation](#dataset-preparation)
+- [Usage](#usage)
+- [Distributed Processing](#distributed-processing)
+- [Output Files](#output-files)
+- [Analysis](#analysis)
+- [Development](#development)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
+- [Citation](#citation)
+- [Acknowledgments](#acknowledgments)
+
+## Project Structure
+
+```
+master-thesis/
+├── src/                          # Core source code modules
+│   ├── __init__.py              # Package initialization
+│   ├── computation.py           # Gradient and similarity computations
+│   ├── dataset.py              # Dataset loading and preprocessing
+│   ├── model_operations.py     # Model loading and operations
+│   ├── model.py                # Model wrapper classes
+│   ├── paraphrasing.py         # Text paraphrasing utilities
+│   ├── preprocessing.py        # Data preprocessing functions
+│   ├── storage.py              # File I/O and data persistence
+│   ├── utility.py              # General utility functions
+│   └── config/                 # Configuration files
+├── data/                        # Data storage directory
+│   ├── datasets/               # Generated and processed datasets
+│   │   ├── paraphrased/        # Paraphrased LIMA dataset
+│   │   └── model_generated/    # Model-generated responses
+│   ├── gradient_similarity/    # Gradient similarity results
+│   │   ├── paraphrased/        # Results for paraphrased data
+│   │   ├── model_generated/    # Results for model-generated data
+│   │   ├── random_projection/  # Random projection results
+│   │   └── *.csv              # Sample size analysis files
+│   └── dot_products/           # Dot product computation results
+│       ├── paraphrased/        # Paraphrased data dot products
+│       └── model_generated/    # Model-generated data dot products
+├── notebooks/                   # Jupyter notebooks for analysis
+│   ├── analysis.ipynb          # Main analysis notebook
+│   ├── datasets_playground.ipynb  # Dataset exploration
+│   ├── paraphrased_dataset.ipynb  # Paraphrased data analysis
+│   ├── playground_bm25.ipynb   # BM25 retrieval experiments
+│   ├── playground_model_generation.ipynb  # Model generation tests
+│   └── playground.ipynb        # General experimentation
+├── results/                     # Analysis results and visualizations
+│   ├── accuracy_per_layer/     # Layer-wise accuracy analysis
+│   ├── layer_comparison_full_gradient/  # Full gradient comparisons
+│   ├── parameters_per_layer/   # Parameter distribution analysis
+│   └── self_similarity_over_layers/    # Self-similarity analysis
+├── slurm_scripts/              # SLURM cluster job scripts
+│   ├── batch_processing/       # Batch job scripts
+│   ├── old_scripts/           # Legacy scripts
+│   └── paraphrase_dataset/    # Dataset creation scripts
+├── submodules/                 # Git submodules
+│   └── open-instruct/         # Open-instruct framework
+├── papers/                     # Reference papers and literature
+│   ├── allen-ai/              # Allen AI research papers
+│   ├── explainability/        # Explainability research
+│   └── *.pdf                  # Core ML/NLP papers
+├── slides/                     # Presentation slides
+├── tests/                      # Test files
+├── main.py                     # Main execution script
+├── paraphrase.py              # Dataset paraphrasing script
+├── requirements.txt           # Python dependencies (pip)
+├── pyproject.toml            # Project configuration (uv/pip)
+├── uv.lock                   # UV dependency lock file
+├── Dockerfile                # Docker container definition
+├── README.md                 # This file
+└── README_SLURM.md          # SLURM-specific documentation
+```
+
+## Features
+
+- **Gradient Similarity Analysis**: Compute similarities between gradients of original and modified (paraphrased/model-generated) training samples
+- **Multi-layer Analysis**: Analyze gradient similarities across different transformer layers
+- **Random Projection Support**: Efficient dimensionality reduction for large-scale gradient computations
+- **Dot Product Computations**: Alternative similarity metric using layer output dot products
+- **Dataset Generation**: Automated creation of paraphrased and model-generated datasets
+- **Distributed Processing**: SLURM cluster support for large-scale experiments
+- **Comprehensive Analysis**: Jupyter notebooks for result visualization and interpretation
+- **Docker Support**: Containerized execution environment
+- **Multiple Model Support**: Compatible with various transformer models (AMD-OLMo, etc.)
+
+## Requirements
+
+- **Python**: 3.11.* (required by open-instruct submodule)
+- **GPU**: NVIDIA GPU with CUDA support (recommended for model inference)
+- **Memory**: Minimum 16GB RAM (32GB+ recommended for larger models)
+- **Storage**: At least 10GB free space for datasets and results
+- **API Keys**: OpenAI API key (for dataset paraphrasing)
+- **HuggingFace Token**: For accessing gated models
+
+### Core Dependencies
+
+- PyTorch
+- Transformers (HuggingFace)
+- TrAKer (influence function computation)
+- NumPy, Pandas
+- scikit-learn
+- Jupyter
+- OpenAI API client
 
 ## Setup
 
@@ -191,6 +302,45 @@ Different analytical perspectives are explored:
 3. **Parameter Distribution**: Examines the distribution and importance of parameters within each layer.
 
 4. **Self-Similarity**: Measures how similar a layer's gradients are to itself across different samples and modifications.
+
+## Development
+
+### Code Organization
+
+The project follows a modular architecture with clear separation of concerns:
+
+- **src/**: Contains all core functionality organized by purpose
+- **Configuration**: Environment variables and model settings in `.env`
+- **Testing**: Unit tests in `tests.py` for core functionality (needs to be extended)
+- **Documentation**: Comprehensive docstrings and type hints throughout
+
+### Running Tests
+
+Execute the test suite to verify functionality:
+
+```shell
+python tests.py
+```
+
+## License
+
+This project is part of a Master's thesis research. Please contact the author for usage permissions and citation requirements.
+
+## Citation
+
+If you use this work in your research, please cite:
+
+```bibtex
+@mastersthesis{hinterleitner2025select,
+  title={Select or Project? Evaluating Lower-dimensional Vectors for LLM Training Data Explanations},
+  author={Hinterleitner, Lukas},
+  year={2025},
+  school={[University of Vienna]},
+  type={Master's thesis}
+}
+```
+
+For SLURM cluster usage instructions, see [README_SLURM.md](README_SLURM.md).
 
 ## Create requirements.txt from UV config files
 ```shell
