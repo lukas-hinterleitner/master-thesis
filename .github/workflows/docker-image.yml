@@ -37,6 +37,3 @@ jobs:
           git submodule update
 
           docker buildx bake --push
-
-          docker push $IMAGE_NAME:${IMAGE_TAG::8}
-          docker push $IMAGE_NAME:latest
