@@ -125,7 +125,8 @@ Activate virtual environment:
 source .venv/bin/activate
 ```
 
-#### Install necessary packages using PIP
+#### Install necessary packages using PIP (not tested since UV is preferred)
+```shell
 The project was developed with Python 3.11 since open-instruct requires it. So it is necessary to use Python 3.11.*.
 
 Create a virtual environment:

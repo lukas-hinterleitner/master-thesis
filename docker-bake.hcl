@@ -54,6 +54,5 @@ target "local" {
   tags = [
     "${IMAGE_NAME}:local"
   ]
-  platforms = ["linux/amd64"]
   output = ["type=docker"]
 }
