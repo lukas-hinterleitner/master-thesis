@@ -6,8 +6,8 @@ description = "Calculates similarities between gradients of the LIMA fine-tuning
 readme = "README.md"
 requires-python = ">=3.10,<3.12"
 dependencies = [
-    "ipywidgets==8.1.5",
     "open-instruct",
+    "ipywidgets==8.1.5",
     "openai==1.59.9",
     "pandas==2.3.0",
     "pandas-stubs==2.3.0.250703",
@@ -16,8 +16,8 @@ dependencies = [
     "scikit-learn==1.6.1",
     "seaborn==0.13.2",
     "tqdm==4.67.1",
-    "torch==2.7.0",
     "notebook==7.4.4"
+    # torch isn't listed since it is a dependency of open-instruct
 ]
 
 [tool.uv.sources]

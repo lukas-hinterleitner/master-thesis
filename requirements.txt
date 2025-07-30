@@ -882,7 +882,6 @@ torch==2.7.0 ; sys_platform == 'darwin'
     #   accelerate
     #   compressed-tensors
     #   deepspeed
-    #   gradient-similarity-analyzer
     #   open-instruct
     #   outlines
     #   peft
@@ -896,7 +895,6 @@ torch==2.7.0+cu128 ; sys_platform != 'darwin'
     #   bitsandbytes
     #   compressed-tensors
     #   deepspeed
-    #   gradient-similarity-analyzer
     #   open-instruct
     #   outlines
     #   peft

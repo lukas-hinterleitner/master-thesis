@@ -1,10 +1,6 @@
 # Docker Bake configuration for Master Thesis project
 # Usage: docker buildx bake --push
 
-variable "REGISTRY" {
-  default = "lukashinterleitner"
-}
-
 variable "IMAGE_NAME" {
   default = "master-thesis-data-science"
 }
@@ -34,8 +30,8 @@ target "app" {
   dockerfile = "Dockerfile"
   context = "."
   tags = [
-    "${REGISTRY}/${IMAGE_NAME}:${substr(IMAGE_TAG, 0, 8)}",
-    "${REGISTRY}/${IMAGE_NAME}:latest"
+    "${IMAGE_NAME}:${substr(IMAGE_TAG, 0, 8)}",
+    "${IMAGE_NAME}:latest"
   ]
   labels = {
     "org.opencontainers.image.title" = "Master Thesis - LLM Training Data Explanations"
