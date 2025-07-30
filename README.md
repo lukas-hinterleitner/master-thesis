@@ -11,19 +11,14 @@ It includes scripts for dataset preparation, analysis, and visualization of resu
 
 - [Project Structure](#project-structure)
 - [Features](#features)
-- [Requirements](#requirements)
 - [Setup](#setup)
 - [Dataset Preparation](#dataset-preparation)
 - [Usage](#usage)
 - [Distributed Processing](#distributed-processing)
 - [Output Files](#output-files)
 - [Analysis](#analysis)
-- [Development](#development)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
 - [License](#license)
 - [Citation](#citation)
-- [Acknowledgments](#acknowledgments)
 
 ## Project Structure
 
@@ -98,20 +93,11 @@ master-thesis/
 - **Docker Support**: Containerized execution environment
 - **Multiple Model Support**: Compatible with various transformer models (AMD-OLMo, etc.)
 
-## Requirements
-
-- **Python**: 3.11.* (required by open-instruct submodule)
-- **GPU**: NVIDIA GPU with CUDA support (recommended for model inference)
-- **Memory**: Minimum 16GB RAM (32GB+ recommended for larger models)
-- **Storage**: At least 10GB free space for datasets and results
-- **API Keys**: OpenAI API key (for dataset paraphrasing)
-- **HuggingFace Token**: For accessing gated models
-
 ### Core Dependencies
 
 - PyTorch
 - Transformers (HuggingFace)
-- TrAKer (influence function computation)
+- TrAKer (used for random-projection)
 - NumPy, Pandas
 - scikit-learn
 - Jupyter
@@ -302,25 +288,6 @@ Different analytical perspectives are explored:
 3. **Parameter Distribution**: Examines the distribution and importance of parameters within each layer.
 
 4. **Self-Similarity**: Measures how similar a layer's gradients are to itself across different samples and modifications.
-
-## Development
-
-### Code Organization
-
-The project follows a modular architecture with clear separation of concerns:
-
-- **src/**: Contains all core functionality organized by purpose
-- **Configuration**: Environment variables and model settings in `.env`
-- **Testing**: Unit tests in `tests.py` for core functionality (needs to be extended)
-- **Documentation**: Comprehensive docstrings and type hints throughout
-
-### Running Tests
-
-Execute the test suite to verify functionality:
-
-```shell
-python tests.py
-```
 
 ## License
 
