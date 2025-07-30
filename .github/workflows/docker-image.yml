@@ -36,10 +36,7 @@ jobs:
           git submodule init
           git submodule update
 
-          docker build . \
-            --file Dockerfile \
-            --tag $IMAGE_NAME:${IMAGE_TAG::8} \
-            --tag $IMAGE_NAME:latest
+          docker buildx bake --push
 
           docker push $IMAGE_NAME:${IMAGE_TAG::8}
           docker push $IMAGE_NAME:latest
