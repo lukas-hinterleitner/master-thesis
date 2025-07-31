@@ -24,61 +24,56 @@ It includes scripts for dataset preparation, analysis, and visualization of resu
 
 ```
 master-thesis/
-├── src/                          # Core source code modules
-│   ├── __init__.py              # Package initialization
-│   ├── computation.py           # Gradient and similarity computations
-│   ├── dataset.py              # Dataset loading and preprocessing
-│   ├── model_operations.py     # Model loading and operations
-│   ├── model.py                # Model wrapper classes
-│   ├── paraphrasing.py         # Text paraphrasing utilities
-│   ├── preprocessing.py        # Data preprocessing functions
-│   ├── storage.py              # File I/O and data persistence
-│   ├── utility.py              # General utility functions
-│   └── config/                 # Configuration files
-├── data/                        # Data storage directory
-│   ├── datasets/               # Generated and processed datasets
-│   │   ├── paraphrased/        # Paraphrased LIMA dataset
-│   │   └── model_generated/    # Model-generated responses
-│   ├── gradient_similarity/    # Gradient similarity results
-│   │   ├── paraphrased/        # Results for paraphrased data
-│   │   ├── model_generated/    # Results for model-generated data
-│   │   ├── random_projection/  # Random projection results
-│   │   └── *.csv              # Sample size analysis files
-│   └── dot_products/           # Dot product computation results
-│       ├── paraphrased/        # Paraphrased data dot products
-│       └── model_generated/    # Model-generated data dot products
-├── notebooks/                   # Jupyter notebooks for analysis
-│   ├── analysis.ipynb          # Main analysis notebook
-│   ├── datasets_playground.ipynb  # Dataset exploration
-│   ├── paraphrased_dataset.ipynb  # Paraphrased data analysis
-│   ├── playground_bm25.ipynb   # BM25 retrieval experiments
+├── src/                            # Core source code modules
+│   ├── __init__.py                 # Package initialization
+│   ├── computation.py              # Gradient and similarity computations
+│   ├── dataset.py                  # Dataset loading and preprocessing
+│   ├── model_operations.py         # Model loading and operations
+│   ├── model.py                    # Model wrapper classes
+│   ├── paraphrasing.py             # Text paraphrasing utilities
+│   ├── preprocessing.py            # Data preprocessing functions
+│   ├── storage.py                  # File I/O and data persistence
+│   ├── utility.py                  # General utility functions
+│   └── config/                     # Configuration files
+├── data/                           # Data storage directory
+│   ├── datasets/                   # Generated and processed datasets
+│   │   ├── paraphrased/            # Paraphrased LIMA dataset
+│   │   └── model_generated/        # Model-generated responses
+│   ├── gradient_similarity/        # Gradient similarity results
+│   │   ├── paraphrased/            # Results for paraphrased data
+│   │   ├── model_generated/        # Results for model-generated data
+│   │   ├── random_projection/      # Random projection results
+│   │   └── *.csv                   # Sample size analysis files
+│   └── dot_products/               # Dot product computation results
+│       ├── paraphrased/            # Paraphrased data dot products
+│       └── model_generated/        # Model-generated data dot products
+├── notebooks/                      # Jupyter notebooks for analysis
+│   ├── analysis.ipynb              # Main analysis notebook
+│   ├── datasets_playground.ipynb   # Dataset exploration
+│   ├── paraphrased_dataset.ipynb   # Paraphrased data analysis
+│   ├── playground_bm25.ipynb       # BM25 retrieval experiments
 │   ├── playground_model_generation.ipynb  # Model generation tests
-│   └── playground.ipynb        # General experimentation
+│   └── playground.ipynb                    # General experimentation
 ├── results/                     # Analysis results and visualizations
-│   ├── accuracy_per_layer/     # Layer-wise accuracy analysis
+│   ├── accuracy_per_layer/      # Layer-wise accuracy analysis
 │   ├── layer_comparison_full_gradient/  # Full gradient comparisons
 │   ├── parameters_per_layer/   # Parameter distribution analysis
 │   └── self_similarity_over_layers/    # Self-similarity analysis
 ├── slurm_scripts/              # SLURM cluster job scripts
 │   ├── batch_processing/       # Batch job scripts
-│   ├── old_scripts/           # Legacy scripts
-│   └── paraphrase_dataset/    # Dataset creation scripts
+│   ├── old_scripts/            # Legacy scripts
+│   └── paraphrase_dataset/     # Dataset creation scripts
 ├── submodules/                 # Git submodules
-│   └── open-instruct/         # Open-instruct framework
-├── papers/                     # Reference papers and literature
-│   ├── allen-ai/              # Allen AI research papers
-│   ├── explainability/        # Explainability research
-│   └── *.pdf                  # Core ML/NLP papers
-├── slides/                     # Presentation slides
+│   └── open-instruct/          # Open-instruct framework
 ├── tests/                      # Test files
 ├── main.py                     # Main execution script
-├── paraphrase.py              # Dataset paraphrasing script
-├── requirements.txt           # Python dependencies (pip)
-├── pyproject.toml            # Project configuration (uv/pip)
-├── uv.lock                   # UV dependency lock file
-├── Dockerfile                # Docker container definition
-├── README.md                 # This file
-└── README_SLURM.md          # SLURM-specific documentation
+├── paraphrase.py               # Dataset paraphrasing script
+├── requirements.txt            # Python dependencies (pip)
+├── pyproject.toml              # Project configuration (uv/pip)
+├── uv.lock                     # UV dependency lock file
+├── Dockerfile                  # Docker container definition
+├── README.md                   # This file
+└── README_SLURM.md             # SLURM-specific documentation
 ```
 
 ## Features
