@@ -49,11 +49,11 @@ master-thesis/
 │       └── model_generated/        # Model-generated data dot products
 ├── notebooks/                      # Jupyter notebooks for analysis
 │   ├── analysis.ipynb              # Main analysis notebook
-│   ├── datasets_playground.ipynb   # Dataset exploration
-│   ├── paraphrased_dataset.ipynb   # Paraphrased data analysis
+│   ├── playground.ipynb            # General experimentation
 │   ├── playground_bm25.ipynb       # BM25 retrieval experiments
+│   ├── playground_datasets.ipynb   # Dataset exploration
 │   ├── playground_model_generation.ipynb  # Model generation tests
-│   └── playground.ipynb                    # General experimentation
+│   └── playground_preprocessing.ipynb     # Data preprocessing workflows
 ├── results/                     # Analysis results and visualizations
 │   ├── accuracy_per_layer/      # Layer-wise accuracy analysis
 │   ├── layer_comparison_full_gradient/  # Full gradient comparisons
@@ -120,7 +120,7 @@ Activate virtual environment:
 source .venv/bin/activate
 ```
 
-#### Install necessary packages using PIP (not tested since UV is preferred)
+#### Install the necessary packages using PIP (not tested since UV is preferred)
 ```shell
 The project was developed with Python 3.11 since open-instruct requires it. So it is necessary to use Python 3.11.*.
 
@@ -259,31 +259,24 @@ Results follow a JSON structure containing similarity scores between original an
 ## Analysis
 
 After running the computations, analysis notebooks are available in the `notebooks/` directory:
-- `analysis.ipynb`: General analysis of similarity results
-- `paraphrased_dataset.ipynb`: Analysis specific to paraphrased dataset
-- `playground_bm25.ipynb`: BM25 retrieval experiments
-- `playground_model_generation.ipynb`: Model generation experiments
+- `analysis.ipynb`: Main analysis notebook with comprehensive gradient similarity analysis and layer importance investigations
+- `playground.ipynb`: General experimentation notebook for model testing and gradient operations
+- `playground_bm25.ipynb`: BM25 ranking and similarity analysis experiments
+- `playground_datasets.ipynb`: Dataset exploration and manipulation notebook
+- `playground_model_generation.ipynb`: Model text generation experimentation and response analysis
+- `playground_preprocessing.ipynb`: Data preprocessing and tokenization workflows
 
-### Results Overview
+### Notebook Details
 
-The analysis examines multiple dimensions of gradient similarities:
+#### Core Analysis
+- **`analysis.ipynb`**: The primary analysis notebook containing comprehensive gradient similarity calculations, layer-wise comparisons, BM25 scoring for dataset validation, and data restructuring for visualization
 
-#### Model Coverage
-The project analyzes models from multiple providers:
-- AMD models (e.g., AMD-OLMo)
-- AllenAI models
-- OpenAI Community models (for testing purposes)
-
-#### Analysis Types
-Different analytical perspectives are explored:
-
-1. **Accuracy Per Layer**: Measures how accurately gradient similarities can identify matching samples across different model layers.
-
-2. **Layer Comparison**: Analyzes how gradients differ between layers and which layers contribute most to similarity detection.
-
-3. **Parameter Distribution**: Examines the distribution and importance of parameters within each layer.
-
-4. **Self-Similarity**: Measures how similar a layer's gradients are to itself across different samples and modifications.
+#### Experimental Playgrounds
+- **`playground.ipynb`**: General model testing with reproducible seeds, basic gradient computation experiments, and model parameter analysis
+- **`playground_preprocessing.ipynb`**: Focused on data preprocessing pipelines, dataset tokenization using various models, and reproducible preprocessing workflows
+- **`playground_datasets.ipynb`**: Dataset exploration including loading paraphrased, model-generated, and original datasets, with dataset comparison and validation utilities
+- **`playground_model_generation.ipynb`**: Model text generation experiments, prompt engineering, response analysis, and message extraction utilities
+- **`playground_bm25.ipynb`**: BM25Okapi implementation for document ranking, cosine similarity comparisons, and corpus analysis
 
 ## License
 

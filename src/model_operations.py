@@ -9,11 +9,12 @@ def get_gradients(model: PreTrainedModel, sample) -> dict[str, torch.Tensor]:
 
     device = model.device
 
-    output = model(input_ids=sample["input_ids"].reshape(1, -1).to(device),
-                   labels=sample["labels"].reshape(1, -1).to(device),
-                   attention_mask=sample["attention_mask"].reshape(1, -1).to(device),
-                   use_cache=False
-                   )
+    output = model(
+        input_ids=sample["input_ids"].reshape(1, -1).to(device),
+        labels=sample["labels"].reshape(1, -1).to(device),
+        attention_mask=sample["attention_mask"].reshape(1, -1).to(device),
+        use_cache=False
+    )
 
     loss = output.loss
 
@@ -44,6 +45,9 @@ def map_to_message_format(role: str, content: str) -> dict[str, str]:
 
 def generate_model_output_from_paraphrased_sample(sample: dict, model: PreTrainedModel, tokenizer: PreTrainedTokenizer) -> dict:
     user_message = list(filter(lambda x: x["role"] == "user", sample["paraphrased_messages"]))
+
+    assert len(user_message) == 1, "There should be exactly one user message in the sample."
+
     chat_template_applied = tokenizer.apply_chat_template([user_message], return_tensors="pt", add_generation_prompt=True)
 
     generation = model.generate(
