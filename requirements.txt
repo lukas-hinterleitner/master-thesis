@@ -819,7 +819,9 @@ setuptools==79.0.1
     #   jupyterlab
     #   open-instruct
     #   tensorboard
+    #   torch
     #   triton
+    #   vllm
     #   wandb
 shellingham==1.5.4
     # via typer
@@ -831,6 +833,7 @@ six==1.17.0
     #   python-dateutil
     #   rfc3339-validator
     #   tensorboard
+    #   vllm
 smart-open==7.1.0
     # via ray
 smmap==5.0.2
