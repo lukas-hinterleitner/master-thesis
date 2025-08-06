@@ -1,6 +1,5 @@
 LICENSE
 README.md
-*.venv
 papers
 .cadence
 .github
@@ -24,3 +23,6 @@ README_SLURM.md
 notebooks
 results
 requirements.txt
+docker-bake.hcl
+*.venv
+data
