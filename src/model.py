@@ -6,11 +6,10 @@ from src.config.dataset import get_chat_template
 
 
 def get_model(model_name = MODEL_NAME, device = DEVICE) -> PreTrainedModel:
-    model = AutoModelForCausalLM.from_pretrained(model_name, device_map=device)
+    model: PreTrainedModel = AutoModelForCausalLM.from_pretrained(model_name, device_map=device)
+    model.eval()  # set to evaluation because we don't need to update weights
 
     print(f"Device: {model.device}")
-
-    model.eval()  # set to evaluation because we don't need to update weights
 
     print(f"Model parameters: {model.num_parameters()}")
     print("=" * 50)
