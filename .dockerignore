@@ -26,3 +26,4 @@ requirements.txt
 docker-bake.hcl
 *.venv
 data
+slides
