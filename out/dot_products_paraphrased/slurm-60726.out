@@ -1,0 +1,8 @@
+pyxis: importing docker image: lukashinterleitner/master-thesis-data-science:latest
+pyxis: imported docker image: lukashinterleitner/master-thesis-data-science:latest
+Downloading cpython-3.11.13-linux-x86_64-gnu (download) (30.1MiB)
+ Downloading cpython-3.11.13-linux-x86_64-gnu (download)
+Using CPython 3.11.13
+Creating virtual environment at: .venv
+error: Failed to generate package metadata for `open-instruct==0.1.0 @ editable+submodules/open-instruct`
+  Caused by: /app/submodules/open-instruct does not appear to be a Python project, as neither `pyproject.toml` nor `setup.py` are present in the directory

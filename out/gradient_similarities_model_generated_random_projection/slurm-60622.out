@@ -1,0 +1,15 @@
+pyxis: importing docker image: lukashinterleitner/master-thesis-data-science:latest
+slurmstepd: error: pyxis: child 3846591 failed with error code: 1
+slurmstepd: error: pyxis: failed to import docker image
+slurmstepd: error: pyxis: printing enroot log file:
+slurmstepd: error: pyxis:     [INFO] Querying registry for permission grant
+slurmstepd: error: pyxis:     [INFO] Authenticating with user: <anonymous>
+slurmstepd: error: pyxis:     [INFO] Authentication succeeded
+slurmstepd: error: pyxis:     [INFO] Fetching image manifest list
+slurmstepd: error: pyxis:     [INFO] Fetching image manifest
+slurmstepd: error: pyxis:     [INFO] Downloading 11 missing layers...
+slurmstepd: error: pyxis:     curl: (22) The requested URL returned error: 500
+slurmstepd: error: pyxis: couldn't start container
+slurmstepd: error: spank: required plugin spank_pyxis.so: task_init() failed with rc=-1
+slurmstepd: error: Failed to invoke spank plugin stack
+slurmstepd: error: pyxis: child 3866617 failed with error code: 1

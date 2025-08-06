@@ -1,0 +1,16 @@
+pyxis: importing docker image: lukashinterleitner/master-thesis-data-science:latest
+slurmstepd: error: pyxis: child 3224241 failed with error code: 1
+slurmstepd: error: pyxis: failed to import docker image
+slurmstepd: error: pyxis: printing enroot log file:
+slurmstepd: error: pyxis:     [INFO] Querying registry for permission grant
+slurmstepd: error: pyxis:     [INFO] Authenticating with user: <anonymous>
+slurmstepd: error: pyxis:     [INFO] Authentication succeeded
+slurmstepd: error: pyxis:     [INFO] Fetching image manifest list
+slurmstepd: error: pyxis:     [INFO] Fetching image manifest
+slurmstepd: error: pyxis:     [INFO] Downloading 1 missing layers...
+slurmstepd: error: pyxis:     zstd: error 25 : Write error : No space left on device (cannot write compressed block) 
+slurmstepd: error: pyxis:     curl: (23) Failure writing output to destination
+slurmstepd: error: pyxis: couldn't start container
+slurmstepd: error: spank: required plugin spank_pyxis.so: task_init() failed with rc=-1
+slurmstepd: error: Failed to invoke spank plugin stack
+slurmstepd: error: pyxis: child 3225660 failed with error code: 1

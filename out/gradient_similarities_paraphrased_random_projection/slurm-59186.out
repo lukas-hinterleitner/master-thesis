@@ -1,0 +1,69 @@
+pyxis: importing docker image: lukashinterleitner/master-thesis-data-science:latest
+pyxis: imported docker image: lukashinterleitner/master-thesis-data-science:latest
+[2025-05-21 12:09:14,410] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Warning: The cache directory for DeepSpeed Triton autotune, /srv/home/users/a51912219cs/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+Setting: paraphrased
+Computation Type: gradient-similarity
+Use Random Projection: True
+Device: cuda:0
+Model parameters: 124439808
+======================
+GPT2LMHeadModel(
+  (transformer): GPT2Model(
+    (wte): Embedding(50257, 768)
+    (wpe): Embedding(1024, 768)
+    (drop): Dropout(p=0.1, inplace=False)
+    (h): ModuleList(
+      (0-11): 12 x GPT2Block(
+        (ln_1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+        (attn): GPT2Attention(
+          (c_attn): Conv1D(nf=2304, nx=768)
+          (c_proj): Conv1D(nf=768, nx=768)
+          (attn_dropout): Dropout(p=0.1, inplace=False)
+          (resid_dropout): Dropout(p=0.1, inplace=False)
+        )
+        (ln_2): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+        (mlp): GPT2MLP(
+          (c_fc): Conv1D(nf=3072, nx=768)
+          (c_proj): Conv1D(nf=768, nx=3072)
+          (act): NewGELUActivation()
+          (dropout): Dropout(p=0.1, inplace=False)
+        )
+      )
+    )
+    (ln_f): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+  )
+  (lm_head): Linear(in_features=768, out_features=50257, bias=False)
+)
+Projection dimensions:   0%|          | 0/2 [00:00<?, ?it/s]Projection dimension: 1244160
+
+Calculating gradients + similarities using random projection:   0%|          | 0/2 [00:00<?, ?it/s][A`loss_type=None` was set in the config but it is unrecognised.Using the default loss: `ForCausalLMLoss`.
+
+P(lima_0) vs O(lima_0):   0%|          | 0/2 [01:25<?, ?it/s]                                      [A
+P(lima_0) vs O(lima_451):   0%|          | 0/2 [02:50<?, ?it/s][A
+P(lima_0) vs O(lima_266):   0%|          | 0/2 [04:14<?, ?it/s][A
+P(lima_0) vs O(lima_947):   0%|          | 0/2 [05:39<?, ?it/s][A
+P(lima_0) vs O(lima_110):   0%|          | 0/2 [07:04<?, ?it/s][A
+P(lima_0) vs O(lima_110):  50%|█████     | 1/2 [08:29<08:29, 509.25s/it][A
+P(lima_1) vs O(lima_1):  50%|█████     | 1/2 [09:54<08:29, 509.25s/it]  [A
+P(lima_1) vs O(lima_122):  50%|█████     | 1/2 [11:18<08:29, 509.25s/it][A
+P(lima_1) vs O(lima_22):  50%|█████     | 1/2 [12:43<08:29, 509.25s/it] [A
+P(lima_1) vs O(lima_337):  50%|█████     | 1/2 [14:08<08:29, 509.25s/it][A
+P(lima_1) vs O(lima_290):  50%|█████     | 1/2 [15:33<08:29, 509.25s/it][A
+P(lima_1) vs O(lima_290): 100%|██████████| 2/2 [16:57<00:00, 508.91s/it][A
+                                                                        [AProjection dimensions:  50%|█████     | 1/2 [16:57<16:57, 1017.93s/it]Projection dimension: 6221824
+
+Calculating gradients + similarities using random projection:   0%|          | 0/2 [00:00<?, ?it/s][A
+                                                                                                   [AProjection dimensions:  50%|█████     | 1/2 [16:58<16:58, 1018.48s/it]
+Traceback (most recent call last):
+  File "/app/main.py", line 184, in <module>
+    main()
+  File "/app/main.py", line 125, in main
+    gradient_similarities = calculate_paraphrased_random_projected_gradient_similarities(
+  File "/app/application/computation.py", line 244, in calculate_paraphrased_random_projected_gradient_similarities
+    down_projected_paraphrased_gradient = projector.project(
+  File "/usr/local/lib/python3.10/dist-packages/trak/projectors.py", line 421, in project
+    raise e
+  File "/usr/local/lib/python3.10/dist-packages/trak/projectors.py", line 408, in project
+    result = fn(
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 14.83 GiB. GPU 0 has a total capacity of 15.77 GiB of which 14.06 GiB is free. Including non-PyTorch memory, this process has 1.70 GiB memory in use. Of the allocated memory 1.19 GiB is allocated by PyTorch, and 138.57 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

@@ -1,0 +1,3 @@
+pyxis: importing docker image: lukashinterleitner/master-thesis-data-science:latest
+slurmstepd: error: *** JOB 59185 ON dgx1 CANCELLED AT 2025-05-21T12:06:39 ***
+slurmstepd: error: pyxis: child 2498816 failed with error code: 1

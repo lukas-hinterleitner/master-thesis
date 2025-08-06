@@ -1,0 +1,37 @@
+pyxis: importing docker image: lukashinterleitner/master-thesis-data-science:latest
+pyxis: imported docker image: lukashinterleitner/master-thesis-data-science:latest
+Setting: model-generated
+Computation Type: dot-product
+Use Random Projection: False
+Processing partition: 792-891
+Device: cuda:0
+Model parameters: 1176764416
+==================================================
+OlmoForCausalLM(
+  (model): OlmoModel(
+    (embed_tokens): Embedding(50304, 2048, padding_idx=1)
+    (layers): ModuleList(
+      (0-15): 16 x OlmoDecoderLayer(
+        (self_attn): OlmoAttention(
+          (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
+          (k_proj): Linear(in_features=2048, out_features=2048, bias=False)
+          (v_proj): Linear(in_features=2048, out_features=2048, bias=False)
+          (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+        )
+        (mlp): OlmoMLP(
+          (gate_proj): Linear(in_features=2048, out_features=8192, bias=False)
+          (up_proj): Linear(in_features=2048, out_features=8192, bias=False)
+          (down_proj): Linear(in_features=8192, out_features=2048, bias=False)
+          (act_fn): SiLU()
+        )
+        (input_layernorm): OlmoLayerNorm()
+        (post_attention_layernorm): OlmoLayerNorm()
+      )
+    )
+    (norm): OlmoLayerNorm()
+    (rotary_emb): OlmoRotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=2048, out_features=50304, bias=False)
+)
+Layer dot products (model‑generated):   0%|          | 0/99 [00:00<?, ?it/s]P(lima_803) vs O(lima_803):   0%|          | 0/99 [00:03<?, ?it/s]          P(lima_803) vs O(lima_801):   0%|          | 0/99 [00:07<?, ?it/s]P(lima_803) vs O(lima_22):   0%|          | 0/99 [00:12<?, ?it/s] P(lima_803) vs O(lima_64):   0%|          | 0/99 [00:16<?, ?it/s]P(lima_803) vs O(lima_240):   0%|          | 0/99 [00:20<?, ?it/s]P(lima_803) vs O(lima_240):   1%|          | 1/99 [00:24<40:07, 24.56s/it]P(lima_804) vs O(lima_804):   1%|          | 1/99 [00:27<40:07, 24.56s/it]P(lima_804) vs O(lima_132):   1%|          | 1/99 [00:30<40:07, 24.56s/it]P(lima_804) vs O(lima_176):   1%|          | 1/99 [00:34<40:07, 24.56s/it]P(lima_804) vs O(lima_290):   1%|          | 1/99 [00:38<40:07, 24.56s/it]P(lima_804) vs O(lima_801):   1%|          | 1/99 [00:41<40:07, 24.56s/it]P(lima_804) vs O(lima_801):   2%|▏         | 2/99 [00:45<35:47, 22.14s/it]P(lima_805) vs O(lima_805):   2%|▏         | 2/99 [00:47<35:47, 22.14s/it]P(lima_805) vs O(lima_801):   2%|▏         | 2/99 [00:51<35:47, 22.14s/it]P(lima_805) vs O(lima_233):   2%|▏         | 2/99 [00:54<35:47, 22.14s/it]P(lima_805) vs O(lima_396):   2%|▏         | 2/99 [00:57<35:47, 22.14s/it]P(lima_805) vs O(lima_927):   2%|▏         | 2/99 [01:01<35:47, 22.14s/it]P(lima_805) vs O(lima_927):   3%|▎         | 3/99 [01:04<33:42, 21.07s/it]P(lima_806) vs O(lima_806):   3%|▎         | 3/99 [01:07<33:42, 21.07s/it]P(lima_806) vs O(lima_920):   3%|▎         | 3/99 [01:10<33:42, 21.07s/it]P(lima_806) vs O(lima_133):   3%|▎         | 3/99 [01:13<33:42, 21.07s/it]P(lima_806) vs O(lima_934):   3%|▎         | 3/99 [01:16<33:42, 21.07s/it]P(lima_806) vs O(lima_257):   3%|▎         | 3/99 [01:19<33:42, 21.07s/it]P(lima_806) vs O(lima_257):   4%|▍         | 4/99 [01:22<30:57, 19.56s/it]P(lima_807) vs O(lima_260):   4%|▍         | 4/99 [01:23<30:57, 19.56s/it]P(lima_807) vs O(lima_254):   4%|▍         | 4/99 [01:27<30:57, 19.56s/it]P(lima_807) vs O(lima_292):   4%|▍         | 4/99 [01:29<30:57, 19.56s/it]P(lima_807) vs O(lima_335):   4%|▍         | 4/99 [01:33<30:57, 19.56s/it]P(lima_807) vs O(lima_807):   4%|▍         | 4/99 [01:35<30:57, 19.56s/it]P(lima_807) vs O(lima_807):   5%|▌         | 5/99 [01:39<29:20, 18.73s/it]P(lima_808) vs O(lima_924):   5%|▌         | 5/99 [01:40<29:20, 18.73s/it]P(lima_808) vs O(lima_992):   5%|▌         | 5/99 [01:43<29:20, 18.73s/it]P(lima_808) vs O(lima_254):   5%|▌         | 5/99 [01:46<29:20, 18.73s/it]P(lima_808) vs O(lima_971):   5%|▌         | 5/99 [01:49<29:20, 18.73s/it]P(lima_808) vs O(lima_808):   5%|▌         | 5/99 [01:52<29:20, 18.73s/it]P(lima_808) vs O(lima_808):   6%|▌         | 6/99 [01:55<27:39, 17.85s/it]P(lima_809) vs O(lima_809):   6%|▌         | 6/99 [01:57<27:39, 17.85s/it]P(lima_809) vs O(lima_430):   6%|▌         | 6/99 [02:00<27:39, 17.85s/it]P(lima_809) vs O(lima_559):   6%|▌         | 6/99 [02:02<27:39, 17.85s/it]P(lima_809) vs O(lima_921):   6%|▌         | 6/99 [02:05<27:39, 17.85s/it]P(lima_809) vs O(lima_499):   6%|▌         | 6/99 [02:07<27:39, 17.85s/it]P(lima_809) vs O(lima_499):   7%|▋         | 7/99 [02:10<25:58, 16.94s/it]P(lima_810) vs O(lima_810):   7%|▋         | 7/99 [02:12<25:58, 16.94s/it]P(lima_810) vs O(lima_230):   7%|▋         | 7/99 [02:15<25:58, 16.94s/it]P(lima_810) vs O(lima_160):   7%|▋         | 7/99 [02:18<25:58, 16.94s/it]P(lima_810) vs O(lima_235):   7%|▋         | 7/99 [02:21<25:58, 16.94s/it]P(lima_810) vs O(lima_501):   7%|▋         | 7/99 [02:23<25:58, 16.94s/it]P(lima_810) vs O(lima_501):   8%|▊         | 8/99 [02:27<25:33, 16.85s/it]P(lima_811) vs O(lima_811):   8%|▊         | 8/99 [02:28<25:33, 16.85s/it]P(lima_811) vs O(lima_324):   8%|▊         | 8/99 [02:31<25:33, 16.85s/it]P(lima_811) vs O(lima_829):   8%|▊         | 8/99 [02:34<25:33, 16.85s/it]P(lima_811) vs O(lima_20):   8%|▊         | 8/99 [02:37<25:33, 16.85s/it] P(lima_811) vs O(lima_396):   8%|▊         | 8/99 [02:40<25:33, 16.85s/it]P(lima_811) vs O(lima_396):   9%|▉         | 9/99 [02:43<24:57, 16.64s/it]P(lima_812) vs O(lima_812):   9%|▉         | 9/99 [02:45<24:57, 16.64s/it]P(lima_812) vs O(lima_396):   9%|▉         | 9/99 [02:47<24:57, 16.64s/it]P(lima_812) vs O(lima_844):   9%|▉         | 9/99 [02:50<24:57, 16.64s/it]P(lima_812) vs O(lima_36):   9%|▉         | 9/99 [02:52<24:57, 16.64s/it] P(lima_812) vs O(lima_144):   9%|▉         | 9/99 [02:55<24:57, 16.64s/it]P(lima_812) vs O(lima_144):  10%|█         | 10/99 [02:58<24:01, 16.19s/it]P(lima_813) vs O(lima_813):  10%|█         | 10/99 [03:00<24:01, 16.19s/it]P(lima_813) vs O(lima_160):  10%|█         | 10/99 [03:03<24:01, 16.19s/it]P(lima_813) vs O(lima_612):  10%|█         | 10/99 [03:05<24:01, 16.19s/it]P(lima_813) vs O(lima_593):  10%|█         | 10/99 [03:09<24:01, 16.19s/it]slurmstepd: error: *** JOB 147812 ON dgx-h100-em2 CANCELLED AT 2025-07-09T08:01:01 ***
+P(lima_813) vs O(lima_847):  10%|█         | 10/99 [03:12<24:01, 16.19s/it]

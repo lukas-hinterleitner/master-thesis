@@ -1,0 +1,9 @@
+pyxis: importing docker image: lukashinterleitner/master-thesis-data-science:latest
+pyxis: imported docker image: lukashinterleitner/master-thesis-data-science:latest
+slurmstepd: error: pyxis: container start failed with error code: 1
+slurmstepd: error: pyxis: printing enroot log file:
+slurmstepd: error: pyxis:     nvidia-container-cli: container error: file lookup failed: /proc/3843820/root/srv/localstorage/a51912219cs/enroot/pyxis_60621.4294967291/etc/debian_version: permission denied
+slurmstepd: error: pyxis:     [ERROR] /etc/enroot/hooks.d/98-nvidia.sh exited with return code 1
+slurmstepd: error: pyxis: couldn't start container
+slurmstepd: error: spank: required plugin spank_pyxis.so: task_init() failed with rc=-1
+slurmstepd: error: Failed to invoke spank plugin stack

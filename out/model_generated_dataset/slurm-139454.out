@@ -1,0 +1,7 @@
+pyxis: importing docker image: lukashinterleitner/master-thesis-data-science:latest
+pyxis: imported docker image: lukashinterleitner/master-thesis-data-science:latest
+Starting model-generated dataset creation...
+Job ID: 139454
+Node: dgx1
+Start time: Wed Jul  2 18:39:09 CEST 2025
+slurmstepd: error: *** JOB 139454 ON dgx1 CANCELLED AT 2025-07-02T18:39:30 ***

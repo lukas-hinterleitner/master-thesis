@@ -1,0 +1,58 @@
+pyxis: importing docker image: lukashinterleitner/master-thesis-data-science:latest
+pyxis: imported docker image: lukashinterleitner/master-thesis-data-science:latest
+Setting: paraphrased
+Computation Type: gradient-similarity
+Use Random Projection: True
+Device: cuda:0
+Model parameters: 1176764416
+======================
+OlmoForCausalLM(
+  (model): OlmoModel(
+    (embed_tokens): Embedding(50304, 2048, padding_idx=1)
+    (layers): ModuleList(
+      (0-15): 16 x OlmoDecoderLayer(
+        (self_attn): OlmoAttention(
+          (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
+          (k_proj): Linear(in_features=2048, out_features=2048, bias=False)
+          (v_proj): Linear(in_features=2048, out_features=2048, bias=False)
+          (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+        )
+        (mlp): OlmoMLP(
+          (gate_proj): Linear(in_features=2048, out_features=8192, bias=False)
+          (up_proj): Linear(in_features=2048, out_features=8192, bias=False)
+          (down_proj): Linear(in_features=8192, out_features=2048, bias=False)
+          (act_fn): SiLU()
+        )
+        (input_layernorm): OlmoLayerNorm()
+        (post_attention_layernorm): OlmoLayerNorm()
+      )
+    )
+    (norm): OlmoLayerNorm()
+    (rotary_emb): OlmoRotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=2048, out_features=50304, bias=False)
+)
+Projection dimensions:   0%|          | 0/2 [00:00<?, ?it/s]Projection dimensions:   0%|          | 0/2 [00:00<?, ?it/s]
+Projection dimension: 11767808
+Traceback (most recent call last):
+  File "/uv/.venv/lib/python3.11/site-packages/trak/projectors.py", line 373, in __init__
+    import fast_jl
+ModuleNotFoundError: No module named 'fast_jl'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/app/main.py", line 196, in <module>
+    main()
+  File "/app/main.py", line 126, in main
+    gradient_similarities = calculate_paraphrased_random_projected_gradient_similarities(
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/application/computation.py", line 567, in calculate_paraphrased_random_projected_gradient_similarities
+    return __calculate_random_projected_similarities(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/application/computation.py", line 300, in __calculate_random_projected_similarities
+    projector = CudaProjector(
+                ^^^^^^^^^^^^^^
+  File "/uv/.venv/lib/python3.11/site-packages/trak/projectors.py", line 382, in __init__
+    raise ModuleNotFoundError(err)
+ModuleNotFoundError: You should make sure to install the CUDA projector for traker (called fast_jl).                  See the installation FAQs for more details.
