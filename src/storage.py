@@ -179,6 +179,15 @@ def get_gradient_similarity_paraphrased_random_projection_data(model_name = MODE
 
     return data
 
+def get_gradient_similarity_model_generated_random_projection_data(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE) -> dict[str, dict[str, dict[str, float]]]:
+    path = get_gradient_similarity_model_generated_random_projection_file_path(model_name, sample_size)
+
+    with open(path) as f:
+        data = json.load(f)
+        f.close()
+
+    return data
+
 def get_results_parameters_per_layer_folder_path(model_name = MODEL_NAME):
     path = os.path.join(results_folder_path, "parameters_per_layer", model_name)
 
@@ -211,12 +220,19 @@ def get_results_layer_comparison_full_gradient_folder_path(model_name = MODEL_NA
 
     return path
 
-def get_results_self_similarities_over_layers_folder_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE, experiment_type: ExperimentType = ExperimentType.PARAPHRASED):
-    # If sample_size is None, the path will have 'full' instead of a number
+def get_results_self_similarities_over_layers_folder_path(sample_id: str, model_name = MODEL_NAME, experiment_type: ExperimentType = ExperimentType.PARAPHRASED):
+    path = os.path.join(results_folder_path, "self_similarity_over_layers", experiment_type.value, model_name, sample_id)
+
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    return path
+
+def get_greedy_layer_selection_folder_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE, experiment_type: ExperimentType = ExperimentType.PARAPHRASED):
     if sample_size is None:
-        path = os.path.join(results_folder_path, "self_similarity_over_layers", experiment_type.value, model_name, "sample_size", "full")
+        path = os.path.join(results_folder_path, "greedy_layer_selection", experiment_type.value, model_name, "sample_size", "full")
     else:
-        path = os.path.join(results_folder_path, "self_similarity_over_layers", experiment_type.value, model_name, "sample_size", str(sample_size))
+        path = os.path.join(results_folder_path, "greedy_layer_selection", experiment_type.value, model_name, "sample_size", str(sample_size))
 
     if not os.path.exists(path):
         os.makedirs(path)
