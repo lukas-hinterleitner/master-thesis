@@ -1,61 +1,0 @@
-pyxis: importing docker image: lukashinterleitner/master-thesis-data-science:latest
-pyxis: imported docker image: lukashinterleitner/master-thesis-data-science:latest
-Setting: paraphrased
-Computation Type: gradient-similarity
-Use Random Projection: True
-Device: cuda:0
-Model parameters: 1176764416
-======================
-OlmoForCausalLM(
-  (model): OlmoModel(
-    (embed_tokens): Embedding(50304, 2048, padding_idx=1)
-    (layers): ModuleList(
-      (0-15): 16 x OlmoDecoderLayer(
-        (self_attn): OlmoAttention(
-          (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
-          (k_proj): Linear(in_features=2048, out_features=2048, bias=False)
-          (v_proj): Linear(in_features=2048, out_features=2048, bias=False)
-          (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
-        )
-        (mlp): OlmoMLP(
-          (gate_proj): Linear(in_features=2048, out_features=8192, bias=False)
-          (up_proj): Linear(in_features=2048, out_features=8192, bias=False)
-          (down_proj): Linear(in_features=8192, out_features=2048, bias=False)
-          (act_fn): SiLU()
-        )
-        (input_layernorm): OlmoLayerNorm()
-        (post_attention_layernorm): OlmoLayerNorm()
-      )
-    )
-    (norm): OlmoLayerNorm()
-    (rotary_emb): OlmoRotaryEmbedding()
-  )
-  (lm_head): Linear(in_features=2048, out_features=50304, bias=False)
-)
-TRAK and fast_jl are installed correctly!
-Projection dimensions:   0%|          | 0/2 [00:00<?, ?it/s]Projection dimension: 11767808
-
-Gradients + similarities (random projection):   0%|          | 0/988 [00:00<?, ?it/s][A
-P(lima_0) vs O(lima_0):   0%|          | 0/988 [1:24:36<?, ?it/s]                    [A
-P(lima_0) vs O(lima_451):   0%|          | 0/988 [2:49:11<?, ?it/s][A
-P(lima_0) vs O(lima_947):   0%|          | 0/988 [4:13:47<?, ?it/s][A
-P(lima_0) vs O(lima_266):   0%|          | 0/988 [5:38:22<?, ?it/s][A
-                                                                   [AProjection dimensions:   0%|          | 0/2 [5:38:25<?, ?it/s]
-Traceback (most recent call last):
-  File "/app/main.py", line 201, in <module>
-    main()
-  File "/app/main.py", line 129, in main
-    gradient_similarities = calculate_paraphrased_random_projected_gradient_similarities(
-                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/app/application/computation.py", line 567, in calculate_paraphrased_random_projected_gradient_similarities
-    return __calculate_random_projected_similarities(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/app/application/computation.py", line 347, in __calculate_random_projected_similarities
-    down_original = projector.project(
-                    ^^^^^^^^^^^^^^^^^^
-  File "/uv/.venv/lib/python3.11/site-packages/trak/projectors.py", line 421, in project
-    raise e
-  File "/uv/.venv/lib/python3.11/site-packages/trak/projectors.py", line 408, in project
-    result = fn(
-             ^^^
-torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 46.29 GiB. GPU 0 has a total capacity of 79.11 GiB of which 21.34 GiB is free. Including non-PyTorch memory, this process has 57.76 GiB memory in use. Of the allocated memory 11.02 GiB is allocated by PyTorch, and 46.01 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
