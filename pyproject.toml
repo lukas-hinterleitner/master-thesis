@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = [{ name = "Lukas Hinterleitner" }]
 description = "Calculates similarities between gradients of the LIMA fine-tuning dataset samples and paraphrased versions of it."
 readme = "README.md"
-requires-python = ">=3.10,<3.13"
+requires-python = ">=3.10,<3.12"
 dependencies = [
     "open-instruct",
     "ipywidgets==8.1.5",

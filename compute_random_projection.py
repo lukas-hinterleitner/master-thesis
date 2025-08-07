@@ -29,6 +29,8 @@ def compute_full_gradient_projection(
     # 2. Flatten all gradients into a single vector
     full_gradient_vector = torch.cat([g.flatten() for g in gradients.values()])
 
+    print(full_gradient_vector.shape)
+
     # 3. Create a projector for the full gradient
     projector = CudaProjector(
         grad_dim=full_gradient_vector.numel(),
