@@ -111,8 +111,8 @@ All necessary packages can be installed using either [UV](https://docs.astral.sh
 
 #### Install necessary packages using UV
 ```shell
-uv sync
-uv pip install --no-build-isolation traker[fast]==0.3.2
+uv sync --extra build
+uv sync --extra build --extra trakfast
 ```
 
 Activate virtual environment: 

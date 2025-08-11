@@ -7,20 +7,24 @@ readme = "README.md"
 requires-python = ">=3.10,<3.13"
 dependencies = [
     "open-instruct",
-    "ipywidgets==8.1.5",
-    "openai==1.59.9",
-    "pandas==2.3.0",
-    "pandas-stubs==2.3.0.250703",
+    "ipywidgets==8.1.7",
+    "openai==1.99.7",
+    "pandas==2.3.1",
     "python-dotenv==1.1.1",
     "rank-bm25==0.2.2",
-    "scikit-learn==1.6.1",
     "seaborn==0.13.2",
     "tqdm==4.67.1",
-    "notebook==7.4.4"
-    # torch isn't listed since it is a dependency of open-instruct
+    "notebook==7.4.5",
 ]
 
+[project.optional-dependencies]
+# ensures torch (and basic build tools) are present BEFORE building fast-jl
+build = ["torch"]
+trakfast = ["traker[fast]==0.3.2"]
+
+[tool.uv]
+# let these packages build inside the project env so they can import torch
+no-build-isolation-package = ["fast-jl"]
+
 [tool.uv.sources]
-open-instruct = [
-    { path = "submodules/open-instruct", editable = true }
-]
+open-instruct = [{ path = "submodules/open-instruct", editable = true }]

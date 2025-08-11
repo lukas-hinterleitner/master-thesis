@@ -276,7 +276,7 @@ ipython==9.3.0 ; python_full_version >= '3.11'
     #   ipywidgets
 ipython-pygments-lexers==1.1.1 ; python_full_version >= '3.11'
     # via ipython
-ipywidgets==8.1.5
+ipywidgets==8.1.7
     # via gradient-similarity-analyzer
 isoduration==20.11.0
     # via jsonschema
@@ -295,9 +295,7 @@ jinja2==3.1.6
 jiter==0.10.0
     # via openai
 joblib==1.5.1
-    # via
-    #   nltk
-    #   scikit-learn
+    # via nltk
 json5==0.12.0
     # via jupyterlab-server
 jsonpointer==3.0.0
@@ -359,7 +357,7 @@ lark==1.2.2
     # via
     #   outlines
     #   vllm
-litellm==1.60.0
+litellm==1.75.5.post1
     # via open-instruct
 llguidance==0.7.29 ; platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'x86_64'
     # via vllm
@@ -428,7 +426,7 @@ ninja==1.11.1.4
     #   xgrammar
 nltk==3.9.1
     # via open-instruct
-notebook==7.4.4
+notebook==7.4.5
     # via gradient-similarity-analyzer
 notebook-shim==0.2.4
     # via
@@ -455,7 +453,6 @@ numpy==1.26.4
     #   pandas-stubs
     #   peft
     #   rank-bm25
-    #   scikit-learn
     #   scipy
     #   seaborn
     #   tensorboard
@@ -504,7 +501,7 @@ nvidia-nvtx-cu12==12.8.55 ; platform_machine == 'x86_64' and sys_platform == 'li
     # via torch
 nvitop==1.5.1
     # via open-instruct
-openai==1.59.9
+openai==1.99.7
     # via
     #   gradient-similarity-analyzer
     #   litellm
@@ -794,12 +791,8 @@ safetensors==0.5.3
     #   accelerate
     #   peft
     #   transformers
-scikit-learn==1.6.1
-    # via gradient-similarity-analyzer
 scipy==1.15.3
-    # via
-    #   scikit-learn
-    #   vllm
+    # via vllm
 seaborn==0.13.2
     # via gradient-similarity-analyzer
 send2trash==1.8.3
@@ -861,8 +854,6 @@ terminado==0.18.1
     # via
     #   jupyter-server
     #   jupyter-server-terminals
-threadpoolctl==3.6.0
-    # via scikit-learn
 tiktoken==0.9.0
     # via
     #   litellm
