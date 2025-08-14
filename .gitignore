@@ -3,32 +3,8 @@
 
 # add paraphrased data
 data/*
-!data/datasets
-!data/datasets/
 !data/gradient_similarity
 !data/dot_products
-
-# Ignore everything in paraphrased and model_generated directories
-data/datasets/paraphrased/**
-data/datasets/model_generated/**
-
-# But include the specific files we want to track
-!data/datasets/paraphrased/**/data-00000-of-00001.arrow
-!data/datasets/paraphrased/**/state.json
-!data/datasets/paraphrased/**/dataset_info.json
-
-!data/datasets/model_generated/**/data-00000-of-00001.arrow
-!data/datasets/model_generated/**/state.json
-!data/datasets/model_generated/**/dataset_info.json
-
-# Also need to allow the intermediate directories to be tracked
-!data/datasets/paraphrased/
-!data/datasets/paraphrased/*/
-!data/datasets/paraphrased/*/*/
-
-!data/datasets/model_generated/
-!data/datasets/model_generated/*/
-!data/datasets/model_generated/*/*/
 
 #data/**/*_part_*.json
 

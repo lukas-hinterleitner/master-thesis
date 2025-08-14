@@ -1,11 +1,11 @@
+from datasets import load_from_disk, Dataset, load_dataset
 from transformers import PreTrainedModel, PreTrainedTokenizerBase
-from datasets import load_from_disk, Dataset
 
 from src.config.dataset import get_dataset_config, SAMPLE_SIZE
 from src.config.model import MODEL_NAME
 from src.config.storage import lima_paraphrased_dataset_path
-from src.storage import get_model_generated_dataset_folder_path
 from src.preprocessing import prepare_dataset
+from src.storage import get_model_generated_huggingface_dataset_path
 
 
 def get_paraphrased_dataset_tokenized(model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase, sample_size = SAMPLE_SIZE, partition_start=None, partition_end=None) -> Dataset:
@@ -43,7 +43,7 @@ def get_model_generated_dataset_tokenized(model: PreTrainedModel, tokenizer: Pre
     )
 
 def get_original_dataset(sample_size = SAMPLE_SIZE, partition_start=None, partition_end=None) -> Dataset:
-    original_dataset = load_from_disk(lima_paraphrased_dataset_path).select_columns(["id", "messages"])
+    original_dataset = load_dataset("lukashinterleitner/LIMA-paraphrased-GPT-4o-mini", split="train").select_columns(["id", "messages"])
 
     # Handle partition-based subsetting (takes precedence over sample_size)
     if partition_start is not None and partition_end is not None:
@@ -54,7 +54,7 @@ def get_original_dataset(sample_size = SAMPLE_SIZE, partition_start=None, partit
         return original_dataset
 
 def get_paraphrased_dataset(sample_size = SAMPLE_SIZE, partition_start=None, partition_end=None) -> Dataset:
-    paraphrased = load_from_disk(lima_paraphrased_dataset_path).select_columns(["id", "paraphrased_messages"])
+    paraphrased = load_dataset("lukashinterleitner/LIMA-paraphrased-GPT-4o-mini", split="train").select_columns(["id", "paraphrased_messages"])
 
     # Handle partition-based subsetting (takes precedence over sample_size)
     if partition_start is not None and partition_end is not None:
@@ -65,13 +65,12 @@ def get_paraphrased_dataset(sample_size = SAMPLE_SIZE, partition_start=None, par
         return paraphrased
 
 def get_model_generated_dataset(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE, partition_start=None, partition_end=None) -> Dataset:
-    model_generated_path = get_model_generated_dataset_folder_path(model_name)
-
     try:
-        model_generated_dataset = load_from_disk(model_generated_path).select_columns(["id", "model_generated_messages"])
+        path = get_model_generated_huggingface_dataset_path(model_name)
+        model_generated_dataset = load_dataset(path, split="train").select_columns(["id", "model_generated_messages"])
     except Exception as e:
         # raise error
-        raise RuntimeError(f"Error loading model-generated dataset from {model_generated_path}. Please create the model-generated dataset first using --dataset-type model-generated")
+        raise RuntimeError(f"Error loading model-generated dataset from {path}. Please create the model-generated dataset first using --dataset-type model-generated")
 
     # Handle partition-based subsetting (takes precedence over sample_size)
     if partition_start is not None and partition_end is not None:

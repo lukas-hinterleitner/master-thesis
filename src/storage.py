@@ -38,6 +38,10 @@ def get_model_generated_dataset_folder_path(model_name = MODEL_NAME):
     return path
 
 
+def get_model_generated_huggingface_dataset_path(model_name = MODEL_NAME):
+    return f"lukashinterleitner/LIMA-model-generated-{model_name.replace('/', '-')}"
+
+
 def get_gradient_similarity_file_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE):
     path = str(os.path.join(gradient_similarity_storage_path, model_name))
 
