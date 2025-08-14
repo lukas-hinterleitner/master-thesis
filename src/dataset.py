@@ -1,4 +1,4 @@
-from datasets import load_from_disk, Dataset, load_dataset
+from datasets import Dataset, load_dataset
 from transformers import PreTrainedModel, PreTrainedTokenizerBase
 
 from src.config.dataset import get_dataset_config, SAMPLE_SIZE
@@ -22,7 +22,7 @@ def get_paraphrased_dataset_tokenized(model: PreTrainedModel, tokenizer: PreTrai
 
 def get_original_dataset_tokenized(model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase) -> Dataset:
     original_dataset_config = get_dataset_config(model, sft_messages_key="messages")
-    dataset = load_from_disk(lima_paraphrased_dataset_path)
+    dataset = get_original_dataset(None, None, None) # get full original dataset
 
     return prepare_dataset(
         dataset=dataset,
@@ -81,5 +81,5 @@ def get_model_generated_dataset(model_name = MODEL_NAME, sample_size = SAMPLE_SI
         return model_generated_dataset
 
 def get_samples(sample_ids: list[str]) -> Dataset:
-    return load_from_disk(lima_paraphrased_dataset_path).filter(lambda example: example["id"] in sample_ids)
+    return get_model_generated_dataset(None, None, None).filter(lambda example: example["id"] in sample_ids)
 
