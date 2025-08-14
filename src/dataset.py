@@ -33,7 +33,6 @@ def get_original_dataset_tokenized(model: PreTrainedModel, tokenizer: PreTrained
 
 def get_model_generated_dataset_tokenized(model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase, sample_size = SAMPLE_SIZE, partition_start=None, partition_end=None) -> Dataset:
     model_generated_dataset = get_model_generated_dataset(model_name=MODEL_NAME, sample_size=sample_size, partition_start=partition_start, partition_end=partition_end)
-
     model_generated_dataset_config = get_dataset_config(model, sft_messages_key="model_generated_messages")
 
     return prepare_dataset(
@@ -43,7 +42,7 @@ def get_model_generated_dataset_tokenized(model: PreTrainedModel, tokenizer: Pre
     )
 
 def get_original_dataset(sample_size = SAMPLE_SIZE, partition_start=None, partition_end=None) -> Dataset:
-    original_dataset = load_dataset("lukashinterleitner/LIMA-paraphrased-GPT-4o-mini", split="train").select_columns(["id", "messages"])
+    original_dataset = load_dataset("lukashinterleitner/LIMA-paraphrased-GPT-4o-mini", split="train")
 
     # Handle partition-based subsetting (takes precedence over sample_size)
     if partition_start is not None and partition_end is not None:
@@ -54,7 +53,7 @@ def get_original_dataset(sample_size = SAMPLE_SIZE, partition_start=None, partit
         return original_dataset
 
 def get_paraphrased_dataset(sample_size = SAMPLE_SIZE, partition_start=None, partition_end=None) -> Dataset:
-    paraphrased = load_dataset("lukashinterleitner/LIMA-paraphrased-GPT-4o-mini", split="train").select_columns(["id", "paraphrased_messages"])
+    paraphrased = load_dataset("lukashinterleitner/LIMA-paraphrased-GPT-4o-mini", split="train")
 
     # Handle partition-based subsetting (takes precedence over sample_size)
     if partition_start is not None and partition_end is not None:
@@ -67,7 +66,7 @@ def get_paraphrased_dataset(sample_size = SAMPLE_SIZE, partition_start=None, par
 def get_model_generated_dataset(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE, partition_start=None, partition_end=None) -> Dataset:
     try:
         path = get_model_generated_huggingface_dataset_path(model_name)
-        model_generated_dataset = load_dataset(path, split="train").select_columns(["id", "model_generated_messages"])
+        model_generated_dataset = load_dataset(path, split="train")
     except Exception as e:
         # raise error
         raise RuntimeError(f"Error loading model-generated dataset from {path}. Please create the model-generated dataset first using --dataset-type model-generated")
