@@ -1,5 +1,8 @@
 import torch
 from transformers import PreTrainedModel, PreTrainedTokenizer
+from transformers.modeling_outputs import CausalLMOutputWithPast, CausalLMOutputWithCrossAttentions, MoECausalLMOutputWithPast
+
+from open_instruct.dataset_processor import INPUT_IDS_PROMPT_KEY
 
 def get_gradients(model: PreTrainedModel, sample) -> dict[str, torch.Tensor]:
     gradients = {}
@@ -15,6 +18,15 @@ def get_gradients(model: PreTrainedModel, sample) -> dict[str, torch.Tensor]:
         attention_mask=sample["attention_mask"].reshape(1, -1).to(device),
         use_cache=False
     )
+
+    if isinstance(output, CausalLMOutputWithPast):
+        output: CausalLMOutputWithPast = output
+    elif isinstance(output, CausalLMOutputWithCrossAttentions):
+        output: CausalLMOutputWithCrossAttentions = output
+    elif isinstance(output, MoECausalLMOutputWithPast):
+        output: MoECausalLMOutputWithPast = output
+    else:
+        raise TypeError("Unsupported output type from the model. Change it accordingly or remove the type check.")
 
     loss = output.loss
 
@@ -45,16 +57,15 @@ def map_to_message_format(role: str, content: str) -> dict[str, str]:
 
 def generate_model_output_from_paraphrased_sample(sample: dict, model: PreTrainedModel, tokenizer: PreTrainedTokenizer) -> dict:
     user_message = list(filter(lambda x: x["role"] == "user", sample["paraphrased_messages"]))
-
     assert len(user_message) == 1, "There should be exactly one user message in the sample."
 
-    chat_template_applied = tokenizer.apply_chat_template([user_message], return_tensors="pt", add_generation_prompt=True)
+    batch = sample[INPUT_IDS_PROMPT_KEY].reshape(1, -1)
 
     generation = model.generate(
-        chat_template_applied.to(model.device),
-        max_new_tokens=512,
+        batch.to(model.device),
+        max_new_tokens=model.config.max_position_embeddings - batch.shape[1],
         do_sample=False,
-        attention_mask=torch.ones_like(chat_template_applied).to(model.device),
+        attention_mask=torch.ones_like(batch).to(model.device),
     )
 
     decoded = tokenizer.decode(generation[0])

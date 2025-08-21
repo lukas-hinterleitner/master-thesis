@@ -5,6 +5,8 @@ import sys
 from pathlib import Path
 from collections import OrderedDict
 
+from src.utility import sort_key
+
 project_root = Path(__file__).resolve().parents[2]
 sys.path.append(str(project_root))
 
@@ -29,15 +31,6 @@ def find_partial_results(base_path, pattern="*_part_*_*.json"):
     path = Path(base_path)
     return list(path.glob(pattern))
 
-# Sort the combined results numerically by the number after "lima_"
-def sort_key(item):
-    key = item[0]
-    if key.startswith("lima_"):
-        try:
-            return int(key.split("_")[1])
-        except (IndexError, ValueError):
-            return key
-    return key
 
 def combine_gradient_similarity_results(file_paths, output_path):
     """Combine gradient similarity results from multiple files"""

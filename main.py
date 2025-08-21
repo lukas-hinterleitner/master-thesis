@@ -1,15 +1,13 @@
 import argparse
 import enum
 import json
+import os
 import random
 import time
 
 import numpy as np
 import torch
 import trak
-import os
-
-from src.model import get_model, get_tokenizer
 
 from src.computation import (
     calculate_paraphrased_layer_dot_products,
@@ -19,13 +17,12 @@ from src.computation import (
     calculate_paraphrased_random_projected_gradient_similarities,
     calculate_model_generated_random_projected_gradient_similarities
 )
-
 from src.dataset import (
     get_original_dataset_tokenized,
     get_paraphrased_dataset_tokenized,
     get_model_generated_dataset_tokenized
 )
-
+from src.model import get_model, get_tokenizer
 from src.storage import (
     get_dot_product_paraphrased_file_path,
     get_dot_product_model_generated_file_path,
@@ -34,6 +31,7 @@ from src.storage import (
     get_gradient_similarity_paraphrased_random_projection_file_path,
     get_gradient_similarity_model_generated_random_projection_file_path
 )
+
 
 class Setting(enum.Enum):
     MODEL_GENERATED = "model-generated"

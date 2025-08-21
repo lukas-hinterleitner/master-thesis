@@ -242,3 +242,8 @@ def get_greedy_layer_selection_folder_path(model_name = MODEL_NAME, sample_size 
         os.makedirs(path)
 
     return path
+
+def get_accuracy_per_layer_boxplot_path(model_name = MODEL_NAME, sample_size = SAMPLE_SIZE, experiment_type: ExperimentType = ExperimentType.PARAPHRASED):
+    path = get_results_accuracy_per_layer_folder_path(model_name, sample_size, experiment_type)
+
+    return os.path.join(path, "boxplot.png")

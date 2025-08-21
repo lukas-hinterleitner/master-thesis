@@ -1,11 +1,18 @@
 import argparse
-from datasets import load_dataset
+import random
+
+import numpy as np
+import torch
+
+from datasets import load_dataset, Dataset
+
+from src.dataset import get_paraphrased_dataset_tokenized
 from src.model_operations import generate_model_output_from_paraphrased_sample, map_to_message_format
-from src.storage import get_paraphrased_dataset_folder_path, get_model_generated_dataset_folder_path
 from src.model import get_model, get_tokenizer
 
 from tqdm import tqdm
 
+from src.storage import get_model_generated_huggingface_dataset_path
 
 def create_paraphrased_dataset():
     from src.paraphrasing import paraphrase_input
@@ -46,25 +53,34 @@ def create_paraphrased_dataset():
     lima_data_paraphrased = lima_data_paraphrased.remove_columns("dataset")
     lima_data_paraphrased = lima_data_paraphrased.remove_columns("paraphrased_id")
 
-    lima_data_paraphrased.save_to_disk(get_paraphrased_dataset_folder_path())
-    print(f"Paraphrased dataset saved to: {get_paraphrased_dataset_folder_path()}")
+    lima_data_paraphrased = Dataset.from_list(list(lima_data_paraphrased))
+
+    repo_id = "lukashinterleitner/LIMA-paraphrased-GPT-4o-mini"
+
+    lima_data_paraphrased.push_to_hub(repo_id)
+    print(f"Paraphrased dataset saved to: {repo_id}")
 
 
 def create_model_generated_dataset():
     """Create model-generated dataset from paraphrased LIMA data."""
-    # Load the paraphrased dataset
-    try:
-        from datasets import load_from_disk
-        paraphrased_dataset = load_from_disk(get_paraphrased_dataset_folder_path())
-        print(f"Loaded paraphrased dataset from: {get_paraphrased_dataset_folder_path()}")
-    except Exception as e:
-        print(f"Error loading paraphrased dataset: {e}")
-        print("Please create the paraphrased dataset first using --dataset-type paraphrased")
-        return
+
+    torch.manual_seed(42)
+    np.random.seed(42)
+    random.seed(42)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
     # Load model and tokenizer
     model = get_model()
     tokenizer = get_tokenizer()
+
+    # Load the paraphrased dataset
+    try:
+        paraphrased_dataset = get_paraphrased_dataset_tokenized(model, tokenizer, sample_size=None, partition_start=None, partition_end=None)
+    except Exception as e:
+        print(f"Error loading paraphrased dataset: {e}")
+        print("Please create the paraphrased dataset first using --dataset-type paraphrased")
+        return
 
     model_generated = []
 
@@ -75,7 +91,7 @@ def create_model_generated_dataset():
         except Exception as e:
             raise RuntimeError(f"Error generating output for sample {row['id']}: {e}") from e
 
-    # Create new dataset with model-generated content
+    # Create a new dataset with model-generated content
     lima_data_model_generated = paraphrased_dataset.add_column("model_generated_id", [m[0] for m in model_generated])
     lima_data_model_generated = lima_data_model_generated.add_column("model_generated_messages", [m[1] for m in model_generated])
 
@@ -88,8 +104,12 @@ def create_model_generated_dataset():
 
     lima_data_model_generated = lima_data_model_generated.remove_columns("model_generated_id")
 
-    lima_data_model_generated.save_to_disk(get_model_generated_dataset_folder_path())
-    print(f"Model-generated dataset saved to: {get_model_generated_dataset_folder_path()}")
+    lima_data_model_generated = Dataset.from_list(list(lima_data_model_generated))
+
+    repo_id = get_model_generated_huggingface_dataset_path()
+
+    lima_data_model_generated.push_to_hub(repo_id)
+    print(f"Model-generated dataset saved to: {repo_id}")
 
 
 def main():
