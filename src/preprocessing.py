@@ -8,9 +8,9 @@ def prepare_dataset(dataset: Dataset | DatasetDict, tokenizer: PreTrainedTokeniz
     dataset_processor = SFTDatasetProcessor(tokenizer, dataset_config)
 
     tokenized_dataset = dataset_processor.tokenize(dataset)
-    filtered_dataset = dataset_processor.filter(tokenized_dataset)
+    #tokenized_dataset = dataset_processor.filter(tokenized_dataset)
 
-    subsampled_dataset = filtered_dataset.select(range(sample_size)) if sample_size else filtered_dataset
-    subsampled_dataset.set_format(type="pt")
+    tokenized_dataset = tokenized_dataset.select(range(sample_size)) if sample_size else tokenized_dataset
+    tokenized_dataset.set_format(type="pt")
 
-    return subsampled_dataset
+    return tokenized_dataset

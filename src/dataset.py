@@ -89,3 +89,7 @@ def get_samples(sample_ids: list[str]) -> Dataset:
 
     return merged.filter(lambda example: example["id"] in sample_ids)
 
+
+def get_indices(sample_ids: list[str]) -> list[int]:
+    ids = get_original_dataset()["id"]
+    return [ids.index(sid) for sid in sample_ids if sid in ids]

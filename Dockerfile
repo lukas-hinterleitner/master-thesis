@@ -1,5 +1,5 @@
 FROM nvidia/cuda:12.8.1-cudnn-devel-ubuntu24.04
-COPY --from=ghcr.io/astral-sh/uv:0.8.10 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.8.14 /uv /uvx /bin/
 
 LABEL authors="lukashinterleitner"
 
