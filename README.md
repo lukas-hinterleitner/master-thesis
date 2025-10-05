@@ -18,7 +18,6 @@ It includes scripts for dataset preparation, analysis, and visualization of resu
 - [Output Files](#output-files)
 - [Analysis](#analysis)
 - [License](#license)
-- [Citation](#citation)
 
 ## Project Structure
 
@@ -277,24 +276,6 @@ After running the computations, analysis notebooks are available in the `noteboo
 - **`playground_datasets.ipynb`**: Dataset exploration including loading paraphrased, model-generated, and original datasets, with dataset comparison and validation utilities
 - **`playground_model_generation.ipynb`**: Model text generation experiments, prompt engineering, response analysis, and message extraction utilities
 - **`playground_bm25.ipynb`**: BM25Okapi implementation for document ranking, cosine similarity comparisons, and corpus analysis
-
-## License
-
-This project is part of a Master's thesis research. Please contact the author for usage permissions and citation requirements.
-
-## Citation
-
-If you use this work in your research, please cite:
-
-```bibtex
-@mastersthesis{hinterleitner2025select,
-  title={Select or Project? Evaluating Lower-dimensional Vectors for LLM Training Data Explanations},
-  author={Hinterleitner, Lukas},
-  year={2025},
-  school={[University of Vienna]},
-  type={Master's thesis}
-}
-```
 
 For SLURM cluster usage instructions, see [README_SLURM.md](README_SLURM.md).
 
