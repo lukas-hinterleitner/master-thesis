@@ -371,7 +371,15 @@ This project is part of a master's thesis. Please contact the author for licensi
 If you use this work in your research, please cite:
 !!! Will be provided in the future !!!
 ```bibtex
-
+@misc{hinterleitner2026selectprojectevaluatinglowerdimensional,
+      title={Select or Project? Evaluating Lower-dimensional Vectors for LLM Training Data Explanations}, 
+      author={Lukas Hinterleitner and Loris Schoenegger and Benjamin Roth},
+      year={2026},
+      eprint={2601.16651},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2601.16651}, 
+}
 ```
 
 ---
