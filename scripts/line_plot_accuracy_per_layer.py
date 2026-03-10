@@ -1,6 +1,7 @@
 """
-Create line plots for accuracy-per-layer data (instead of bar plots).
-Each component type is a separate line, with layer depth on the x-axis.
+Create line plots for accuracy-per-layer and layer-comparison-full-gradient data
+(instead of bar plots). Each component type is a separate line, with layer depth
+on the x-axis.
 
 Usage:
     python scripts/line_plot_accuracy_per_layer.py
@@ -15,16 +16,34 @@ import seaborn as sns
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DATA_PATHS = {
-    "paraphrased": os.path.join(
-        BASE_DIR,
-        "results/accuracy_per_layer/paraphrased/amd/AMD-OLMo-1B-SFT/sample_size/full/values.json",
-    ),
-    "model_generated": os.path.join(
-        BASE_DIR,
-        "results/accuracy_per_layer/model_generated/amd/AMD-OLMo-1B-SFT/sample_size/full/values.json",
-    ),
-}
+DATASETS = [
+    {
+        "y_label": "Accuracy",
+        "paths": {
+            "paraphrased": os.path.join(
+                BASE_DIR,
+                "results/accuracy_per_layer/paraphrased/amd/AMD-OLMo-1B-SFT/sample_size/full/values.json",
+            ),
+            "model_generated": os.path.join(
+                BASE_DIR,
+                "results/accuracy_per_layer/model_generated/amd/AMD-OLMo-1B-SFT/sample_size/full/values.json",
+            ),
+        },
+    },
+    {
+        "y_label": "Similarity",
+        "paths": {
+            "paraphrased": os.path.join(
+                BASE_DIR,
+                "results/layer_comparison_full_gradient/paraphrased/amd/AMD-OLMo-1B-SFT/sample_size/full/values.json",
+            ),
+            "model_generated": os.path.join(
+                BASE_DIR,
+                "results/layer_comparison_full_gradient/model_generated/amd/AMD-OLMo-1B-SFT/sample_size/full/values.json",
+            ),
+        },
+    },
+]
 
 
 def parse_layer_data(values: dict) -> dict[str, dict[int, float]]:
@@ -49,7 +68,7 @@ def parse_layer_data(values: dict) -> dict[str, dict[int, float]]:
     return components
 
 
-def line_plot(values: dict, title: str, output_path: str):
+def line_plot(values: dict, title: str, output_path: str, y_label: str = "Accuracy"):
     """Create a line plot with one line per component type."""
     components = parse_layer_data(values)
 
@@ -59,7 +78,6 @@ def line_plot(values: dict, title: str, output_path: str):
     for (comp, layer_acc), color in zip(sorted(components.items()), palette):
         layers = sorted(layer_acc.keys())
         accs = [layer_acc[l] for l in layers]
-        labels = ["Embed" if l == 0 else str(l) for l in layers]
         plt.plot(range(len(layers)), accs, marker="o", markersize=3, label=comp, color=color)
 
     # Collect all unique layer depths across all components
@@ -69,7 +87,7 @@ def line_plot(values: dict, title: str, output_path: str):
 
     plt.ylim(bottom=0)
     plt.xlabel("Layer Depth")
-    plt.ylabel("Accuracy")
+    plt.ylabel(y_label)
     plt.legend(title="Component Type", frameon=False)
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
@@ -79,14 +97,16 @@ def line_plot(values: dict, title: str, output_path: str):
 
 
 def main():
-    for setting, path in DATA_PATHS.items():
-        with open(path) as f:
-            values = json.load(f)
+    for dataset in DATASETS:
+        y_label = dataset["y_label"]
+        for setting, path in dataset["paths"].items():
+            with open(path) as f:
+                values = json.load(f)
 
-        output_dir = os.path.dirname(path)
-        output_path = os.path.join(output_dir, "line_plot.png")
-        title = f"AMD-OLMo-1B-SFT - {setting} - accuracy per layer"
-        line_plot(values, title, output_path)
+            output_dir = os.path.dirname(path)
+            output_path = os.path.join(output_dir, "line_plot.png")
+            title = f"AMD-OLMo-1B-SFT - {setting} - {y_label.lower()} per layer"
+            line_plot(values, title, output_path, y_label=y_label)
 
 
 if __name__ == "__main__":
