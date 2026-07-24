@@ -12,13 +12,18 @@ Master thesis project analyzing gradient similarities between LIMA fine-tuning d
 
 ### Installation
 ```bash
+# Initialize the open-instruct submodule first — uv sync and all imports fail without it
+git submodule update --init
+
 # Using UV (preferred)
 uv sync --extra build
-uv sync --extra build --extra trakfast  # For random projection support
+uv sync --extra build --extra trakfast  # For random projection (--use-random-projection); fast-jl needs torch installed first, so run after the line above
 
 # Activate venv
 source .venv/bin/activate
 ```
+
+A `.env` file must exist before running anything: `src/config/` modules raise at import time if `.env`, `MT_MODEL_NAME`, or `MT_DEVICE` are missing.
 
 ### Main Execution
 ```bash
@@ -44,7 +49,7 @@ python paraphrase.py --dataset-type both             # Creates both sequentially
 
 ### Testing
 ```bash
-python tests.py  # Verifies gradient computation correctness
+python tests.py  # Verifies gradient computation correctness (plain script — not a pytest suite)
 ```
 
 ### Export requirements
@@ -62,22 +67,16 @@ uv export --format requirements-txt --no-hashes -o requirements.txt
 - **model_operations.py**: Gradient extraction via backward pass, model output generation
 - **storage.py**: Centralized path management. All I/O paths defined here
 - **preprocessing.py**: Uses open-instruct submodule for dataset tokenization
+- **paraphrasing.py**: OpenAI-based paraphrasing, used by `paraphrase.py`
 
 ### Configuration (`src/config/`)
 
 All configuration is environment-based via `.env`:
-- `HF_TOKEN`: HuggingFace API token
+- `HF_TOKEN`: HuggingFace API token (consumed by HF libraries, not read by project code)
+- `OPENAI_API_KEY`: Required for `paraphrase.py --dataset-type paraphrased`
 - `MT_MODEL_NAME`: Model name (e.g., `amd/AMD-OLMo-1B-SFT`)
-- `MT_DEVICE`: Device (`cpu`, `cuda:0`, etc.)
+- `MT_DEVICE`: Device (`cpu`, `cuda:0`, etc.). `cuda:*` is validated against available GPUs at import — use `cpu` on machines without one
 - `MT_SAMPLE_SIZE`: Optional subset size for testing
-
-### Data Flow
-
-1. Original LIMA dataset → tokenized via open-instruct
-2. Paraphrased/model-generated variants created via `paraphrase.py`
-3. Gradients computed per sample via backward pass
-4. Similarities computed layer-wise (gradient cosine similarity or dot products)
-5. Results stored as JSON in `data/` directory
 
 ### Key Dependencies
 
@@ -85,6 +84,8 @@ All configuration is environment-based via `.env`:
 - **open-instruct** (submodule): Provides dataset preprocessing and chat template handling
 
 ## Distributed Processing (SLURM)
+
+See `README_SLURM.md` for full details.
 
 Generate and submit distributed jobs:
 ```bash
@@ -102,4 +103,5 @@ bash slurm_scripts/batch_processing/combine_all.sh
 - Random seed is set to 42 globally in `main.py` for reproducibility
 - Model-generated dataset requires paraphrased dataset to exist first
 - Results are stored in `data/gradient_similarity/` and `data/dot_products/`
+- Plot scripts live in `scripts/` (e.g., `line_plot_accuracy_per_layer.py`); figures/tables go to `results/`
 - Analysis notebooks in `notebooks/`, primary analysis is `analysis.ipynb`
